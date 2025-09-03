@@ -22,13 +22,20 @@ export function ProfilePageBilling() {
    const { data: customerState, isLoading } = useSuspenseQuery(
       trpc.authHelpers.getCustomerState.queryOptions(),
    );
+   const { data: isOwner, isLoading: isOwnerLoading } = useSuspenseQuery(
+      trpc.authHelpers.isOrganizationOwner.queryOptions(),
+   );
    const activeSubscription = customerState?.activeSubscriptions[0];
    const activeMeter = customerState?.activeMeters[0];
    const handleManageSubscription = useCallback(async () => {
       return await betterAuthClient.customer.portal();
    }, []);
 
-   if (isLoading) {
+   if (!isOwner) {
+      return null;
+   }
+
+   if (isLoading || isOwnerLoading) {
       return (
          <Card>
             <CardHeader>

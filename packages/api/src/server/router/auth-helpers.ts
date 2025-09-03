@@ -4,6 +4,7 @@ import {
    listAgents,
 } from "@packages/database/repositories/agent-repository";
 import { getContentStatsLast30Days } from "@packages/database/repositories/content-repository";
+import { isOrganizationOwner } from "@packages/database/repositories/auth-repository";
 
 export const authHelpersRouter = router({
    getApiKeys: protectedProcedure.query(async ({ ctx }) => {
@@ -56,5 +57,16 @@ export const authHelpersRouter = router({
          wordCount30d: contentStats.wordsCount,
          contentGenerated: contentStats.count,
       };
+   }),
+   isOrganizationOwner: protectedProcedure.query(async ({ ctx }) => {
+      const resolvedCtx = await ctx;
+      const userId = resolvedCtx.session?.user.id;
+      const organizationId = resolvedCtx.session?.session?.activeOrganizationId;
+
+      if (!userId || !organizationId) {
+         return true; // If no organization, user manages their own billing
+      }
+
+      return await isOrganizationOwner(resolvedCtx.db, userId, organizationId);
    }),
 });

@@ -8,9 +8,7 @@ import { marked } from "marked";
 import type { ContentSelect } from "@packages/database/schema";
 
 interface Props {
-   post: Omit<ContentSelect, "shareStatus"> & {
-      shareStatus?: ContentSelect["shareStatus"];
-   };
+   post: ContentSelect;
    author: {
       name: string;
       profilePhoto: {
@@ -18,9 +16,7 @@ interface Props {
          contentType: string;
       } | null;
    };
-   relatedPosts: (Omit<ContentSelect, "shareStatus"> & {
-      shareStatus?: ContentSelect["shareStatus"];
-   })[];
+   relatedPosts: ContentSelect[];
 }
 
 const { post, author, relatedPosts } = Astro.props as Props;

@@ -717,6 +717,50 @@ export const contentRouter = router({
             throw err;
          }
       }),
+   toggleShare: protectedProcedure
+      .input(ContentInsertSchema.pick({ id: true }))
+      .mutation(async ({ ctx, input }) => {
+         try {
+            if (!input.id) {
+               throw new TRPCError({
+                  code: "BAD_REQUEST",
+                  message: "Content ID is required.",
+               });
+            }
+            const db = (await ctx).db;
+            const content = await getContentById(db, input.id);
+            if (!content) {
+               throw new TRPCError({
+                  code: "NOT_FOUND",
+                  message: "Content not found.",
+               });
+            }
+
+            const newShareStatus =
+               content.shareStatus === "shared" ? "private" : "shared";
+
+            const updated = await updateContent(db, input.id, {
+               shareStatus: newShareStatus,
+            });
+
+            return {
+               success: true,
+               shareStatus: newShareStatus,
+               content: updated,
+            };
+         } catch (err) {
+            if (err instanceof NotFoundError) {
+               throw new TRPCError({ code: "NOT_FOUND", message: err.message });
+            }
+            if (err instanceof DatabaseError) {
+               throw new TRPCError({
+                  code: "INTERNAL_SERVER_ERROR",
+                  message: err.message,
+               });
+            }
+            throw err;
+         }
+      }),
    getRelatedSlugs: protectedProcedure
       .input(z.object({ slug: z.string(), agentId: z.string() }))
       .query(async ({ ctx, input }) => {

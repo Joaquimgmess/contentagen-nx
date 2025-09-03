@@ -1,6 +1,14 @@
 import { useRouter } from "@tanstack/react-router";
 import { Button } from "@packages/ui/components/button";
-import { Edit, Trash2, RotateCcw, CheckCircle, Upload } from "lucide-react";
+import {
+   Edit,
+   Trash2,
+   RotateCcw,
+   CheckCircle,
+   Upload,
+   Share,
+   Lock,
+} from "lucide-react";
 import {
    Card,
    CardContent,
@@ -76,6 +84,21 @@ export function ContentDetailsQuickActions({
       }),
    );
 
+   const toggleShareMutation = useMutation(
+      trpc.content.toggleShare.mutationOptions({
+         onSuccess: (data) => {
+            toast.success(
+               `Content ${data.shareStatus === "shared" ? "shared" : "made private"} successfully!`,
+            );
+         },
+         onError: (error) => {
+            toast.error(
+               `Error toggling share status: ${error.message ?? "Unknown error"}`,
+            );
+         },
+      }),
+   );
+
    const handleRegenerate = () => {
       regenerateMutation.mutate({ id: content.id });
    };
@@ -87,6 +110,10 @@ export function ContentDetailsQuickActions({
    const handleDeleteConfirm = () => {
       deleteMutation.mutate({ id: content.id });
       setDeleteDialogOpen(false);
+   };
+
+   const handleToggleShare = () => {
+      toggleShareMutation.mutate({ id: content.id });
    };
 
    const actions = [
@@ -113,6 +140,13 @@ export function ContentDetailsQuickActions({
          label: "Approve Content",
          onClick: handleApprove,
          disabled: approveMutation.isPending || content.status === "approved",
+      },
+      {
+         icon: content.shareStatus === "shared" ? Lock : Share,
+         label:
+            content.shareStatus === "shared" ? "Make Private" : "Share Content",
+         onClick: handleToggleShare,
+         disabled: toggleShareMutation.isPending,
       },
       {
          icon: Trash2,

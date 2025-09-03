@@ -8,38 +8,6 @@ import type {
 import type { DatabaseInstance } from "../client";
 import { DatabaseError, NotFoundError } from "@packages/errors";
 import { eq } from "drizzle-orm";
-import { hasContentAccess } from "@packages/helpers/access-control";
-
-export async function getContentWithAccessControl(
-   dbClient: DatabaseInstance,
-   contentId: string,
-   userId?: string,
-   organizationId?: string,
-): Promise<Content> {
-   try {
-      const contentItem = await dbClient.query.content.findFirst({
-         where: eq(content.id, contentId),
-      });
-
-      if (!contentItem) throw new NotFoundError("Content not found");
-
-      const { canRead } = await hasContentAccess(
-         dbClient,
-         contentItem,
-         userId,
-         organizationId,
-      );
-
-      if (!canRead) throw new NotFoundError("Content not found");
-
-      return contentItem;
-   } catch (err) {
-      if (err instanceof NotFoundError) throw err;
-      throw new DatabaseError(
-         `Failed to get content with access control: ${(err as Error).message}`,
-      );
-   }
-}
 
 // Get content by slug
 export async function getContentBySlug(

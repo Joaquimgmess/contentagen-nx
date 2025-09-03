@@ -27,6 +27,7 @@ import {
    approveBulkContent,
    listContents,
 } from "@packages/database/repositories/content-repository";
+import { canModifyContent } from "@packages/database";
 import { NotFoundError, DatabaseError } from "@packages/errors";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -727,7 +728,35 @@ export const contentRouter = router({
                   message: "Content ID is required.",
                });
             }
-            const db = (await ctx).db;
+
+            const resolvedCtx = await ctx;
+            const db = resolvedCtx.db;
+            const userId = resolvedCtx.session?.user.id;
+            const organizationId = resolvedCtx.session?.session?.activeOrganizationId;
+
+            if (!userId) {
+               throw new TRPCError({
+                  code: "UNAUTHORIZED",
+                  message: "User must be authenticated to toggle share status.",
+               });
+            }
+
+            // Check if user can modify this content
+            const canModify = await canModifyContent(
+               db,
+               input.id,
+               userId,
+               organizationId ?? "",
+            );
+
+            if (!canModify) {
+               throw new TRPCError({
+                  code: "FORBIDDEN",
+                  message: "You don't have permission to modify this content.",
+               });
+            }
+
+            // Get content after access check
             const content = await getContentById(db, input.id);
             if (!content) {
                throw new TRPCError({

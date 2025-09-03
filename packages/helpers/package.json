@@ -16,8 +16,7 @@
    "type": "module",
    "exports": {
       "./text": "./src/text.ts",
-      "./number": "./src/numbers.ts",
-      "./access-control": "./src/access-control.ts"
+      "./number": "./src/numbers.ts"
    },
    "version": "0.0.0"
 }

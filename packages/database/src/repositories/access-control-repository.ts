@@ -57,9 +57,6 @@ export async function getContentWithAccessControl(
    try {
       const contentItem = await dbClient.query.content.findFirst({
          where: (content) => eq(content.id, contentId),
-         with: {
-            agent: true,
-         },
       });
 
       if (!contentItem) throw new NotFoundError("Content not found");

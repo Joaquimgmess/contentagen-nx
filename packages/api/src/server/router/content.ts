@@ -732,7 +732,8 @@ export const contentRouter = router({
             const resolvedCtx = await ctx;
             const db = resolvedCtx.db;
             const userId = resolvedCtx.session?.user.id;
-            const organizationId = resolvedCtx.session?.session?.activeOrganizationId;
+            const organizationId =
+               resolvedCtx.session?.session?.activeOrganizationId;
 
             if (!userId) {
                throw new TRPCError({

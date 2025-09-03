@@ -134,9 +134,23 @@ export function ContentRequestCard({
                      <Badge variant="outline">
                         {new Date(request.createdAt).toLocaleDateString()}
                      </Badge>
-                     <Badge className="text-xs">
-                        {formatValueForDisplay(request.status ?? "")}
-                     </Badge>
+                     <div className="flex items-center gap-2">
+                        <Badge
+                           variant={
+                              request.shareStatus === "shared"
+                                 ? "default"
+                                 : "secondary"
+                           }
+                           className="text-xs"
+                        >
+                           {formatValueForDisplay(
+                              request.shareStatus ?? "private",
+                           )}
+                        </Badge>
+                        <Badge className="text-xs">
+                           {formatValueForDisplay(request.status ?? "")}
+                        </Badge>
+                     </div>
                   </CardFooter>
                </Card>
             </CredenzaTrigger>

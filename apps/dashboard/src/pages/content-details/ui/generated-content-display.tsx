@@ -134,6 +134,25 @@ export function GeneratedContentDisplay({
          },
       }),
    );
+   const toggleShareMutation = useMutation(
+      trpc.content.toggleShare.mutationOptions({
+         onError: (error) => {
+            console.error("Error toggling share status:", error);
+            toast.error("Failed to update share status. Please try again.");
+         },
+         onSuccess: (data) => {
+            toast.success(
+               `Content ${data.shareStatus === "shared" ? "shared" : "made private"} successfully!`,
+            );
+            queryClient.invalidateQueries({
+               queryKey: [
+                  trpc.content.listAllContent.queryKey(),
+                  trpc.content.get.queryKey({ id: content.id }),
+               ],
+            });
+         },
+      }),
+   );
    return (
       <>
          <Card>
@@ -198,6 +217,17 @@ export function GeneratedContentDisplay({
                            }
                         >
                            Approve Content
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                           onClick={async () =>
+                              await toggleShareMutation.mutateAsync({
+                                 id: content.id,
+                              })
+                           }
+                        >
+                           {content.shareStatus === "shared"
+                              ? "Make Private"
+                              : "Share"}
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>

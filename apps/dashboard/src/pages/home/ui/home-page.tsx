@@ -17,7 +17,7 @@ export function DashboardHomePage() {
          {
             title: "Total Agents",
             description: "Active agents registered",
-            value: data.totalAgents?.toLocaleString() ?? "0",
+            value: data.totalAgents,
          },
          {
             title: "Words Written (30d)",
@@ -27,7 +27,7 @@ export function DashboardHomePage() {
          {
             title: "Content Generated (30d)",
             description: "Pieces of content generated",
-            value: data.contentGenerated?.toLocaleString() ?? "0",
+            value: data.contentGenerated,
          },
       ],
       [data],

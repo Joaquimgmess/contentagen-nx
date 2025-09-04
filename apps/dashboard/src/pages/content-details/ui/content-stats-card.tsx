@@ -15,7 +15,7 @@ export function ContentStatsCard({ content }: ContentStatsCardProps) {
          {
             label: "Word Count",
             description: "Total words in the content",
-            value: wordCount.toString(),
+            value: wordCount.toLocaleString(),
          },
          {
             label: "Content Quality",

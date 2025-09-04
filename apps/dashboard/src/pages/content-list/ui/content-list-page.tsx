@@ -18,7 +18,13 @@ import { useSearch } from "@tanstack/react-router";
 function ContentListPageContent() {
    const trpc = useTRPC();
    const queryClient = useQueryClient();
-   const { page, limit, hasGeneratingContent } = useContentList();
+   const {
+      page,
+      limit,
+      hasGeneratingContent,
+      filteredStatuses,
+      selectedAgents,
+   } = useContentList();
 
    // Initialize missing images notification hook
    useMissingImagesNotification();
@@ -31,19 +37,12 @@ function ContentListPageContent() {
                toast.success(`Content status updated to ${statusData.status}`);
                queryClient.invalidateQueries({
                   queryKey: trpc.content.listAllContent.queryKey({
-                     status: [
-                        "draft",
-                        "approved",
-                        "pending",
-                        "planning",
-                        "researching",
-                        "writing",
-                        "editing",
-                        "analyzing",
-                        "grammar_checking",
-                     ],
+                     status: filteredStatuses,
                      page,
                      limit,
+                     ...(selectedAgents.length > 0 && {
+                        agentIds: selectedAgents,
+                     }),
                   }),
                });
             },
@@ -86,11 +85,7 @@ export function ContentListPage() {
    );
 
    return (
-      <ContentListProvider
-         data={data}
-         agents={agents.items}
-         initialPage={search.page}
-      >
+      <ContentListProvider data={data} agents={agents.items}>
          <ContentListPageContent />
       </ContentListProvider>
    );

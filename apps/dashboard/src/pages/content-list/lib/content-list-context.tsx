@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import type { ReactNode } from "react";
 import type { RouterInput, RouterOutput } from "@packages/api/client";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 export type ContentStatuses =
    RouterInput["content"]["listAllContent"]["status"];
@@ -16,7 +16,6 @@ interface ContentListContextType {
    // Pagination state
    page: number;
    totalPages: number;
-   setPage: (page: number) => void;
    handlePageChange: (newPage: number) => void;
 
    // Selection state
@@ -60,17 +59,16 @@ interface ContentListProviderProps {
    children: ReactNode;
    data?: RouterOutput["content"]["listAllContent"];
    agents?: RouterOutput["agent"]["list"]["items"];
-   initialPage?: number;
 }
 
 export function ContentListProvider({
    children,
    data,
    agents,
-   initialPage = 1,
 }: ContentListProviderProps) {
    const navigate = useNavigate();
-   const [page, setPage] = useState(initialPage);
+   const search = useSearch({ from: "/_dashboard/content/" });
+   const page = search.page;
    const [limit] = useState(8);
    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
@@ -118,10 +116,10 @@ export function ContentListProvider({
 
    const handlePageChange = useCallback(
       (newPage: number) => {
-         setPage(newPage);
          navigate({
             to: "/content",
-            search: (prev: any) => ({ ...prev, page: newPage }),
+            search: (prev) => ({ ...prev, page: newPage }),
+            replace: true,
          });
       },
       [navigate],
@@ -185,7 +183,6 @@ export function ContentListProvider({
       // Pagination
       page,
       totalPages,
-      setPage,
       handlePageChange,
 
       // Selection

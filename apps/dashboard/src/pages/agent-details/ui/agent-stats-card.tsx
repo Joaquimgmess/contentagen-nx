@@ -50,7 +50,7 @@ export function AgentStatsCard() {
          {
             label: "Avg. Quality Score",
             description: "Average quality score across generated content.",
-            value: data.avgQualityScore?.toFixed(2).toString() ?? "0",
+            value: data.avgQualityScore ? `${data.avgQualityScore}/100` : "0/100",
          },
          {
             label: "Total Ideas",

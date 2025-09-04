@@ -8,7 +8,7 @@ interface ContentStatsCardProps {
 
 export function ContentStatsCard({ content }: ContentStatsCardProps) {
    const items = useMemo(() => {
-      const wordCount = content.stats?.wordsCount || 0;
+      const wordCount = Number(content.stats?.wordsCount || 0);
       const qualityScore = content.stats?.qualityScore || 0;
 
       return [
@@ -20,7 +20,7 @@ export function ContentStatsCard({ content }: ContentStatsCardProps) {
          {
             label: "Content Quality",
             description: "AI-assessed quality score",
-            value: qualityScore.toString(),
+            value: `${qualityScore}/100`,
          },
       ];
    }, [content]);

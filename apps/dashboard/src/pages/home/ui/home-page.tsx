@@ -52,7 +52,7 @@ export function DashboardHomePage() {
                   Agents
                </SquaredIconButton>
             </Link>
-            <Link to="/content">
+            <Link to="/content" search={{ page: 1 }}>
                <SquaredIconButton>
                   <FileText className="w-5 h-5" />
                   Content

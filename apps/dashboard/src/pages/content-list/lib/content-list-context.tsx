@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import type { ReactNode } from "react";
 import type { RouterInput, RouterOutput } from "@packages/api/client";
+import { useNavigate } from "@tanstack/react-router";
 
 export type ContentStatuses =
    RouterInput["content"]["listAllContent"]["status"];
@@ -59,14 +60,17 @@ interface ContentListProviderProps {
    children: ReactNode;
    data?: RouterOutput["content"]["listAllContent"];
    agents?: RouterOutput["agent"]["list"]["items"];
+   initialPage?: number;
 }
 
 export function ContentListProvider({
    children,
    data,
    agents,
+   initialPage = 1,
 }: ContentListProviderProps) {
-   const [page, setPage] = useState(1);
+   const navigate = useNavigate();
+   const [page, setPage] = useState(initialPage);
    const [limit] = useState(8);
    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
@@ -112,9 +116,16 @@ export function ContentListProvider({
       return Math.ceil((data?.total || 0) / limit);
    }, [data?.total, limit]);
 
-   const handlePageChange = useCallback((newPage: number) => {
-      setPage(newPage);
-   }, []);
+   const handlePageChange = useCallback(
+      (newPage: number) => {
+         setPage(newPage);
+         navigate({
+            to: "/content",
+            search: (prev: any) => ({ ...prev, page: newPage }),
+         });
+      },
+      [navigate],
+   );
 
    const handleSelectionChange = useCallback(
       (id: string, selected: boolean) => {

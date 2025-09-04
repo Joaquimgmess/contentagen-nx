@@ -74,7 +74,7 @@ export function ContentDetailsQuickActions({
             toast.success("Content deleted successfully");
             router.navigate({
                to: "/content",
-               search: { agentId: content.agentId },
+               search: { agentId: content.agentId, page: 1 },
             });
          },
          onError: (error) => {

@@ -12,6 +12,7 @@ import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
 import { useMissingImagesNotification } from "../lib/use-missing-images-notification";
+import { useSearch } from "@tanstack/react-router";
 
 //TODO: criar um component padrao para paginacao + toolbar, bulk actions de aprovar, deletar ou rejeitar
 function ContentListPageContent() {
@@ -64,6 +65,7 @@ function ContentListPageContent() {
 
 export function ContentListPage() {
    const trpc = useTRPC();
+   const search = useSearch({ from: "/_dashboard/content/" });
    const { data: agents } = useSuspenseQuery(trpc.agent.list.queryOptions());
    const { data } = useSuspenseQuery(
       trpc.content.listAllContent.queryOptions({
@@ -78,13 +80,17 @@ export function ContentListPage() {
             "analyzing",
             "grammar_checking",
          ],
-         page: 1,
+         page: search.page,
          limit: 8,
       }),
    );
 
    return (
-      <ContentListProvider data={data} agents={agents.items}>
+      <ContentListProvider
+         data={data}
+         agents={agents.items}
+         initialPage={search.page}
+      >
          <ContentListPageContent />
       </ContentListProvider>
    );

@@ -34,6 +34,7 @@ export function AgentContentRequestPage() {
             state.navigate({
                to: "/content/$id",
                params: { id: data.id },
+               search: { page: 1 },
             });
          },
          onError: (error) => {

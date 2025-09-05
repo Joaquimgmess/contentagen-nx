@@ -38,6 +38,7 @@ export function IdeaDetailsQuickActions({ idea }: { idea: IdeaSelect }) {
                params: {
                   id: data.content.id,
                },
+               search: { page: 1 },
             });
          },
          onError: (error) => {

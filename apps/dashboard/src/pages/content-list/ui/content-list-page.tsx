@@ -18,13 +18,7 @@ import { useSearch } from "@tanstack/react-router";
 function ContentListPageContent() {
    const trpc = useTRPC();
    const queryClient = useQueryClient();
-   const {
-      page,
-      limit,
-      hasGeneratingContent,
-      filteredStatuses,
-      selectedAgents,
-   } = useContentList();
+   const { hasGeneratingContent } = useContentList();
 
    // Initialize missing images notification hook
    useMissingImagesNotification();

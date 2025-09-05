@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
 import { formatValueForDisplay } from "@packages/helpers/text";
 import { useContentList } from "../lib/content-list-context";
+import { useSearch } from "@tanstack/react-router";
 
 export function ContentRequestCard({
    request,
@@ -44,6 +45,7 @@ export function ContentRequestCard({
    const trpc = useTRPC();
    const queryClient = useQueryClient();
    const navigate = useNavigate();
+   const search = useSearch({ from: "/_dashboard/content/" });
    const { data: profilePhoto } = useSuspenseQuery(
       trpc.agentFile.getProfilePhoto.queryOptions({
          agentId: request.agent?.id,
@@ -74,9 +76,10 @@ export function ContentRequestCard({
       navigate({
          to: "/content/$id",
          params: { id: request.id },
+         search,
       });
       setIsCredenzaOpen(false);
-   }, [navigate, request.id]);
+   }, [navigate, request.id, search]);
 
    const handleDelete = useCallback(() => {
       setShowDeleteConfirmation(true);

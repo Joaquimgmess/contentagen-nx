@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const contentSearchSchema = z.object({
    agentId: z.string().optional(),
-   page: z.number().min(1).optional().default(1),
+   page: z.coerce.number().int().min(1).default(1),
 });
 
 export const Route = createFileRoute("/_dashboard/content/")({

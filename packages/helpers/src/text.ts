@@ -291,3 +291,13 @@ export function formatValueForDisplay(value: string) {
    if (!value) return "Not specified";
    return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+export function calculateContentStats(content: string) {
+   const wordCount = countWords(content);
+   const readTime = readTimeMinutes(wordCount);
+
+   return {
+      wordsCount: wordCount.toString(),
+      readTimeMinutes: readTime.toString(),
+   };
+}

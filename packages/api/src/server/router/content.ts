@@ -46,7 +46,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { uploadFile, streamFileForProxy } from "@packages/files/client";
 import { compressImage } from "@packages/files/image-helper";
-import { createDiff, createLineDiff } from "@packages/helpers/text";
+import {
+   createDiff,
+   createLineDiff,
+   calculateContentStats,
+} from "@packages/helpers/text";
 
 const ContentImageUploadInput = z.object({
    id: z.uuid(),
@@ -375,9 +379,19 @@ export const contentRouter = router({
             // Update the content's current version
             await updateContentCurrentVersion(db, input.id, versionNumber);
 
+            // Calculate new stats for the updated content
+            const newStats = calculateContentStats(input.body);
+
+            // Preserve existing qualityScore if present, or set to current content's qualityScore
+            const updatedStats = {
+               ...newStats,
+               qualityScore: currentContent.stats?.qualityScore || undefined,
+            };
+
             // Update the content
             const updated = await updateContent(db, input.id, {
                body: input.body,
+               stats: updatedStats,
             });
 
             return { success: true, content: updated, version: versionNumber };

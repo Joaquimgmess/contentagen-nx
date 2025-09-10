@@ -382,10 +382,12 @@ export const contentRouter = router({
             // Calculate new stats for the updated content
             const newStats = calculateContentStats(input.body);
 
-            // Preserve existing qualityScore if present, or set to current content's qualityScore
+            // Merge existing stats with new stats, preserving existing values unless new ones should override
             const updatedStats = {
+               ...currentContent.stats,
                ...newStats,
-               qualityScore: currentContent.stats?.qualityScore || undefined,
+               qualityScore:
+                  currentContent.stats?.qualityScore ?? newStats.qualityScore,
             };
 
             // Update the content

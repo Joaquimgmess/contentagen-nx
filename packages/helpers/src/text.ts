@@ -1,4 +1,5 @@
 import slugfy from "slugify";
+import type { ContentStats } from "@packages/database/schemas/content";
 export type Diff = [number, string][];
 export type LineDiff = {
    type: "add" | "remove" | "context" | "modify";
@@ -292,7 +293,7 @@ export function formatValueForDisplay(value: string) {
    return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export function calculateContentStats(content: string) {
+export function calculateContentStats(content: string): ContentStats {
    const wordCount = countWords(content);
    const readTime = readTimeMinutes(wordCount);
 

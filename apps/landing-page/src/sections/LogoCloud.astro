@@ -5,17 +5,16 @@ import enduroLogo from "../assets/teams/enduro-logo.webp";
 import liciteiLogo from "../assets/teams/licitei-logo.svg";
 
 const _partners = [
-   {
-      alt: "Enduro for Tri Logo",
-      logo: enduroLogo,
-
-      url: "https://www.endurofortri.com/en",
-   },
-   {
-      alt: "Duome Logo",
-      logo: duomeLogo,
-      url: "https://www.duome.app/",
-   },
+   // {
+   //    alt: "Enduro for Tri Logo",
+   //    logo: enduroLogo,
+   //    url: "https://www.endurofortri.com/en",
+   // },
+   // {
+   //    alt: "Duome Logo",
+   //    logo: duomeLogo,
+   //    url: "https://www.duome.app/",
+   // },
    {
       alt: "Licitei Logo",
       logo: liciteiLogo,
@@ -36,14 +35,14 @@ const _partners = [
 							href={partner.url}
 							target="_blank"
 							rel="noopener noreferrer"
+							aria-label={`Visit ${partner.alt} website (opens in new tab)`}
 						>
 				<Picture
           formats={['webp']}
           loading={"lazy"}
 								class="h-10 w-10"
 								src={partner.logo}
-								alt={partner.alt}
-
+								alt={`${partner.alt} - Partner company logo`}
 							/>
 						</a>
 					</div>

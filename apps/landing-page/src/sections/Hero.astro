@@ -30,11 +30,13 @@ import { Image } from "astro:assets";
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
-              <Button id="cta-btn" size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2">
-                Enter on the waitlist
-                <ChevronRight  />
-              </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2">
+              <a href="https://app.contentagen.com/auth/sign-up" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2" aria-label="Get started with Contentagen AI blog generator">
+                  Get Started
+                  <ChevronRight  />
+                </Button>
+              </a>
+              <Button variant="outline" size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2" aria-label="Watch product demonstration video">
                 <CirclePlay  />
                 Watch demo
               </Button>
@@ -51,19 +53,21 @@ import { Image } from "astro:assets";
                 <div class="bg-background rounded-lg shadow-foreground/10 ring-foreground/5 relative h-full -translate-y-12 skew-x-6 overflow-hidden border border-transparent shadow-md ring-1">
                   <Image
                     src={lightHero}
-                    alt="hero-image light"
+                    alt="Contentagen dashboard interface showing AI blog post generation in light mode"
                     class="object-cover object-top-left size-full block dark:hidden"
                     width={Number(lightHero.width)}
                     height={Number(lightHero.height)}
-                    loading="lazy"
+                    loading="eager"
+                    fetchpriority="high"
                   />
                   <Image
                     src={darkHero}
-                    alt="hero-image dark"
+                    alt="Contentagen dashboard interface showing AI blog post generation in dark mode"
                     class="object-cover object-top-left size-full hidden dark:block"
                     width={Number(darkHero.width)}
                     height={Number(darkHero.height)}
-                    loading="lazy"
+                    loading="eager"
+                    fetchpriority="high"
                   />
                 </div>
               </div>
@@ -79,17 +83,3 @@ import { Image } from "astro:assets";
   </section>
 </main>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const button = document.getElementById('cta-btn');
-    if (button) {
-      button.addEventListener('click', function (e) {
-        const target = document.getElementById('cta-section');
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    }
-  });
-</script>

@@ -109,12 +109,15 @@ const pricingPlans: PricingPlan[] = [
             </CardHeader>
 
             <div class="border-y px-8 py-4">
-              <Button
-                className="w-full"
-                variant={plan.variant}
-              >
-                Get Started
-              </Button>
+              <a href="https://app.contentagen.com/auth/sign-up" target="_blank" rel="noopener noreferrer">
+                <Button
+                  className="w-full"
+                  variant={plan.variant}
+                  aria-label={`Get started with ${plan.name} plan at ${plan.price} per month`}
+                >
+                  Get Started
+                </Button>
+              </a>
             </div>
 
             <ul role="list" class="space-y-3 p-8">

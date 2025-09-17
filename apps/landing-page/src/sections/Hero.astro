@@ -1,49 +1,87 @@
 ---
 import lightHero from "../assets/light/light-hero.webp";
 import darkHero from "../assets/dark/dark-hero.webp";
-import { Sparkles } from "@lucide/astro";
+import { Sparkles, ChevronRight, CirclePlay } from "@lucide/astro";
 import { Badge } from "@packages/ui/components/badge";
 import { Button } from "@packages/ui/components/button";
 import LogoCloud from "../sections/LogoCloud.astro";
 import { Image } from "astro:assets";
 ---
 
-  <section id="hero-section" class=" flex flex-col items-center justify-center container mx-auto px-4 py-16 space-y-8">
-        <div class="space-y-4 flex flex-col items-center justify-center text-center  ">
-            <Badge className="flex gap-2 px-4 py-2 items-center font-semibold" >
-              <Sparkles  />
+<main class="overflow-hidden">
+  <section class="bg-gradient-to-b to-muted from-background">
+    <div class="relative py-24 md:py-36">
+      <div class="relative z-10 mx-auto w-full max-w-5xl px-6">
+        <!-- Mobile-first: Stack everything vertically, then side-by-side on larger screens -->
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-8 items-center">
+
+          <!-- Content Section -->
+          <div class="flex flex-col space-y-6 text-center md:text-left">
+            <Badge className="flex gap-2 px-4 py-2 items-center font-semibold w-fit mx-auto md:mx-0">
+              <Sparkles />
               Introducing Contenta Agents
             </Badge>
-    <h1 class="text-4xl font-bold  sm:text-5xl text-foreground">AI Blog Posts, <span class="text-primary">Instantly
 
-    </span></h1>
-          <p class="text-xl text-muted-foreground">Automated, SEO-ready content for creators and agencies.</p>
-          <div class="flex items-center justify-center gap-4">
-      <Button id="cta-btn" size="lg">
-        Enter on the waitlist
-      </Button>
+            <h1 class="text-4xl font-bold leading-tight md:text-5xl lg:text-6xl text-foreground">
+              AI Blog Posts, <span class="text-primary">Instantly</span>
+            </h1>
+
+            <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto md:mx-0">
+              Automated, SEO-ready content for creators and agencies.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
+              <Button id="cta-btn" size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2">
+                Enter on the waitlist
+                <ChevronRight  />
+              </Button>
+              <Button variant="outline" size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2">
+                <CirclePlay  />
+                Watch demo
+              </Button>
+            </div>
+
+            <!-- Logo Cloud section for mobile -->
+            <div class="block md:hidden mt-8">
+              <LogoCloud />
+            </div>
+          </div>
+
+          <!-- Image Section -->
+          <div class="relative md:order-last">
+            <div class="perspective-near">
+              <div class="before:border-foreground/5 before:bg-foreground/5 relative h-full before:absolute before:-inset-x-4 before:bottom-7 before:top-0 before:skew-x-6 before:rounded-[calc(var(--radius)+1rem)] before:border">
+                <div class="bg-background rounded-lg shadow-foreground/10 ring-foreground/5 relative h-full -translate-y-12 skew-x-6 overflow-hidden border border-transparent shadow-md ring-1">
+                  <Image
+                    src={lightHero}
+                    alt="hero-image light"
+                    class="object-cover object-top-left size-full block dark:hidden"
+                    width={Number(lightHero.width)}
+                    height={Number(lightHero.height)}
+                    loading="lazy"
+                  />
+                  <Image
+                    src={darkHero}
+                    alt="hero-image dark"
+                    class="object-cover object-top-left size-full hidden dark:block"
+                    width={Number(darkHero.width)}
+                    height={Number(darkHero.height)}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-    <div class="relative w-full flex justify-center">
-      <Image
-        src={lightHero}
-        alt="hero-image light"
-        class="rounded-xl shadow-xl ring-2 ring-black/10 block dark:hidden"
-        width={Number(lightHero.width)}
-        height={Number(lightHero.height)}
-        loading="lazy"
-      />
-      <Image
-        src={darkHero}
-        alt="hero-image dark"
-        class="rounded-xl shadow-xl ring-2 ring-black/10 hidden dark:block"
-        width={Number(darkHero.width)}
-        height={Number(darkHero.height)}
-        loading="lazy"
-      />
+
+        <!-- Logo Cloud section for desktop -->
+        <div class="hidden md:block mt-16">
+          <LogoCloud />
+        </div>
+      </div>
     </div>
-    <LogoCloud />
   </section>
+</main>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {

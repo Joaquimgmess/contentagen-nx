@@ -17,11 +17,15 @@
    },
    "quick-actions": {
       "title": "Ações Rápidas",
-      "edit": "Editar Conteúdo",
-      "delete": "Deletar Conteúdo",
-      "duplicate": "Duplicar Conteúdo",
-      "publish": "Publicar",
-      "unpublish": "Despublicar"
+      "description": "Execute tarefas comuns relacionadas a este conteúdo.",
+      "regenerate": "Regenerar Conteúdo",
+      "edit": "Editar Corpo do Conteúdo",
+      "upload-image": "Enviar Imagem",
+      "preview": "Prévia do Blog",
+      "approve": "Aprovar Conteúdo",
+      "share": "Compartilhar Conteúdo",
+      "make-private": "Tornar Privado",
+      "delete": "Deletar Conteúdo"
    },
    "versions": {
       "title": "Versões do Conteúdo",

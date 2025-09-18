@@ -27,6 +27,7 @@
    },
    "quick-actions": {
       "title": "Ações Rápidas",
+      "description": "Execute tarefas comuns relacionadas ao agente.",
       "edit-agent": "Editar Agente",
       "delete-agent": "Deletar Agente",
       "duplicate-agent": "Duplicar Agente"

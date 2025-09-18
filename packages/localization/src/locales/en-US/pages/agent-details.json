@@ -27,6 +27,7 @@
    },
    "quick-actions": {
       "title": "Quick Actions",
+      "description": "Perform common tasks related to the agent.",
       "edit-agent": "Edit Agent",
       "delete-agent": "Delete Agent",
       "duplicate-agent": "Duplicate Agent"

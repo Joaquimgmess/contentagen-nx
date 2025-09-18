@@ -17,11 +17,15 @@
    },
    "quick-actions": {
       "title": "Quick Actions",
-      "edit": "Edit Content",
-      "delete": "Delete Content",
-      "duplicate": "Duplicate Content",
-      "publish": "Publish",
-      "unpublish": "Unpublish"
+      "description": "Perform common tasks related to this content.",
+      "regenerate": "Regenerate Content",
+      "edit": "Edit Content Body",
+      "upload-image": "Upload Image",
+      "preview": "Blog Preview",
+      "approve": "Approve Content",
+      "share": "Share Content",
+      "make-private": "Make Private",
+      "delete": "Delete Content"
    },
    "versions": {
       "title": "Content Versions",

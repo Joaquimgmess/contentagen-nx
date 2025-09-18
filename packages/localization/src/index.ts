@@ -33,6 +33,7 @@ i18n.init({
    defaultNS: "translation",
    load: "languageOnly",
    fallbackLng: "en",
+   lng: "pt", // Define português como idioma inicial
 });
 
 export default i18n;

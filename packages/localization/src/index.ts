@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import enUSResources from "./locales/en-US";
+import ptBRResources from "./locales/pt-BR";
 
 type RecursiveKeyOf<T> = T extends object
    ? {
@@ -17,6 +18,7 @@ export type TranslationKey = RecursiveKeyOf<TranslationResources>;
 
 const resources = {
    en: enUSResources,
+   pt: ptBRResources,
 };
 
 declare module "i18next" {
@@ -27,7 +29,7 @@ declare module "i18next" {
 
 i18n.init({
    resources,
-   supportedLngs: ["en"],
+   supportedLngs: ["en", "pt"],
    defaultNS: "translation",
    load: "languageOnly",
    fallbackLng: "en",

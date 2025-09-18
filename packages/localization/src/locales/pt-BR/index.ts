@@ -5,6 +5,10 @@ import ideasListPtBr from "./pages/ideas-list.json";
 import signInPtBr from "./pages/sign-in.json";
 import signUpPtBr from "./pages/sign-up.json";
 import forgotPasswordPtBr from "./pages/forgot-password.json";
+import profilePtBr from "./pages/profile.json";
+import agentDetailsPtBr from "./pages/agent-details.json";
+import contentDetailsPtBr from "./pages/content-details.json";
+import ideaDetailsPtBr from "./pages/idea-details.json";
 
 const resources = {
    translation: {
@@ -15,6 +19,10 @@ const resources = {
       "pages.sign-in": signInPtBr,
       "pages.sign-up": signUpPtBr,
       "pages.forgot-password": forgotPasswordPtBr,
+      "pages.profile": profilePtBr,
+      "pages.agent-details": agentDetailsPtBr,
+      "pages.content-details": contentDetailsPtBr,
+      "pages.idea-details": ideaDetailsPtBr,
    },
 };
 

@@ -39,7 +39,7 @@ function IdeaPreviewCard({ idea }: IdeaPreviewCardProps) {
                           day: "numeric",
                           year: "numeric",
                        })
-                     : "Unknown date"}
+                     : translate("pages.idea-details.content.unknown-date")}
                </p>
                {content.description && (
                   <p className="text-sm text-muted-foreground line-clamp-3">
@@ -56,8 +56,12 @@ export function IdeaContentCard({ idea }: IdeaContentCardProps) {
    return (
       <Card>
          <CardHeader>
-            <CardTitle>Idea Preview</CardTitle>
-            <CardDescription>Preview of the generated content</CardDescription>
+            <CardTitle>
+               {translate("pages.idea-details.content.title")}
+            </CardTitle>
+            <CardDescription>
+               {translate("pages.idea-details.content.description")}
+            </CardDescription>
          </CardHeader>
          <CardContent>
             <IdeaPreviewCard idea={idea} />

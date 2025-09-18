@@ -35,7 +35,9 @@ export function IdeasListToolbar() {
    const actions = useMemo(
       () => [
          {
-            label: allSelected ? translate("pages.ideas-list.toolbar.unselect-all") : translate("pages.ideas-list.toolbar.select-all"),
+            label: allSelected
+               ? translate("pages.ideas-list.toolbar.unselect-all")
+               : translate("pages.ideas-list.toolbar.select-all"),
             icon: CheckSquare,
             onClick: handleSelectAll,
          },
@@ -63,7 +65,8 @@ export function IdeasListToolbar() {
                </Button>
 
                <span className="text-sm text-muted-foreground px-2">
-                  {page} {translate("pages.ideas-list.toolbar.pagination.of")} {totalPages}
+                  {page} {translate("pages.ideas-list.toolbar.pagination.of")}{" "}
+                  {totalPages}
                </span>
 
                <Button

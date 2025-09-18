@@ -2,16 +2,16 @@
 import { Calendar, Ellipsis, Bold, Italic, Underline } from "@lucide/astro";
 
 const { class: className = "", variant = "elevated" } = Astro.props as {
-  class?: string;
-  variant?: "elevated" | "outlined" | "mixed";
+   class?: string;
+   variant?: "elevated" | "outlined" | "mixed";
 };
 
 const variantClasses =
-  variant === "elevated"
-    ? "shadow-black-950/10 shadow-lg"
-    : variant === "outlined"
-    ? "border-foreground/10 border"
-    : "border-foreground/10 border shadow-md shadow-black/5";
+   variant === "elevated"
+      ? "shadow-black-950/10 shadow-lg"
+      : variant === "outlined"
+        ? "border-foreground/10 border"
+        : "border-foreground/10 border shadow-md shadow-black/5";
 ---
 
 <div class={`relative ${className}`}>

@@ -41,7 +41,9 @@ function ContentListPageContent() {
 
    return (
       <main className="h-full w-full flex flex-col gap-4">
-         <TalkingMascot message={translate("pages.content-list.mascot-message")} />
+         <TalkingMascot
+            message={translate("pages.content-list.mascot-message")}
+         />
          <ContentListToolbar />
          <Suspense fallback={<ContentCardsSkeleton />}>
             <ContentCardsList />

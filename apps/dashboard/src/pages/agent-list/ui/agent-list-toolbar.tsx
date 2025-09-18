@@ -24,7 +24,9 @@ export function AgentListToolbar() {
    const actions = useMemo(
       () => [
          {
-            label: allSelected ? translate("pages.agent-list.toolbar.unselect-all") : translate("pages.agent-list.toolbar.select-all"),
+            label: allSelected
+               ? translate("pages.agent-list.toolbar.unselect-all")
+               : translate("pages.agent-list.toolbar.select-all"),
             icon: CheckSquare,
             onClick: handleSelectAll,
          },
@@ -53,7 +55,8 @@ export function AgentListToolbar() {
             </Button>
 
             <span className="text-sm text-muted-foreground px-2">
-               {page} {translate("pages.agent-list.toolbar.pagination.of")} {totalPages}
+               {page} {translate("pages.agent-list.toolbar.pagination.of")}{" "}
+               {totalPages}
             </span>
 
             <Button

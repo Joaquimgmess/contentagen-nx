@@ -15,7 +15,9 @@ function AgentListPageContent() {
 
    return (
       <main className="h-full w-full flex flex-col gap-4 ">
-         <TalkingMascot message={translate("pages.agent-list.mascot-message")} />
+         <TalkingMascot
+            message={translate("pages.agent-list.mascot-message")}
+         />
          <AgentListToolbar />
          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {data?.items?.map((agent) => (

@@ -44,7 +44,9 @@ export function ContentListToolbar() {
    const actions = useMemo(
       () => [
          {
-            label: allSelectableSelected ? translate("pages.content-list.toolbar.unselect-all") : translate("pages.content-list.toolbar.select-all"),
+            label: allSelectableSelected
+               ? translate("pages.content-list.toolbar.unselect-all")
+               : translate("pages.content-list.toolbar.select-all"),
             icon: CheckSquare,
             onClick: handleSelectAll,
          },
@@ -82,7 +84,8 @@ export function ContentListToolbar() {
                </Button>
 
                <span className="text-sm text-muted-foreground px-2">
-                  {page} {translate("pages.content-list.toolbar.pagination.of")} {totalPages}
+                  {page} {translate("pages.content-list.toolbar.pagination.of")}{" "}
+                  {totalPages}
                </span>
 
                <Button

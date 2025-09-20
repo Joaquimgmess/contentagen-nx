@@ -12,7 +12,10 @@ function getAllJsonFiles(dir: string): string[] {
       .map((file) => file as string);
 }
 
-function getKeysFromObject(obj: Record<string, unknown>, prefix = ""): string[] {
+function getKeysFromObject(
+   obj: Record<string, unknown>,
+   prefix = "",
+): string[] {
    const keys: string[] = [];
 
    for (const [key, value] of Object.entries(obj)) {
@@ -23,7 +26,9 @@ function getKeysFromObject(obj: Record<string, unknown>, prefix = ""): string[] 
          value !== null &&
          !Array.isArray(value)
       ) {
-         keys.push(...getKeysFromObject(value as Record<string, unknown>, fullKey));
+         keys.push(
+            ...getKeysFromObject(value as Record<string, unknown>, fullKey),
+         );
       } else {
          keys.push(fullKey);
       }

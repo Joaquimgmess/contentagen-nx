@@ -1,4 +1,5 @@
 import { ThemeToggler } from "@/layout/theme-provider";
+import { LanguageSwitcher } from "@/layout/language-switcher";
 import {
    Card,
    CardContent,
@@ -16,6 +17,7 @@ export function PreferencesSection() {
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
                <ThemeToggler />
+               <LanguageSwitcher />
             </CardContent>
          </Card>
          <WorkflowPreferences />

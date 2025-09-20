@@ -6,6 +6,7 @@ import {
    CardTitle,
 } from "@packages/ui/components/card";
 import type { IdeaSelect, IdeaContentSchema } from "@packages/database/schema";
+import { translate } from "@packages/localization";
 
 interface IdeaContentCardProps {
    idea: IdeaSelect;

@@ -1,9 +1,16 @@
 ---
-import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
 import { Button } from "@packages/ui/components/button";
-import { Badge } from "@packages/ui/components/badge";
-import { Github, Heart, Users, Code, Star, GitFork } from "@lucide/astro";
-const cards = [
+import {
+   Github,
+   Heart,
+   Users,
+   Code,
+   Star,
+   GitFork,
+   Check,
+} from "@lucide/astro";
+
+const benefits = [
    {
       icon: Users,
       title: "Community Driven",
@@ -25,39 +32,65 @@ const cards = [
 ];
 ---
 
-<section id="open-source" class="bg-muted py-16 md:py-24 ">
-  <div class="container mx-auto max-w-6xl">
-    <div class="text-center">
-      <h2 class="text-balance text-2xl font-semibold md:text-3xl lg:text-4xl">
-        Built in the Open: 
-        <span class="text-primary">100% Open Source</span>
+<section id="open-source" class=" py-16 md:py-24">
+  <div class="container mx-auto max-w-6xl px-6">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-balance text-2xl font-bold md:text-3xl lg:text-4xl">
+        Built in the Open, For Everyone
       </h2>
-      <p class="mt-4">
-        ContentaGen is completely open source and community-driven. Explore our code, 
-        contribute to development, or fork it for your own projects.
+      <p class="text-muted-foreground mx-auto mt-4 max-w-2xl text-balance">
+        ContentaGen is 100% open-source under the Apache-2.0 license. We believe in transparency, community collaboration, and the freedom to build without limits.
       </p>
     </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-        {cards.map(card => (
-          <Card class="group shadow-zinc-950/5">
-            <CardHeader class="pb-3">
-              <div class="mask-radial-from-40% mask-radial-to-60% relative mx-auto size-36 duration-200 [--color-border:color-mix(in_oklab,var(--color-zinc-950)10%,transparent)] group-hover:[--color-border:color-mix(in_oklab,var(--color-zinc-950)20%,transparent)] dark:[--color-border:color-mix(in_oklab,var(--color-white)15%,transparent)] dark:group-hover:[--color-border:color-mix(in_oklab,var(--color-white)20%,transparent)]">
-                <div
-                  aria-hidden="true"
-                  class="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-[size:24px_24px] dark:opacity-50"
-                />
-                <div class="bg-background absolute inset-0 m-auto flex size-12 items-center justify-center border-l border-t">
-                  <card.icon class="size-6" aria-hidden="true" />
-                </div>
-              </div>
-              <h3 class="mt-6 font-medium">{card.title}</h3>
-            </CardHeader>
-            <CardContent>
-              <p class="text-sm">{card.description}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
+    <div class="relative mt-16 max-w-4xl mx-auto">
+      <div class="absolute -inset-2 rounded-xl bg-gradient-to-r from-primary/50 to-secondary/50 opacity-10 blur-2xl"></div>
+      <div class="relative bg-card border rounded-xl shadow-lg p-8 md:p-12">
+        
+        <!-- GitHub Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <Github class="size-8 text-foreground" />
+            <a href="https://github.com/F-O-T/contentagen-nx" target="_blank" rel="noopener noreferrer" class="text-2xl font-semibold text-foreground hover:text-primary transition-colors">
+              F-O-T/contentagen-nx
+            </a>
+          </div>
+          <div classs="flex items-center gap-6">
+            <div class="flex items-center gap-2 text-muted-foreground">
+              <Star class="size-4" />
+              <span class="font-medium">4</span>
+            </div>
+            <div class="flex items-center gap-2 text-muted-foreground">
+              <GitFork class="size-4" />
+              <span class="font-medium">1</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-8 border-border" />
+
+        <!-- Core Benefits -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {benefits.map(benefit => (
+            <div class="flex flex-col items-start text-left">
+              <div class="bg-primary/10 text-primary p-3 rounded-lg">
+                <benefit.icon class="size-6" />
+              </div>
+              <h3 class="mt-4 text-lg font-semibold text-foreground">{benefit.title}</h3>
+              <p class="mt-2 text-muted-foreground text-sm">{benefit.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-12 text-center flex items-center justify-center gap-4">
+          <Button size="lg" >
+            <a href="https://github.com/F-O-T/contentagen-nx" class="flex items-center gap-2 " target="_blank" rel="noopener noreferrer">
+              <Github class="size-4 mr-2" />
+              Star on GitHub
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

@@ -13,22 +13,24 @@ import SocialProof from "../sections/SocialProof.astro";
 import FAQ from "../sections/FAQ.astro";
 import CTA from "../sections/CTA.astro";
 import StickyNavbar from "../components/StickyNavbar.astro";
+import Community from "../sections/Community.astro";
+import HowItWorks from "../sections/HowItWorks.astro";
 ---
 <Layout>
   <div class="flex flex-col">
-    <StickyNavbar client:load />
+    <StickyNavbar  />
     <Hero />
-    <div class="flex flex-col space-y-8">
       <BrandLearning />
       <CompetitorIntelligence />
-      <ContentWorkflow />
+    <ContentWorkflow />
+    <HowItWorks />
       <SDK />
       <SocialProof />
-      <OpenSource />
+    <OpenSource />
+    <Community />
       <Pricing />
       <FAQ />
       <CTA />
       <Footer />
-    </div>
   </div>
   </Layout>

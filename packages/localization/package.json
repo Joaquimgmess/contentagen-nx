@@ -14,13 +14,15 @@
       "dev": "dotenv -e .env -- bunx --bun mastra dev",
       "build": "tsc",
       "check": "biome check --write ./src",
-      "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+      "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+      "test": "bun test"
    },
    "dependencies": {
       "i18next": "^25.5.2"
    },
    "devDependencies": {
       "@tooling/typescript": "workspace:*",
-      "typescript": "catalog:development"
+      "typescript": "catalog:development",
+      "vitest": "catalog:testing"
    }
 }

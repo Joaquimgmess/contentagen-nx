@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
 import { useAgentForm } from "../lib/use-agent-form";
+import { translate } from "@packages/localization";
 import { BasicInfoStep, BasicInfoStepSubscribe } from "./basic-info-step";
 import { VoiceToneStep, VoiceToneStepSubscribe } from "./voice-tone-step";
 import { AudienceStep, AudienceStepSubscribe } from "./audience-step";
@@ -20,14 +21,14 @@ export const agentFormSchema = PersonaConfigSchema;
 
 export type AgentForm = ReturnType<typeof useAgentForm>;
 const steps = [
-   { id: "step-basic-info", title: "Basic Information" },
-   { id: "step-audience", title: "Audience" },
-   { id: "step-purpose", title: "Purpose" },
-   { id: "step-voice-tone", title: "Voice & Tone" },
-   { id: "step-brand", title: "Brand" },
-   { id: "step-language", title: "Language" },
-   { id: "step-formatting", title: "Formatting" },
-   { id: "step-review", title: "Review" },
+   { id: "step-basic-info", title: translate("pages.agent-creation-form.steps.basic-info") },
+   { id: "step-audience", title: translate("pages.agent-creation-form.steps.audience") },
+   { id: "step-purpose", title: translate("pages.agent-creation-form.steps.purpose") },
+   { id: "step-voice-tone", title: translate("pages.agent-creation-form.steps.voice-tone") },
+   { id: "step-brand", title: translate("pages.agent-creation-form.steps.brand") },
+   { id: "step-language", title: translate("pages.agent-creation-form.steps.language") },
+   { id: "step-formatting", title: translate("pages.agent-creation-form.steps.formatting") },
+   { id: "step-review", title: translate("pages.agent-creation-form.steps.review") },
 ] as const;
 const { Stepper } = defineStepper(...steps);
 
@@ -45,23 +46,23 @@ export function AgentCreationManualForm({
    const getMascotMessage = (step: (typeof steps)[number]["id"]) => {
       switch (step) {
          case "step-basic-info":
-            return "Let's give your content agent a special name!";
+            return translate("pages.agent-creation-form.mascot-messages.basic-info");
          case "step-audience":
-            return "Who is your agent writing for?";
+            return translate("pages.agent-creation-form.mascot-messages.audience");
          case "step-purpose":
-            return "What is the main purpose or channel for this agent's content?";
+            return translate("pages.agent-creation-form.mascot-messages.purpose");
          case "step-voice-tone":
-            return "Now, let's define your agent's voice and tone.";
+            return translate("pages.agent-creation-form.mascot-messages.voice-tone");
          case "step-brand":
-            return "How closely should your agent follow your brand guidelines?";
+            return translate("pages.agent-creation-form.mascot-messages.brand");
          case "step-language":
-            return "What language and variant should your agent use?";
+            return translate("pages.agent-creation-form.mascot-messages.language");
          case "step-formatting":
-            return "How should your agent format the content?";
+            return translate("pages.agent-creation-form.mascot-messages.formatting");
          case "step-review":
-            return "Perfect! Review your agent configuration and create your agent.";
+            return translate("pages.agent-creation-form.mascot-messages.review");
          default:
-            return "Let's get started with your agent's basic information.";
+            return translate("pages.agent-creation-form.mascot-messages.default");
       }
    };
    return (
@@ -144,7 +145,7 @@ export function AgentCreationManualForm({
                            variant="outline"
                         >
                            <ChevronLeft className="w-5 h-5" />
-                           Back
+                           {translate("pages.agent-creation-form.actions.back")}
                         </Button>
                      )}
                   </div>

@@ -2,6 +2,7 @@ import { Button } from "@packages/ui/components/button";
 
 import { AudienceConfigSchema } from "@packages/database/schemas/agent";
 import type { AgentForm } from "../lib/use-agent-form";
+import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getAudienceLabel = (value: string): string => {
@@ -16,7 +17,7 @@ export function AudienceStep({ form }: { form: AgentForm }) {
       <form.AppField name="audience">
          {(field) => (
             <field.FieldContainer className="space-y-2">
-               <field.FieldLabel>Audience Base *</field.FieldLabel>
+               <field.FieldLabel>{translate("pages.agent-creation-form.audience.audience-base.label")}</field.FieldLabel>
                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
                   {audienceOptions.map((option) => (
                      <button
@@ -61,7 +62,7 @@ export function AudienceStepSubscribe({
             const isValid = value && (!errors || errors.length === 0);
             return (
                <Button onClick={next} type="button" disabled={!isValid}>
-                  Next
+                  {translate("pages.agent-creation-form.actions.next")}
                </Button>
             );
          }}

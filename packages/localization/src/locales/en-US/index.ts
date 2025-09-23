@@ -16,6 +16,8 @@ import competitorListEnUs from "./pages/competitor-list.json";
 import organizationEnUs from "./pages/organization.json";
 import agentCreationFormEnUs from "./pages/agent-creation-form.json";
 import contentRequestFormEnUs from "./pages/content-request-form.json";
+import agentCreateEnUs from "./pages/agent-create.json";
+import agentEditEnUs from "./pages/agent-edit.json";
 
 const resources = {
    translation: {
@@ -37,6 +39,8 @@ const resources = {
       "pages.organization": organizationEnUs,
       "pages.agent-creation-form": agentCreationFormEnUs,
       "pages.content-request-form": contentRequestFormEnUs,
+      "pages.agent-create": agentCreateEnUs,
+      "pages.agent-edit": agentEditEnUs,
    },
 };
 

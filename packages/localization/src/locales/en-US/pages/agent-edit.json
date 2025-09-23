@@ -4,18 +4,5 @@
       "success": "Agent updated successfully!",
       "error": "Failed to update agent",
       "error-console": "Error updating agent:"
-   },
-   "actions": {
-      "view-details": "View agent details",
-      "create-content": "Create new content",
-      "edit-agent": "Edit agent",
-      "delete-agent": "Delete agent",
-      "generate-brand-files": "Generate brand files",
-      "manage-photo": "Manage agent photo",
-      "delete-files": "Delete all uploaded files",
-      "no-files": "No files to delete"
-   },
-   "defaults": {
-      "not-specified": "Not specified"
    }
 }

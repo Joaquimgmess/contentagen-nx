@@ -57,49 +57,51 @@ const { Stepper } = defineStepper(...steps);
 export type AgentCreationManualForm = {
    defaultValues?: Partial<PersonaConfig>;
    onSubmit: (values: PersonaConfig) => Promise<void>;
+   mode?: "create" | "edit";
 };
 
 export function AgentCreationManualForm({
    onSubmit,
    defaultValues,
+   mode = "create",
 }: AgentCreationManualForm) {
    const { handleSubmit, form } = useAgentForm({ defaultValues, onSubmit });
 
    const getMascotMessage = (step: (typeof steps)[number]["id"]) => {
+      const messageType =
+         mode === "edit" ? "mascot-messages-edit" : "mascot-messages";
       switch (step) {
          case "step-basic-info":
             return translate(
-               "pages.agent-creation-form.mascot-messages.basic-info",
+               `pages.agent-creation-form.${messageType}.basic-info`,
             );
          case "step-audience":
             return translate(
-               "pages.agent-creation-form.mascot-messages.audience",
+               `pages.agent-creation-form.${messageType}.audience`,
             );
          case "step-purpose":
             return translate(
-               "pages.agent-creation-form.mascot-messages.purpose",
+               `pages.agent-creation-form.${messageType}.purpose`,
             );
          case "step-voice-tone":
             return translate(
-               "pages.agent-creation-form.mascot-messages.voice-tone",
+               `pages.agent-creation-form.${messageType}.voice-tone`,
             );
          case "step-brand":
-            return translate("pages.agent-creation-form.mascot-messages.brand");
+            return translate(`pages.agent-creation-form.${messageType}.brand`);
          case "step-language":
             return translate(
-               "pages.agent-creation-form.mascot-messages.language",
+               `pages.agent-creation-form.${messageType}.language`,
             );
          case "step-formatting":
             return translate(
-               "pages.agent-creation-form.mascot-messages.formatting",
+               `pages.agent-creation-form.${messageType}.formatting`,
             );
          case "step-review":
-            return translate(
-               "pages.agent-creation-form.mascot-messages.review",
-            );
+            return translate(`pages.agent-creation-form.${messageType}.review`);
          default:
             return translate(
-               "pages.agent-creation-form.mascot-messages.default",
+               `pages.agent-creation-form.${messageType}.default`,
             );
       }
    };
@@ -232,7 +234,7 @@ export function AgentCreationManualForm({
                            />
                         ),
                         "step-review": () => (
-                           <ReviewStepSubscribe form={form} />
+                           <ReviewStepSubscribe form={form} mode={mode} />
                         ),
                      })}
                   </div>

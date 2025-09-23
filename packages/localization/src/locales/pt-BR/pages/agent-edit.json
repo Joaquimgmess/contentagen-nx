@@ -4,18 +4,5 @@
       "success": "Agente atualizado com sucesso!",
       "error": "Falha ao atualizar agente",
       "error-console": "Erro ao atualizar agente:"
-   },
-   "actions": {
-      "view-details": "Ver detalhes do agente",
-      "create-content": "Criar novo conteúdo",
-      "edit-agent": "Editar agente",
-      "delete-agent": "Excluir agente",
-      "generate-brand-files": "Gerar arquivos da marca",
-      "manage-photo": "Gerenciar foto do agente",
-      "delete-files": "Excluir todos os arquivos enviados",
-      "no-files": "Nenhum arquivo para excluir"
-   },
-   "defaults": {
-      "not-specified": "Não especificado"
    }
 }

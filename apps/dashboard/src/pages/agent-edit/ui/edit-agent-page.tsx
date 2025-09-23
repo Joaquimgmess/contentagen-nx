@@ -34,6 +34,7 @@ export function EditAgentPage() {
 
    return (
       <AgentCreationManualForm
+         mode="edit"
          onSubmit={async (values) => {
             await agentMutation.mutateAsync({
                id: agentId,

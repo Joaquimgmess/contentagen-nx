@@ -21,6 +21,17 @@
       "review": "Perfeito! Revise a configuração do seu agente e crie seu agente.",
       "default": "Vamos começar com as informações básicas do seu agente."
    },
+   "mascot-messages-edit": {
+      "basic-info": "Vamos atualizar as informações do seu agente!",
+      "audience": "Para quem seu agente deve estar escrevendo?",
+      "purpose": "Qual é o principal propósito ou canal para o conteúdo deste agente?",
+      "voice-tone": "Vamos ajustar a voz e o tom do seu agente.",
+      "brand": "Quão rigorosamente seu agente deve seguir as diretrizes da marca?",
+      "language": "Que idioma e variante seu agente deve usar?",
+      "formatting": "Como seu agente deve formatar o conteúdo?",
+      "review": "Perfeito! Revise suas alterações e atualize seu agente.",
+      "default": "Vamos atualizar a configuração do seu agente."
+   },
    "basic-info": {
       "agent-name": {
          "label": "Nome do Agente *",

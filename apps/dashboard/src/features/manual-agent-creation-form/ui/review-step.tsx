@@ -16,17 +16,29 @@ import {
 // Helper function to format values consistently
 const formatValue = (value: string): string => {
    if (!value) return "";
-   // Handle language codes specially
+   // Handle language codes specially using translations
    const languageMap: Record<string, string> = {
-      en: "English",
-      pt: "Portuguese",
-      es: "Spanish",
-      "en-US": "English (US)",
-      "en-GB": "English (UK)",
-      "pt-BR": "Portuguese (Brazil)",
-      "pt-PT": "Portuguese (Portugal)",
-      "es-ES": "Spanish (Spain)",
-      "es-MX": "Spanish (Mexico)",
+      en: translate("pages.agent-creation-form.language.languages.english"),
+      pt: translate("pages.agent-creation-form.language.languages.portuguese"),
+      es: translate("pages.agent-creation-form.language.languages.spanish"),
+      "en-US": translate(
+         "pages.agent-creation-form.language.languages.english-us",
+      ),
+      "en-GB": translate(
+         "pages.agent-creation-form.language.languages.english-uk",
+      ),
+      "pt-BR": translate(
+         "pages.agent-creation-form.language.languages.portuguese-brazil",
+      ),
+      "pt-PT": translate(
+         "pages.agent-creation-form.language.languages.portuguese-portugal",
+      ),
+      "es-ES": translate(
+         "pages.agent-creation-form.language.languages.spanish-spain",
+      ),
+      "es-MX": translate(
+         "pages.agent-creation-form.language.languages.spanish-mexico",
+      ),
    };
 
    if (languageMap[value]) {
@@ -185,7 +197,13 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    );
 }
 
-export function ReviewStepSubscribe({ form }: { form: AgentForm }) {
+export function ReviewStepSubscribe({
+   form,
+   mode = "create",
+}: {
+   form: AgentForm;
+   mode?: "create" | "edit";
+}) {
    return (
       <form.Subscribe
          selector={(state) => ({
@@ -196,8 +214,14 @@ export function ReviewStepSubscribe({ form }: { form: AgentForm }) {
          {({ canSubmit, isSubmitting }) => (
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
                {isSubmitting
-                  ? translate("pages.agent-creation-form.review.submitting")
-                  : translate("pages.agent-creation-form.review.submit")}
+                  ? mode === "edit"
+                     ? translate("common.actions.updating")
+                     : translate("common.actions.creating")
+                  : mode === "edit"
+                    ? translate("common.actions.update")
+                    : translate(
+                         "pages.agent-creation-form.actions.create-agent",
+                      )}
             </Button>
          )}
       </form.Subscribe>

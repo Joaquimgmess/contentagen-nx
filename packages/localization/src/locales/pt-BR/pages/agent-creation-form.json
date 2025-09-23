@@ -34,11 +34,20 @@
    "purpose": {
       "primary-channel": {
          "label": "Canal Principal *"
+      },
+      "options": {
+         "blog_post": "Post de Blog"
       }
    },
    "audience": {
       "audience-base": {
          "label": "Base de Audiência *"
+      },
+      "options": {
+         "general_public": "Público Geral",
+         "professionals": "Profissionais",
+         "beginners": "Iniciantes",
+         "customers": "Clientes"
       }
    },
    "voice-tone": {
@@ -87,21 +96,61 @@
          "label": "Estilo *"
       },
       "list-style": "Estilo de Lista",
-      "example-formatting": "Exemplo de Formatação"
+      "example-formatting": "Exemplo de Formatação",
+      "options": {
+         "structured": "Estruturado",
+         "narrative": "Narrativo",
+         "list_based": "Baseado em Lista",
+         "bullets": "Marcadores",
+         "numbered": "Numerado"
+      },
+      "examples": {
+         "list-style": {
+            "bullets": {
+               "title": "Exemplo de Lista com Marcadores:",
+               "items": ["Ponto chave um", "Ponto chave dois", "Ponto chave três"]
+            },
+            "numbered": {
+               "title": "Exemplo de Lista Numerada:",
+               "items": ["Passo um", "Passo dois", "Passo três"]
+            }
+         },
+         "fallback": "Saída de exemplo no formato selecionado."
+      }
    },
    "brand": {
       "integration-style": {
          "label": "Estilo de Integração *"
       },
       "example-integration": "Exemplo de Integração",
-      "strict-example": "Exemplo de Diretriz Rigorosa:",
-      "strict-text": "Todo conteúdo deve seguir rigorosamente as diretrizes da marca...",
-      "flexible-example": "Exemplo de Diretriz Flexível:",
-      "reference-example": "Exemplo Apenas de Referência:",
-      "creative-example": "Exemplo de Mistura Criativa:",
+      "examples": {
+         "strict_guideline": {
+            "title": "Exemplo de Diretriz Rigorosa:",
+            "text": "Todo conteúdo deve seguir rigorosamente as diretrizes da marca e usar apenas mensagens aprovadas.\nIncluir explicitamente o nome da marca pelo menos uma vez em cada resposta."
+         },
+         "flexible_guideline": {
+            "title": "Exemplo de Diretriz Flexível:",
+            "text": "Use as diretrizes da marca como base, mas adapte o tom e estilo para o contexto e audiência.\nIncorpore naturalmente o nome da marca e produtos de forma orgânica."
+         },
+         "reference_only": {
+            "title": "Exemplo Apenas de Referência:",
+            "text": "Trate o documento da marca como conhecimento de base.\nMencione soluções da marca apenas quando diretamente relevantes às necessidades do usuário."
+         },
+         "creative_blend": {
+            "title": "Exemplo de Mistura Criativa:",
+            "text": "Use traços da personalidade da marca como inspiração para narrativas criativas.\nIntegre elementos da marca naturalmente na narrativa."
+         },
+         "default": "Mensagem de integração de exemplo para o estilo selecionado."
+      },
       "blacklist-words": {
          "label": "Palavras Proibidas (opcional)",
          "placeholder": "Digite palavras a evitar..."
+      },
+      "options": {
+         "strict_guideline": "Diretriz Rigorosa",
+         "flexible_guideline": "Diretriz Flexível",
+         "reference_only": "Apenas Referência",
+         "creative_blend": "Mistura Criativa"
       }
    },
    "review": {

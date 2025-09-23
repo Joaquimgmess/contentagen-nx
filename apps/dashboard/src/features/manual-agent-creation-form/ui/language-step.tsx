@@ -8,21 +8,28 @@ import {
 } from "@packages/ui/components/select";
 import { LanguageConfigSchema } from "@packages/database/schemas/agent";
 import type { AgentForm } from "../lib/use-agent-form";
+import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getLanguageLabel = (value: string): string => {
-   const languageMap: Record<string, string> = {
-      en: "English",
-      pt: "Portuguese",
-      es: "Spanish",
-      "en-US": "English (US)",
-      "en-GB": "English (UK)",
-      "pt-BR": "Portuguese (Brazil)",
-      "pt-PT": "Portuguese (Portugal)",
-      "es-ES": "Spanish (Spain)",
-      "es-MX": "Spanish (Mexico)",
+   // Map schema values to translation keys
+   const keyMap: Record<string, string> = {
+      en: "english",
+      pt: "portuguese",
+      es: "spanish",
+      "en-US": "english-us",
+      "en-GB": "english-uk",
+      "pt-BR": "portuguese-brazil",
+      "pt-PT": "portuguese-portugal",
+      "es-ES": "spanish-spain",
+      "es-MX": "spanish-mexico",
    };
-   return languageMap[value] || value;
+
+   const translationKey = keyMap[value];
+   if (translationKey) {
+      return translate(`pages.agent-creation-form.language.languages.${translationKey}`);
+   }
+   return value; // fallback
 };
 
 export function LanguageStep({ form }: { form: AgentForm }) {
@@ -35,7 +42,7 @@ export function LanguageStep({ form }: { form: AgentForm }) {
          <form.AppField name="language.primary">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>Primary Language *</field.FieldLabel>
+                  <field.FieldLabel>{translate("pages.agent-creation-form.language.primary-language.label")}</field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                      {primaryLanguageOptions.map((option) => (
                         <button
@@ -71,7 +78,7 @@ export function LanguageStep({ form }: { form: AgentForm }) {
 
                return (
                   <field.FieldContainer className="space-y-2">
-                     <field.FieldLabel>Variant (optional)</field.FieldLabel>
+                     <field.FieldLabel>{translate("pages.agent-creation-form.language.variant.label")}</field.FieldLabel>
                      <Select
                         value={field.state.value || "none"}
                         onValueChange={(value) => {
@@ -94,13 +101,13 @@ export function LanguageStep({ form }: { form: AgentForm }) {
                            <SelectValue
                               placeholder={
                                  primaryLanguage
-                                    ? "Select variant..."
-                                    : "Select primary language first"
+                                    ? translate("pages.agent-creation-form.language.variant.placeholder")
+                                    : translate("pages.agent-creation-form.language.variant.placeholder-select-language")
                               }
                            />
                         </SelectTrigger>
                         <SelectContent>
-                           <SelectItem value="none">None</SelectItem>
+                           <SelectItem value="none">{translate("pages.agent-creation-form.language.none")}</SelectItem>
                            {filteredVariants.map((variant) => (
                               <SelectItem key={variant} value={variant}>
                                  {getLanguageLabel(variant)}
@@ -132,7 +139,7 @@ export function LanguageStepSubscribe({
             const isValid = value && (!errors || errors.length === 0);
             return (
                <Button onClick={next} type="button" disabled={!isValid}>
-                  Next
+                  {translate("pages.agent-creation-form.actions.next")}
                </Button>
             );
          }}

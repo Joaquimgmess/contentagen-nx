@@ -34,11 +34,20 @@
    "purpose": {
       "primary-channel": {
          "label": "Primary Channel *"
+      },
+      "options": {
+         "blog_post": "Blog Post"
       }
    },
    "audience": {
       "audience-base": {
          "label": "Audience Base *"
+      },
+      "options": {
+         "general_public": "General Public",
+         "professionals": "Professionals",
+         "beginners": "Beginners",
+         "customers": "Customers"
       }
    },
    "voice-tone": {
@@ -87,21 +96,61 @@
          "label": "Style *"
       },
       "list-style": "List Style",
-      "example-formatting": "Example Formatting"
+      "example-formatting": "Example Formatting",
+      "options": {
+         "structured": "Structured",
+         "narrative": "Narrative",
+         "list_based": "List Based",
+         "bullets": "Bullets",
+         "numbered": "Numbered"
+      },
+      "examples": {
+         "list-style": {
+            "bullets": {
+               "title": "Bulleted List Example:",
+               "items": ["Key point one", "Key point two", "Key point three"]
+            },
+            "numbered": {
+               "title": "Numbered List Example:",
+               "items": ["Step one", "Step two", "Step three"]
+            }
+         },
+         "fallback": "Sample output in the selected format."
+      }
    },
    "brand": {
       "integration-style": {
          "label": "Integration Style *"
       },
       "example-integration": "Example Integration",
-      "strict-example": "Strict Guideline Example:",
-      "strict-text": "All content must strictly follow brand guidelines...",
-      "flexible-example": "Flexible Guideline Example:",
-      "reference-example": "Reference Only Example:",
-      "creative-example": "Creative Blend Example:",
+      "examples": {
+         "strict_guideline": {
+            "title": "Strict Guideline Example:",
+            "text": "All content must strictly follow brand guidelines and use only approved messaging.\nExplicitly include the brand name at least once in every response."
+         },
+         "flexible_guideline": {
+            "title": "Flexible Guideline Example:",
+            "text": "Use brand guidelines as a foundation, but adapt tone and style for context and audience.\nNaturally incorporate the brand name and products in a way that feels organic."
+         },
+         "reference_only": {
+            "title": "Reference Only Example:",
+            "text": "Treat the brand document as background knowledge.\nMention brand solutions only when directly relevant to the user's needs."
+         },
+         "creative_blend": {
+            "title": "Creative Blend Example:",
+            "text": "Use brand personality traits as inspiration for creative storytelling.\nIntegrate brand elements naturally into the narrative."
+         },
+         "default": "Sample integration message for the selected style."
+      },
       "blacklist-words": {
          "label": "Blacklist Words (optional)",
          "placeholder": "Enter words to avoid..."
+      },
+      "options": {
+         "strict_guideline": "Strict Guideline",
+         "flexible_guideline": "Flexible Guideline",
+         "reference_only": "Reference Only",
+         "creative_blend": "Creative Blend"
       }
    },
    "review": {

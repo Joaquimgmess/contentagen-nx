@@ -4,26 +4,27 @@ import { BrandConfigSchema } from "@packages/database/schemas/agent";
 import { Markdown } from "@packages/ui/components/markdown";
 
 import type { AgentForm } from "../lib/use-agent-form";
+import { translate } from "@packages/localization";
 
 // Example string generator for integration style
 const getIntegrationExample = (style: string): string => {
-   switch (style) {
-      case "strict_guideline":
-         return "**Strict Guideline Example:**\n\nAll content must strictly follow brand guidelines and use only approved messaging.\nExplicitly include the brand name at least once in every response.";
-      case "flexible_guideline":
-         return "**Flexible Guideline Example:**\n\nUse brand guidelines as a foundation, but adapt tone and style for context and audience.\nNaturally incorporate the brand name and products in a way that feels organic.";
-      case "reference_only":
-         return "**Reference Only Example:**\n\nTreat the brand document as background knowledge.\nMention brand solutions only when directly relevant to the user's needs.";
-      case "creative_blend":
-         return "**Creative Blend Example:**\n\nUse brand personality traits as inspiration for creative storytelling.\nIntegrate brand elements naturally into the narrative.";
-      default:
-         return "Sample integration message for the selected style.";
+   const exampleKey = `pages.agent-creation-form.brand.examples.${style}`;
+   const titleKey = `${exampleKey}.title`;
+   const textKey = `${exampleKey}.text`;
+
+   if (style === "strict_guideline" || style === "flexible_guideline" || style === "reference_only" || style === "creative_blend") {
+      const title = translate(titleKey);
+      const text = translate(textKey);
+      return `**${title}**\n\n${text}`;
    }
+
+   return translate("pages.agent-creation-form.brand.examples.default");
 };
 
 // Helper function to convert schema values to display labels
 const getBrandLabel = (value: string): string => {
-   return value.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+   const translationKey = `pages.agent-creation-form.brand.options.${value}`;
+   return translate(translationKey);
 };
 
 export function BrandStep({ form }: { form: AgentForm }) {
@@ -38,7 +39,7 @@ export function BrandStep({ form }: { form: AgentForm }) {
          <form.AppField name="brand.integrationStyle">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>Integration Style *</field.FieldLabel>
+                  <field.FieldLabel>{translate("pages.agent-creation-form.brand.integration-style.label")}</field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                      {integrationStyleOptions.map((option) => (
                         <button
@@ -64,7 +65,7 @@ export function BrandStep({ form }: { form: AgentForm }) {
                   {field.state.value && (
                      <div className="mt-4">
                         <div className="text-xs font-semibold mb-1 text-muted-foreground">
-                           Example Integration
+                           {translate("pages.agent-creation-form.brand.example-integration")}
                         </div>
                         <Markdown
                            content={getIntegrationExample(field.state.value)}
@@ -78,7 +79,7 @@ export function BrandStep({ form }: { form: AgentForm }) {
             {(field) => (
                <field.FieldContainer className="space-y-2">
                   <field.FieldLabel>
-                     Blacklist Words (optional)
+                     {translate("pages.agent-creation-form.brand.blacklist-words.label")}
                   </field.FieldLabel>
                   <TiptapEditor
                      value={
@@ -90,7 +91,7 @@ export function BrandStep({ form }: { form: AgentForm }) {
                      onBlur={field.handleBlur}
                      name={field.name}
                      id={field.name}
-                     placeholder="Enter words to avoid..."
+                     placeholder={translate("pages.agent-creation-form.brand.blacklist-words.placeholder")}
                      className="w-full"
                      error={
                         field.state.meta.isTouched &&
@@ -120,7 +121,7 @@ export function BrandStepSubscribe({
             const isValid = value && (!errors || errors.length === 0);
             return (
                <Button onClick={next} type="button" disabled={!isValid}>
-                  Next
+                  {translate("pages.agent-creation-form.actions.next")}
                </Button>
             );
          }}

@@ -1,33 +1,48 @@
 {
-   "title": "Cadastrar",
-   "description": "Crie sua conta para começar a usar o aplicativo.",
-   "steps": {
-      "basic-info": "Suas informações pessoais",
-      "password": "Senha"
-   },
-   "form": {
-      "name": {
-         "label": "Nome",
-         "placeholder": "Digite seu nome"
-      },
-      "email": {
-         "label": "Email",
-         "placeholder": "Digite seu email"
-      },
-      "password": {
-         "label": "Senha",
-         "placeholder": "Crie uma senha"
-      },
-      "confirm-password": {
-         "label": "Confirmar Senha",
-         "placeholder": "Confirme sua senha"
-      },
-      "next": "Próximo",
-      "previous": "Anterior",
-      "submit": "Criar Conta"
-   },
-   "footer": {
-      "have-account": "Já tem uma conta?",
-      "sign-in-link": "Entre aqui"
-   }
+  "title": "Cadastrar",
+  "description": "Crie sua conta para começar a usar o aplicativo.",
+  "steps": {
+    "basic-info": "Suas informações pessoais",
+    "password": "Senha"
+  },
+  "form": {
+    "name": {
+      "label": "Nome",
+      "placeholder": "Digite seu nome"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Digite seu email"
+    },
+    "password": {
+      "label": "Senha",
+      "placeholder": "Crie uma senha"
+    },
+    "confirm-password": {
+      "label": "Confirmar Senha",
+      "placeholder": "Confirme sua senha"
+    },
+    "next": "Próximo",
+    "previous": "Anterior",
+    "submit": "Criar Conta"
+  },
+  "footer": {
+    "have-account": "Já tem uma conta?",
+    "sign-in-link": "Entre aqui"
+  },
+  "validation": {
+    "email-invalid": "Digite um email válido",
+    "name-min-length": "Digite um nome válido",
+    "password-min-length": "Digite uma senha com pelo menos 8 caracteres",
+    "passwords-no-match": "As senhas não coincidem"
+  },
+  "errors": {
+    "unknown": "Erro desconhecido",
+    "user-exists": "Este email já está registrado"
+  },
+  "messages": {
+    "loading": "Criando conta...",
+    "success": "Conta criada com sucesso",
+    "welcome": "Bem-vindo"
+  }
 }

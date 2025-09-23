@@ -38,5 +38,99 @@
          "title": "Workflow Preferences",
          "notify-missing-images": "Notify about missing images"
       }
+   },
+   "forms": {
+      "update-profile": {
+         "title": "Update Name & Photo",
+         "fields": {
+            "name": {
+               "label": "Name",
+               "placeholder": "Enter your name"
+            },
+            "image": {
+               "label": "Profile Image"
+            }
+         },
+         "actions": {
+            "cancel": "Cancel",
+            "save": "Save Changes"
+         },
+         "confirm": {
+            "title": "Confirm Profile Update",
+            "description": "Are you sure you want to update your profile information?",
+            "cancel": "Cancel",
+            "confirm": "Yes, Update Profile"
+         },
+         "messages": {
+            "loading": "Updating profile...",
+            "success": "Profile updated successfully.",
+            "error": "Failed to update profile."
+         },
+         "validation": {
+            "name-required": "Name is required"
+         }
+      },
+      "update-email": {
+         "title": "Change Email Address",
+         "fields": {
+            "current-email": {
+               "label": "Current Email"
+            },
+            "new-email": {
+               "label": "New Email",
+               "placeholder": "Enter new email address"
+            }
+         },
+         "actions": {
+            "cancel": "Cancel",
+            "send": "Send Verification"
+         },
+         "confirm": {
+            "title": "Confirm Email Change",
+            "description": "Are you sure you want to change your email address?",
+            "cancel": "Cancel",
+            "confirm": "Yes, Change Email"
+         },
+         "messages": {
+            "loading": "Sending verification email...",
+            "success": "Verification email sent. Please check your inbox.",
+            "error": "Failed to change email."
+         },
+         "validation": {
+            "email-invalid": "Please enter a valid email address"
+         }
+      },
+      "update-password": {
+         "title": "Change Password",
+         "fields": {
+            "current-password": {
+               "label": "Current Password",
+               "placeholder": "Enter current password"
+            },
+            "new-password": {
+               "label": "New Password",
+               "placeholder": "Enter new password"
+            }
+         },
+         "actions": {
+            "cancel": "Cancel",
+            "change": "Change Password"
+         },
+         "confirm": {
+            "title": "Confirm Password Change",
+            "description": "Are you sure you want to change your password?",
+            "cancel": "Cancel",
+            "confirm": "Yes, Change Password"
+         },
+         "messages": {
+            "loading": "Changing password...",
+            "success": "Password changed successfully.",
+            "error": "Failed to change password."
+         },
+         "validation": {
+            "current-required": "Current password is required",
+            "new-min-length": "Password must be at least 8 characters"
+         }
+      }
    }
 }

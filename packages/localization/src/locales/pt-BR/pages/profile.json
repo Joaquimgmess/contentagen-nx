@@ -38,5 +38,99 @@
          "title": "Preferências de Fluxo de Trabalho",
          "notify-missing-images": "Notificar sobre imagens ausentes"
       }
+   },
+   "forms": {
+      "update-profile": {
+         "title": "Atualizar Nome e Foto",
+         "fields": {
+            "name": {
+               "label": "Nome",
+               "placeholder": "Digite seu nome"
+            },
+            "image": {
+               "label": "Imagem do Perfil"
+            }
+         },
+         "actions": {
+            "cancel": "Cancelar",
+            "save": "Salvar Alterações"
+         },
+         "confirm": {
+            "title": "Confirmar Atualização do Perfil",
+            "description": "Tem certeza de que deseja atualizar as informações do seu perfil?",
+            "cancel": "Cancelar",
+            "confirm": "Sim, Atualizar Perfil"
+         },
+         "messages": {
+            "loading": "Atualizando perfil...",
+            "success": "Perfil atualizado com sucesso.",
+            "error": "Falha ao atualizar perfil."
+         },
+         "validation": {
+            "name-required": "Nome é obrigatório"
+         }
+      },
+      "update-email": {
+         "title": "Alterar Endereço de Email",
+         "fields": {
+            "current-email": {
+               "label": "Email Atual"
+            },
+            "new-email": {
+               "label": "Novo Email",
+               "placeholder": "Digite o novo endereço de email"
+            }
+         },
+         "actions": {
+            "cancel": "Cancelar",
+            "send": "Enviar Verificação"
+         },
+         "confirm": {
+            "title": "Confirmar Alteração de Email",
+            "description": "Tem certeza de que deseja alterar seu endereço de email?",
+            "cancel": "Cancelar",
+            "confirm": "Sim, Alterar Email"
+         },
+         "messages": {
+            "loading": "Enviando email de verificação...",
+            "success": "Email de verificação enviado. Verifique sua caixa de entrada.",
+            "error": "Falha ao alterar email."
+         },
+         "validation": {
+            "email-invalid": "Digite um endereço de email válido"
+         }
+      },
+      "update-password": {
+         "title": "Alterar Senha",
+         "fields": {
+            "current-password": {
+               "label": "Senha Atual",
+               "placeholder": "Digite a senha atual"
+            },
+            "new-password": {
+               "label": "Nova Senha",
+               "placeholder": "Digite a nova senha"
+            }
+         },
+         "actions": {
+            "cancel": "Cancelar",
+            "change": "Alterar Senha"
+         },
+         "confirm": {
+            "title": "Confirmar Alteração de Senha",
+            "description": "Tem certeza de que deseja alterar sua senha?",
+            "cancel": "Cancelar",
+            "confirm": "Sim, Alterar Senha"
+         },
+         "messages": {
+            "loading": "Alterando senha...",
+            "success": "Senha alterada com sucesso.",
+            "error": "Falha ao alterar senha."
+         },
+         "validation": {
+            "current-required": "Senha atual é obrigatória",
+            "new-min-length": "A senha deve ter pelo menos 8 caracteres"
+         }
+      }
    }
 }

@@ -40,6 +40,7 @@
    },
    "messages": {
       "no-organization": "No organization found. Please create one to continue.",
+      "no-members": "No members found.",
       "invite-success": "Invitation sent successfully!",
       "invite-error": "Failed to send invitation. Please try again.",
       "remove-success": "Member removed successfully!",

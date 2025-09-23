@@ -5,7 +5,7 @@
       "select-all": "Selecionar Todos",
       "unselect-all": "Desmarcar Todos",
       "new-competitor": "Novo Concorrente",
-      "selected-count": "{count} selecionados",
+      "selected-count": "{{count}} selecionados",
       "of": "de"
    },
    "table": {
@@ -37,6 +37,9 @@
       "delete-error": "Falha ao excluir concorrente. Tente novamente.",
       "analyze-success": "Análise iniciada com sucesso!",
       "analyze-error": "Falha ao iniciar análise. Tente novamente."
+   },
+   "empty-state": {
+      "no-competitors": "Nenhum concorrente ainda"
    },
    "modals": {
       "delete": {

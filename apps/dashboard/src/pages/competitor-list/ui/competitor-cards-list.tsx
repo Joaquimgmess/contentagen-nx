@@ -6,7 +6,11 @@ export function CompetitorCardsList() {
    const { items } = useCompetitorList();
 
    if (items.length === 0) {
-      return translate("pages.competitor-list.empty-state.no-competitors");
+      return (
+         <div className="text-center text-muted-foreground py-8">
+            <p>{translate("pages.competitor-list.empty-state.no-competitors")}</p>
+         </div>
+      );
    }
 
    return (

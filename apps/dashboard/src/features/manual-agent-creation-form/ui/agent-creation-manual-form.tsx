@@ -3,7 +3,7 @@ import { defineStepper } from "@packages/ui/components/stepper";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { useAgentForm } from "../lib/use-agent-form";
+import { useAgentForm, type AgentForm } from "../lib/use-agent-form";
 import { translate } from "@packages/localization";
 import { BasicInfoStep, BasicInfoStepSubscribe } from "./basic-info-step";
 import { VoiceToneStep, VoiceToneStepSubscribe } from "./voice-tone-step";
@@ -18,8 +18,6 @@ import {
    PersonaConfigSchema,
 } from "@packages/database/schemas/agent";
 export const agentFormSchema = PersonaConfigSchema;
-
-export type AgentForm = ReturnType<typeof useAgentForm>;
 const steps = [
    {
       id: "step-basic-info",

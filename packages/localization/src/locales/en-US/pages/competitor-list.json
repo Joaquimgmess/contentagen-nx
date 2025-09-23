@@ -5,7 +5,7 @@
       "select-all": "Select All",
       "unselect-all": "Unselect All",
       "new-competitor": "New Competitor",
-      "selected-count": "{count} selected",
+      "selected-count": "{{count}} selected",
       "of": "of"
    },
    "table": {
@@ -37,6 +37,9 @@
       "delete-error": "Failed to delete competitor. Please try again.",
       "analyze-success": "Analysis started successfully!",
       "analyze-error": "Failed to start analysis. Please try again."
+   },
+   "empty-state": {
+      "no-competitors": "No competitors yet"
    },
    "modals": {
       "delete": {

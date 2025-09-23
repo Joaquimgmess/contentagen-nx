@@ -40,6 +40,7 @@
    },
    "messages": {
       "no-organization": "Nenhuma organização encontrada. Crie uma para continuar.",
+      "no-members": "Nenhum membro encontrado.",
       "invite-success": "Convite enviado com sucesso!",
       "invite-error": "Falha ao enviar convite. Tente novamente.",
       "remove-success": "Membro removido com sucesso!",

@@ -1,0 +1,18 @@
+{
+   "title": "Verificação de Email",
+   "description": "Digite o código de verificação enviado para seu email.",
+   "form": {
+      "verification-code": {
+         "label": "Código de Verificação",
+         "placeholder": "Digite o código de verificação"
+      },
+      "submit": "Enviar Código",
+      "resend": "Reenviar código de verificação"
+   },
+   "messages": {
+      "success": "Email verificado com sucesso!",
+      "error": "Código de verificação inválido. Tente novamente.",
+      "resend-success": "Código de verificação enviado com sucesso!",
+      "resend-error": "Falha ao reenviar código de verificação. Tente novamente."
+   }
+}

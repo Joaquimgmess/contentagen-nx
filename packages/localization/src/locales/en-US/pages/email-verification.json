@@ -1,0 +1,18 @@
+{
+   "title": "Email Verification",
+   "description": "Enter the verification code sent to your email.",
+   "form": {
+      "verification-code": {
+         "label": "Verification Code",
+         "placeholder": "Enter verification code"
+      },
+      "submit": "Submit Code",
+      "resend": "Resend verification code"
+   },
+   "messages": {
+      "success": "Email verified successfully!",
+      "error": "Invalid verification code. Please try again.",
+      "resend-success": "Verification code sent successfully!",
+      "resend-error": "Failed to resend verification code. Please try again."
+   }
+}

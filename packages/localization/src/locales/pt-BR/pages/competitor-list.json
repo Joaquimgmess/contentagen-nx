@@ -1,0 +1,49 @@
+{
+   "title": "Gerenciamento de Concorrentes",
+   "mascot-message": "Acompanhe e analise seus concorrentes para se manter à frente do mercado!",
+   "toolbar": {
+      "select-all": "Selecionar Todos",
+      "unselect-all": "Desmarcar Todos",
+      "new-competitor": "Novo Concorrente",
+      "selected-count": "{count} selecionados",
+      "of": "de"
+   },
+   "table": {
+      "headers": {
+         "name": "Nome",
+         "website": "Website",
+         "industry": "Setor",
+         "status": "Status",
+         "last-analyzed": "Última Análise",
+         "actions": "Ações"
+      },
+      "no-data": "Nenhum concorrente encontrado",
+      "loading": "Carregando concorrentes..."
+   },
+   "actions": {
+      "view": "Visualizar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "analyze": "Analisar",
+      "export": "Exportar"
+   },
+   "status": {
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "analyzing": "Analisando"
+   },
+   "messages": {
+      "delete-success": "Concorrente excluído com sucesso!",
+      "delete-error": "Falha ao excluir concorrente. Tente novamente.",
+      "analyze-success": "Análise iniciada com sucesso!",
+      "analyze-error": "Falha ao iniciar análise. Tente novamente."
+   },
+   "modals": {
+      "delete": {
+         "title": "Excluir Concorrente",
+         "description": "Tem certeza de que deseja excluir este concorrente? Esta ação não pode ser desfeita.",
+         "confirm": "Excluir",
+         "cancel": "Cancelar"
+      }
+   }
+}

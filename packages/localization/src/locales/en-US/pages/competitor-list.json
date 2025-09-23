@@ -1,0 +1,49 @@
+{
+   "title": "Competitor Management",
+   "mascot-message": "Track and analyze your competitors to stay ahead of the market!",
+   "toolbar": {
+      "select-all": "Select All",
+      "unselect-all": "Unselect All",
+      "new-competitor": "New Competitor",
+      "selected-count": "{count} selected",
+      "of": "of"
+   },
+   "table": {
+      "headers": {
+         "name": "Name",
+         "website": "Website",
+         "industry": "Industry",
+         "status": "Status",
+         "last-analyzed": "Last Analyzed",
+         "actions": "Actions"
+      },
+      "no-data": "No competitors found",
+      "loading": "Loading competitors..."
+   },
+   "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "analyze": "Analyze",
+      "export": "Export"
+   },
+   "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "analyzing": "Analyzing"
+   },
+   "messages": {
+      "delete-success": "Competitor deleted successfully!",
+      "delete-error": "Failed to delete competitor. Please try again.",
+      "analyze-success": "Analysis started successfully!",
+      "analyze-error": "Failed to start analysis. Please try again."
+   },
+   "modals": {
+      "delete": {
+         "title": "Delete Competitor",
+         "description": "Are you sure you want to delete this competitor? This action cannot be undone.",
+         "confirm": "Delete",
+         "cancel": "Cancel"
+      }
+   }
+}

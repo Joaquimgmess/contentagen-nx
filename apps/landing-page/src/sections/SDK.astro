@@ -1,47 +1,230 @@
 ---
-import { Cpu, Lock, Sparkles, Zap } from "@lucide/astro";
-import { Image } from "astro:assets";
-import image from "../assets/sdk.webp";
+import { Cpu, Lock, Zap, BookOpen, Copy, Check } from "@lucide/astro";
+import { Button } from "@packages/ui/components/button";
+
+const benefits = [
+   {
+      icon: Zap,
+      title: "End-to-End Type Safety",
+      description:
+         "Full TypeScript support with Zod validation ensures your data is always what you expect, from API to render.",
+   },
+   {
+      icon: Cpu,
+      title: "Built for Modern Frameworks",
+      description:
+         "Designed for static site generators like Astro and Next.js to build high-performance, statically-generated sites.",
+   },
+   {
+      icon: Lock,
+      title: "Secure & Reliable",
+      description:
+         "Robust API key authentication and consistent error handling for building production-grade applications.",
+   },
+];
+
+const codeSnippet = `
+import { createSdk } from "@contentagen/sdk";
+
+// Initialize the SDK with your API key
+const sdk = createSdk({ apiKey: process.env.API_KEY });
+
+// Fetch your latest approved blog posts
+const { posts } = await sdk.listContentByAgent({
+  agentId: ["your-agent-uuid"],
+  status: ["approved"],
+  limit: 10,
+});
+
+// Your content is ready to be rendered!
+posts.forEach(post => {
+  console.log(post.meta.title);
+});
+`;
 ---
 
-<section id="sdk" class="py-16 md:py-32 bg-muted">
-  <div class="mx-auto max-w-6xl space-y-8 px-6 md:space-y-12">
-    <div class="mx-auto max-w-xl space-y-6 text-center md:space-y-12">
-      <h2 class="text-balance text-4xl font-medium lg:text-5xl">The ContentaGen SDK brings your content to life.</h2>
-      <p>Our TypeScript SDK is more than just an API client. It's a complete content management toolkit — designed for developers who need reliable access to AI-generated content.</p>
-    </div>
-    
-    <Image class="rounded-(--radius)" src={image} alt="SDK illustration" width={1207} height={929} loading="lazy" />
+<section id="sdk" class="py-16 md:py-32">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      
+      <!-- Left Column: Text Content -->
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h2 class="text-balance text-4xl font-medium lg:text-5xl">
+            Integrate Content, Automate Everything.
+          </h2>
+          <p class="text-muted-foreground text-lg">
+            Our TypeScript SDK is more than just an API client. It's a complete content toolkit designed for developers who need reliable, type-safe access to AI-generated content.
+          </p>
+        </div>
 
-    <div class="relative mx-auto grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4">
-      <div class="space-y-3">
-        <div class="flex items-center gap-2">
-          <Zap class="size-4" />
-          <h3 class="text-sm font-medium">Type Safe</h3>
+        <div class="space-y-6">
+          {benefits.map(benefit => (
+            <div class="flex items-start gap-4">
+              <div class="bg-primary/10 text-primary p-3 rounded-lg flex-shrink-0">
+                <benefit.icon class="size-5" />
+              </div>
+              <div>
+                <h3 class="font-semibold text-foreground">{benefit.title}</h3>
+                <p class="text-muted-foreground text-sm mt-1">{benefit.description}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <p class="text-muted-foreground text-sm">Full TypeScript support with Zod validation and automatic date parsing.</p>
+
+        <Button size="lg" className="w-full"  variant="outline">
+          <a href="https://docs.contentagen.com" class="flex items-center gap-2 " target="_blank" rel="noopener noreferrer">
+            <BookOpen class="size-4 mr-2" />
+            Read the Docs
+          </a>
+        </Button>
       </div>
-      <div class="space-y-2">
-        <div class="flex items-center gap-2">
-          <Cpu class="size-4" />
-          <h3 class="text-sm font-medium">Developer Friendly</h3>
+
+      <!-- Right Column: Code Block -->
+      <div class="relative min-h-[400px]">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl opacity-20 blur-2xl"></div>
+        <div id="sdk-code-block" class="relative bg-[#282a36] backdrop-blur-sm border border-white/10 rounded-lg shadow-2xl overflow-hidden font-mono text-sm group">
+          
+          <!-- Faux window header -->
+          <div class="flex items-center justify-between px-4 py-2 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-[#ff5f56]"></span>
+              <span class="h-3 w-3 rounded-full bg-[#ffbd2e]"></span>
+              <span class="h-3 w-3 rounded-full bg-[#27c93f]"></span>
+            </div>
+            <span class="text-slate-400 text-xs">/contentagen/sdk-example.ts</span>
+            <div></div>
+          </div>
+          
+          <pre class="p-6 overflow-x-auto"><code class="language-typescript text-white/90 selection:bg-primary/50">{codeSnippet.trim()}</code></pre>
+
+          <!-- Copy Button -->
+          <Button id="copy-sdk-code" variant="ghost" size="icon" className="absolute top-14 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Copy id="copy-icon" class="size-4 text-white/70 transition-all" />
+            <Check id="check-icon" class="size-4 text-green-400 absolute transition-all scale-0" />
+            <span class="sr-only">Copy code</span>
+          </Button>
         </div>
-        <p class="text-muted-foreground text-sm">Consistent error codes, robust handling, and intuitive API design.</p>
-      </div>
-      <div class="space-y-2">
-        <div class="flex items-center gap-2">
-          <Lock class="size-4" />
-          <h3 class="text-sm font-medium">Security</h3>
-        </div>
-        <p class="text-muted-foreground text-sm">Secure API authentication and content access controls.</p>
-      </div>
-      <div class="space-y-2">
-        <div class="flex items-center gap-2">
-          <Sparkles class="size-4" />
-          <h3 class="text-sm font-medium">AI Powered</h3>
-        </div>
-        <p class="text-muted-foreground text-sm">Built specifically for AI-generated content management.</p>
       </div>
     </div>
   </div>
 </section>
+
+<style is:global>
+  /* Enhanced Dracla-like theme for the code block */
+  code[class*="language-"],
+  pre[class*="language-"] {
+    color: #f8f8f2;
+    background: none;
+    font-family: 'Geist Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #6272a4;
+  }
+
+  .token.punctuation {
+    color: #f8f8f2;
+  }
+
+  .token.property,
+  .token.tag,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    color: #ff79c6;
+  }
+
+  .token.boolean,
+  .token.number {
+    color: #bd93f9;
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    color: #f1fa8c;
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string,
+  .token.variable {
+    color: #f8f8f2;
+  }
+
+  .token.atrule,
+  .token.attr-value,
+  .token.function,
+  .token.class-name {
+    color: #50fa7b;
+  }
+
+  .token.keyword {
+    color: #ff79c6;
+  }
+
+  .token.regex,
+  .token.important {
+    color: #ffb86c;
+  }
+
+  .token.important,
+  .token.bold {
+    font-weight: bold;
+  }
+  .token.italic {
+    font-style: italic;
+  }
+
+  .token.entity {
+    cursor: help;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButton = document.getElementById('copy-sdk-code');
+    const codeBlock = document.querySelector('#sdk-code-block code');
+    const copyIcon = document.getElementById('copy-icon');
+    const checkIcon = document.getElementById('check-icon');
+
+    if (copyButton && codeBlock && copyIcon && checkIcon) {
+      copyButton.addEventListener('click', () => {
+        if (navigator.clipboard && codeBlock.textContent) {
+          navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+            // Success feedback
+            copyIcon.classList.add('scale-0');
+            checkIcon.classList.remove('scale-0');
+
+            setTimeout(() => {
+              copyIcon.classList.remove('scale-0');
+              checkIcon.classList.add('scale-0');
+            }, 2000);
+          });
+        }
+      });
+    }
+  });
+</script>

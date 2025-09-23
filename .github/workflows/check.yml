@@ -19,4 +19,4 @@ jobs:
         uses: ./.github/actions/setup-bun-nx
 
       - name: Run Nx affected check
-        run: npx nx affected -t check --base=origin/master --head=HEAD
+        run: bunx nx affected -t check --base=origin/master --head=HEAD

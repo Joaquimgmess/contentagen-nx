@@ -4,6 +4,7 @@ import { documentSynthesizerAgent } from "./agents/document-syntethizer-agent";
 import { documentGenerationAgent } from "./agents/document-generation-agent";
 import { featureExtractionAgent } from "./agents/feature-extractor-agent";
 import { companyInfoExtractorAgent } from "./agents/company-info-extractor-agent";
+import { ideaGenerationAgent } from "./agents/ideas-agent";
 import { createBrandKnowledgeWorkflow } from "./workflows/create-brand-knowledge-and-index-documents";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 import { crawlCompetitorForFeatures } from "./workflows/crawl-for-features";
@@ -14,11 +15,22 @@ export type CustomRuntimeContext = {
 };
 export const mastra = new Mastra({
    bundler: {
-      externals: ["@packages/openrouter", "@packages/workers"],
+      sourcemap: true,
+      transpilePackages: [
+         "@packages/files/client",
+         "@packages/payment/client",
+         "@packages/payment/ingestion",
+         "@packages/tavily/helpers",
+         "@packages/tavily/client",
+         "@packages/chroma-db/client",
+         "@packages/chroma-db/helpers",
+         "@packages/environment/helpers",
+         "@packages/environment/server",
+      ],
    },
+
    workflows: {
       createBrandKnowledgeWorkflow,
-      createCompetitorKnowledgeWorkflow: createBrandKnowledgeWorkflow, // Use same workflow, target parameter determines behavior
       crawlCompetitorForFeatures,
       extractCompetitorBrandInfoWorkflow,
    },
@@ -27,6 +39,7 @@ export const mastra = new Mastra({
       documentGenerationAgent,
       featureExtractionAgent,
       companyInfoExtractorAgent,
+      ideaGenerationAgent,
    },
    logger: new PinoLogger({
       name: "Mastra",

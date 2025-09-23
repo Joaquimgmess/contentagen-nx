@@ -115,23 +115,37 @@ export const competitorRouter = router({
                organizationId,
             });
 
-            // Enqueue competitor analysis job
-            await enqueueCrawlCompetitorForFeaturesJob({
-               competitorId: created.id,
-               userId,
-               websiteUrl: input.websiteUrl,
-            });
+            await Promise.all([
+               await enqueueCrawlCompetitorForFeaturesJob({
+                  competitorId: created.id,
+                  userId,
+                  websiteUrl: input.websiteUrl,
+                  runtimeContext: {
+                     language: resolvedCtx.language,
+                     userId,
+                  },
+               }),
 
-            await enqueueCreateCompetitorKnowledgeWorkflowJob({
-               competitorId: created.id,
-               userId,
-               websiteUrl: input.websiteUrl,
-            });
-            await enqueueExtractCompetitorBrandInfoJob({
-               competitorId: created.id,
-               userId,
-               websiteUrl: input.websiteUrl,
-            });
+               await enqueueCreateCompetitorKnowledgeWorkflowJob({
+                  competitorId: created.id,
+                  userId,
+                  websiteUrl: input.websiteUrl,
+                  runtimeContext: {
+                     language: resolvedCtx.language,
+                     userId,
+                  },
+               }),
+               await enqueueExtractCompetitorBrandInfoJob({
+                  competitorId: created.id,
+                  userId,
+                  websiteUrl: input.websiteUrl,
+                  runtimeContext: {
+                     language: resolvedCtx.language,
+                     userId,
+                  },
+               }),
+            ]);
+
             return created;
          } catch (err) {
             if (err instanceof DatabaseError) {

@@ -1,35 +1,34 @@
 ---
-import {
-   Brain,
-   Users,
-   Search,
-   Sparkles,
-   Play,
-   TrendingUp,
-   Layout,
-   Target,
-   CalendarCheck,
-} from "@lucide/astro";
+import { Sparkles, Layout, Target, CalendarCheck } from "@lucide/astro";
 import { Image } from "astro:assets";
-import cardImage from "../assets/dark/dark-hero.webp";
+import lightImage from "../assets/light/competitor-light.webp";
+import darkImage from "../assets/dark/competitor-dark.webp";
 ---
 
-<section class="py-24 bg-muted">
+<section id="competitor-intelligence" class="py-24 bg-muted">
   <div class="mx-auto w-full max-w-5xl px-6">
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div class="bg-card text-card-foreground col-span-full overflow-hidden border shadow-sm pl-6 pt-6">
         <Layout class="text-primary size-5" />
-        <h3 class="text-foreground mt-5 text-lg font-semibold">Competitor Intelligence</h3>
-        <p class="text-muted-foreground mt-3 max-w-xl text-balance">Turn competitor strategies into your content advantage with AI-powered competitive analysis.</p>
+        <h3 class="text-foreground mt-5 text-lg font-semibold">Decode Your Market and Dominate Your Niche</h3>
+        <p class="text-muted-foreground mt-3 max-w-xl text-balance">Go beyond simple tracking. ContentaGen analyzes competitor content to identify their strategies, find market gaps, and generate data-driven ideas that outperform.</p>
         <div class="mask-b-from-95% -ml-2 -mt-2 mr-0.5 pl-2 pt-2">
-          <div class="bg-background rounded-tl-(--radius) ring-foreground/5 relative mx-auto mt-8 h-96 overflow-hidden border border-transparent shadow ring-1">
+          <div class="bg-background rounded-tl-lg ring-foreground/5 relative mx-auto mt-8 h-96 overflow-hidden border border-transparent shadow ring-1">
+            <!-- Light Mode Image -->
             <Image
-              src={cardImage}
-              alt="Competitor intelligence dashboard"
-              class="object-top-left h-full w-full object-cover"
-            width={1207}
-            height={929}
-
+              src={lightImage}
+              alt="A dashboard showing competitor analysis with tracked features and content gaps in light mode."
+              class="object-top-left h-full w-full object-cover block dark:hidden"
+              width={1207}
+              height={929}
+            />
+            <!-- Dark Mode Image -->
+            <Image
+              src={darkImage}
+              alt="A dashboard showing competitor analysis with tracked features and content gaps in dark mode."
+              class="object-top-left h-full w-full object-cover hidden dark:block"
+              width={1207}
+              height={929}
             />
           </div>
         </div>
@@ -37,20 +36,20 @@ import cardImage from "../assets/dark/dark-hero.webp";
       
       <div class="bg-card text-card-foreground rounded-xl border py-6 shadow-sm p-6">
         <Target class="text-primary size-5" />
-        <h3 class="text-foreground mt-5 text-lg font-semibold">Strategic Analysis</h3>
-        <p class="text-muted-foreground mt-3 text-balance">Analyze competitor content strategies to identify market gaps and opportunities.</p>
+        <h3 class="text-foreground mt-5 text-lg font-semibold">Uncover Strategic Gaps</h3>
+        <p class="text-muted-foreground mt-3 text-balance">Automatically analyze competitor content to find underserved topics and strategic opportunities.</p>
       </div>
 
       <div class="bg-card text-card-foreground rounded-xl border py-6 shadow-sm p-6">
         <CalendarCheck class="text-primary size-5" />
-        <h3 class="text-foreground mt-5 text-lg font-semibold">Content Planning</h3>
-        <p class="text-muted-foreground mt-3 text-balance">Generate data-driven content ideas that outperform competitors in search rankings.</p>
+        <h3 class="text-foreground mt-5 text-lg font-semibold">Generate Winning Ideas</h3>
+        <p class="text-muted-foreground mt-3 text-balance">Create data-driven content ideas designed to outperform competitors in search rankings and engagement.</p>
       </div>
       
       <div class="bg-card text-card-foreground rounded-xl border py-6 shadow-sm p-6">
         <Sparkles class="text-primary size-5" />
-        <h3 class="text-foreground mt-5 text-lg font-semibold">AI-Powered Insights</h3>
-        <p class="text-muted-foreground mt-3 text-balance">Get actionable recommendations to improve your content strategy and dominate SERPs.</p>
+        <h3 class="text-foreground mt-5 text-lg font-semibold">Automate Feature Tracking</h3>
+        <p class="text-muted-foreground mt-3 text-balance">Keep a real-time pulse on your competitors' product features to inform your own roadmap and positioning.</p>
       </div>
     </div>
   </div>

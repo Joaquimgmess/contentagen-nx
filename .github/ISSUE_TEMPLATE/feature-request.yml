@@ -2,87 +2,52 @@ name: ✨ Feature Request
 description: Suggest a new feature or enhancement
 title: "[FEATURE] "
 labels: ["enhancement", "triage"]
-assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        ## ✨ Feature Request
-
-        Thanks for suggesting a new feature! Please fill out the information below to help us understand your request.
+        ## Feature Request
+        Thanks for suggesting a feature!
 
   - type: textarea
     id: summary
     attributes:
-      label: Feature Summary
-      description: A brief summary of the feature you'd like to see.
-      placeholder: "What's the main goal of this feature?"
+      label: What feature do you want?
+      description: Brief summary of the feature
+      placeholder: "What's the main goal?"
     validations:
       required: true
 
   - type: textarea
     id: problem
     attributes:
-      label: Problem/Use Case
-      description: What problem would this feature solve? What's your use case?
-      placeholder: "Describe the problem this feature would solve..."
+      label: Why do you need it?
+      description: What problem would this solve?
+      placeholder: "Describe the problem this would solve..."
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Proposed Solution
-      description: Describe your proposed solution or implementation.
-      placeholder: "How would you like this feature to work?"
-    validations:
-      required: true
-
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternative Solutions
-      description: Have you considered any alternative solutions?
-      placeholder: "What other solutions have you considered?"
+      label: How should it work?
+      description: Describe your proposed solution
+      placeholder: "How would you like this to work?"
 
   - type: dropdown
     id: priority
     attributes:
       label: Priority
-      description: How important is this feature to you?
+      description: How important is this?
       options:
         - Nice to have
         - Would be helpful
         - Important for my use case
         - Critical for my workflow
-    validations:
-      required: true
-
-  - type: dropdown
-    id: complexity
-    attributes:
-      label: Estimated Complexity
-      description: How complex do you think this feature would be to implement?
-      options:
-        - Simple (small changes)
-        - Medium (moderate changes)
-        - Complex (significant changes)
-        - Very Complex (major rewrite/refactor)
 
   - type: textarea
     id: additional
     attributes:
-      label: Additional Context
-      description: Add any other context, screenshots, or examples.
-      placeholder: "Any additional context, mockups, or examples?"
-
-  - type: checkboxes
-    id: checklist
-    attributes:
-      label: Checklist
-      description: Please check all that apply
-      options:
-        - label: I have searched for similar feature requests and confirmed this is not a duplicate
-        - label: This feature would benefit other users, not just me
-        - label: I am willing to help test this feature if implemented
-        - label: I am willing to contribute to the implementation of this feature
+      label: Additional info
+      description: Mockups, examples, etc.
+      placeholder: "Any additional context..."

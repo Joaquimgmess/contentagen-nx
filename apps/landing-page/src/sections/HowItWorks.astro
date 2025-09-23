@@ -1,0 +1,51 @@
+---
+import { BrainCircuit, BotMessageSquare, Rocket } from "@lucide/astro";
+
+const steps = [
+   {
+      icon: BrainCircuit,
+      title: "1. We Absorb Your Brand DNA",
+      description:
+         "Connect your website and brand documents. Our AI performs a deep analysis to build a unique 'Brand Brain' that understands your voice, style, and offerings.",
+   },
+   {
+      icon: BotMessageSquare,
+      title: "2. Your Agent Creates & Refines",
+      description:
+         "Request content with a simple prompt. Your autonomous agent then researches, writes, and edits a complete, on-brand article, optimized for SEO and engagement.",
+   },
+   {
+      icon: Rocket,
+      title: "3. You Review, Approve & Publish",
+      description:
+         "Receive a ready-to-publish draft in your dashboard. Make final tweaks, approve with one click, and deploy your content anywhere using our developer-friendly SDK.",
+   },
+];
+---
+
+<section id="how-it-works" class="py-16 md:py-24 bg-muted">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-balance text-3xl font-bold md:text-4xl">
+        Your Content Engine in 3 Simple Steps
+      </h2>
+      <p class="text-muted-foreground mx-auto mt-4 max-w-2xl text-balance">
+        From raw knowledge to published content, our process is designed for maximum quality with minimum effort.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+      {
+        steps.map(({ icon: Icon, title, description }) => (
+          <div class="bg-card border rounded-xl p-8 text-center flex flex-col items-center shadow-sm transition-transform hover:-translate-y-1">
+            <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+              <Icon class="size-8" />
+            </div>
+            <h3 class="text-xl font-semibold text-foreground">{title}</h3>
+            <p class="mt-2 text-muted-foreground text-sm">{description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

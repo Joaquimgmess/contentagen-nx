@@ -24,13 +24,14 @@ export function MobileMenu() {
             <Menu className="size-6" />
          </Button>
          <Sheet onOpenChange={setOpen} open={open}>
-            <SheetContent side="right">
+            <SheetContent side="right" className="space-y-4">
                <SheetHeader>
                   <SheetTitle>Menu</SheetTitle>
                   <SheetDescription>
                      Explore our features and services
                   </SheetDescription>
                </SheetHeader>
+
                <ul className="space-y-4 text-base px-4">
                   {menuItems.map((item) => (
                      <li key={item.href}>
@@ -44,6 +45,18 @@ export function MobileMenu() {
                      </li>
                   ))}
                </ul>
+
+               <div className="px-4 w-full mt-auto">
+                  <Button variant="outline" className="w-full">
+                     <a
+                        href="https://app.contentagen.com/auth/sign-in"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                     >
+                        Get Started
+                     </a>
+                  </Button>
+               </div>
             </SheetContent>
          </Sheet>
       </div>

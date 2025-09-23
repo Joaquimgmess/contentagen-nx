@@ -1,0 +1,42 @@
+{
+   "title": "Detalhes do Concorrente",
+   "loading": {
+      "steps": {
+         "pending": {
+            "label": "Inicializando",
+            "description": "Configurando análise do concorrente"
+         },
+         "crawling": {
+            "label": "Coletando",
+            "description": "Coletando dados do site do concorrente"
+         },
+         "analyzing": {
+            "label": "Analisando",
+            "description": "Extraindo recursos e insights"
+         }
+      },
+      "progress": {
+         "step-counter": "Etapa {{current}} de {{total}}",
+         "percentage": "{{percent}}% concluído",
+         "fallback-message": "Processando dados do concorrente"
+      }
+   },
+   "actions": {
+      "card": {
+         "title": "Ações Rápidas",
+         "description": "Execute tarefas comuns relacionadas ao concorrente."
+      },
+      "buttons": {
+         "visit-website": "Visitar Site",
+         "refresh-analysis": "Atualizar Análise",
+         "analyzing": "Analisando...",
+         "upload-logo": "Enviar Logo",
+         "edit-competitor": "Editar Concorrente",
+         "delete-competitor": "Excluir Concorrente"
+      }
+   },
+   "messages": {
+      "analysis-started": "Análise do concorrente iniciada!",
+      "analysis-error": "Erro ao iniciar análise: {{error}}"
+   }
+}

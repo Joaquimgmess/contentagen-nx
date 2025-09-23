@@ -61,6 +61,7 @@
       "edit-agent": "Editar agente",
       "delete-agent": "Excluir agente",
       "create-content": "Criar conteúdo",
+      "view-details": "Ver detalhes do agente",
       "manage-agent-photo": "Gerenciar foto do agente",
       "delete-all-files": "Excluir todos os arquivos enviados",
       "no-files-to-delete": "Nenhum arquivo para excluir"

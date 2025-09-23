@@ -61,6 +61,7 @@
       "edit-agent": "Edit agent",
       "delete-agent": "Delete agent",
       "create-content": "Create content",
+      "view-details": "View agent details",
       "manage-agent-photo": "Manage agent photo",
       "delete-all-files": "Delete all uploaded files",
       "no-files-to-delete": "No files to delete"

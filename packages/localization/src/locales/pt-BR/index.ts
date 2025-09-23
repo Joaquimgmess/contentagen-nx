@@ -44,7 +44,7 @@ const resources = {
       "pages.content-request-form": contentRequestFormPtBr,
       "pages.agent-create": agentCreatePtBr,
       "pages.agent-edit": agentEditPtBr,
-      "common": commonPtBr,
+      common: commonPtBr,
    },
 };
 

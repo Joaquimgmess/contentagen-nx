@@ -108,7 +108,11 @@
          "list-style": {
             "bullets": {
                "title": "Exemplo de Lista com Marcadores:",
-               "items": ["Ponto chave um", "Ponto chave dois", "Ponto chave três"]
+               "items": [
+                  "Ponto chave um",
+                  "Ponto chave dois",
+                  "Ponto chave três"
+               ]
             },
             "numbered": {
                "title": "Exemplo de Lista Numerada:",

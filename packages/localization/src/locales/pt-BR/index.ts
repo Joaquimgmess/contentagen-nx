@@ -14,6 +14,8 @@ import organizationInvitationPtBr from "./pages/organization-invitation.json";
 import apiKeyPtBr from "./pages/api-key.json";
 import competitorListPtBr from "./pages/competitor-list.json";
 import organizationPtBr from "./pages/organization.json";
+import agentCreationFormPtBr from "./pages/agent-creation-form.json";
+import contentRequestFormPtBr from "./pages/content-request-form.json";
 
 const resources = {
    translation: {
@@ -33,6 +35,8 @@ const resources = {
       "pages.api-key": apiKeyPtBr,
       "pages.competitor-list": competitorListPtBr,
       "pages.organization": organizationPtBr,
+      "pages.agent-creation-form": agentCreationFormPtBr,
+      "pages.content-request-form": contentRequestFormPtBr,
    },
 };
 

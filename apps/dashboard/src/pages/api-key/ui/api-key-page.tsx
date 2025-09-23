@@ -96,7 +96,9 @@ export function ApiKeyPage() {
                            <Button
                               variant="ghost"
                               size="icon"
-                              aria-label={translate("pages.api-key.aria-labels.more-actions")}
+                              aria-label={translate(
+                                 "pages.api-key.aria-labels.more-actions",
+                              )}
                            >
                               <MoreVertical className="w-5 h-5" />
                            </Button>
@@ -163,7 +165,9 @@ export function ApiKeyPage() {
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    aria-label={translate("pages.api-key.aria-labels.api-key-actions")}
+                                    aria-label={translate(
+                                       "pages.api-key.aria-labels.api-key-actions",
+                                    )}
                                  >
                                     <MoreVertical className="w-5 h-5" />
                                  </Button>

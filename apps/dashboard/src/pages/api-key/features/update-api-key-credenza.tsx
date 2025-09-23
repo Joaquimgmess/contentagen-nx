@@ -30,7 +30,9 @@ export function UpdateApiKeyCredenza({
 }) {
    const trpc = useTRPC();
    const schema = z.object({
-      name: z.string(translate("common.form.field-required")).min(1, translate("common.form.field-required")),
+      name: z
+         .string(translate("common.form.field-required"))
+         .min(1, translate("common.form.field-required")),
    });
    const queryClient = useQueryClient();
 
@@ -43,7 +45,9 @@ export function UpdateApiKeyCredenza({
             },
             {
                onSuccess: async () => {
-                  toast.success(translate("pages.api-key.messages.update-success"));
+                  toast.success(
+                     translate("pages.api-key.messages.update-success"),
+                  );
                   await queryClient.invalidateQueries({
                      queryKey: trpc.authHelpers.getApiKeys.queryKey(),
                   });
@@ -83,7 +87,9 @@ export function UpdateApiKeyCredenza({
       <Credenza open={open} onOpenChange={onOpenChange}>
          <CredenzaContent>
             <CredenzaHeader>
-               <CredenzaTitle>{translate("pages.api-key.modals.update.title")}</CredenzaTitle>
+               <CredenzaTitle>
+                  {translate("pages.api-key.modals.update.title")}
+               </CredenzaTitle>
                <CredenzaDescription>
                   {translate("pages.api-key.modals.update.description")}
                </CredenzaDescription>
@@ -93,7 +99,11 @@ export function UpdateApiKeyCredenza({
                   <form.AppField name="name">
                      {(field) => (
                         <field.FieldContainer>
-                           <field.FieldLabel>{translate("pages.api-key.modals.update.name-label")}</field.FieldLabel>
+                           <field.FieldLabel>
+                              {translate(
+                                 "pages.api-key.modals.update.name-label",
+                              )}
+                           </field.FieldLabel>
                            <Input
                               id={field.name}
                               name={field.name}
@@ -101,7 +111,9 @@ export function UpdateApiKeyCredenza({
                               onChange={(e) =>
                                  field.handleChange(e.target.value)
                               }
-                              placeholder={translate("pages.api-key.modals.update.name-placeholder")}
+                              placeholder={translate(
+                                 "pages.api-key.modals.update.name-placeholder",
+                              )}
                               value={field.state.value}
                            />
                            <field.FieldMessage />

@@ -35,7 +35,9 @@ export function DeleteApiKeyCredenza({
          },
          {
             onSuccess: async () => {
-               toast.success(translate("pages.api-key.messages.delete-success"));
+               toast.success(
+                  translate("pages.api-key.messages.delete-success"),
+               );
                await queryClient.invalidateQueries({
                   queryKey: trpc.authHelpers.getApiKeys.queryKey(),
                });
@@ -53,7 +55,9 @@ export function DeleteApiKeyCredenza({
       <Credenza open={open} onOpenChange={onOpenChange}>
          <CredenzaContent>
             <CredenzaHeader>
-               <CredenzaTitle>{translate("pages.api-key.modals.delete.title")}</CredenzaTitle>
+               <CredenzaTitle>
+                  {translate("pages.api-key.modals.delete.title")}
+               </CredenzaTitle>
                <CredenzaDescription>
                   {translate("pages.api-key.modals.delete.description")}
                </CredenzaDescription>

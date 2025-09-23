@@ -38,23 +38,31 @@ function ApiKeyAlertCredenza({
       <Credenza open={open} onOpenChange={onOpenChange}>
          <CredenzaContent>
             <CredenzaHeader>
-               <CredenzaTitle>{translate("pages.api-key.modals.api-key-alert.title")}</CredenzaTitle>
+               <CredenzaTitle>
+                  {translate("pages.api-key.modals.api-key-alert.title")}
+               </CredenzaTitle>
                <CredenzaDescription>
                   {translate("pages.api-key.modals.api-key-alert.description")}
                   <br />
-                  <strong>{translate("pages.api-key.modals.api-key-alert.warning")}</strong>
+                  <strong>
+                     {translate("pages.api-key.modals.api-key-alert.warning")}
+                  </strong>
                </CredenzaDescription>
             </CredenzaHeader>
             <CredenzaBody className="grid grid-cols-1 pb-0">
                <InfoItem
                   icon={<Key />}
-                  label={translate("pages.api-key.modals.api-key-alert.key-label")}
+                  label={translate(
+                     "pages.api-key.modals.api-key-alert.key-label",
+                  )}
                   value={apiKey}
                   key={"api-key"}
                />
             </CredenzaBody>
             <CredenzaFooter>
-               <Button onClick={handleCopyApiKey}>{translate("pages.api-key.modals.api-key-alert.copy-button")}</Button>
+               <Button onClick={handleCopyApiKey}>
+                  {translate("pages.api-key.modals.api-key-alert.copy-button")}
+               </Button>
             </CredenzaFooter>
          </CredenzaContent>
       </Credenza>
@@ -72,7 +80,9 @@ export function CreateApiKeyCredenza({
    const [alertOpen, setAlertOpen] = useState(false);
    const trpc = useTRPC();
    const schema = z.object({
-      name: z.string(translate("common.form.field-required")).min(1, translate("common.form.field-required")),
+      name: z
+         .string(translate("common.form.field-required"))
+         .min(1, translate("common.form.field-required")),
    });
    const queryClient = useQueryClient();
    const createApiKey = useCallback(
@@ -83,7 +93,9 @@ export function CreateApiKeyCredenza({
             },
             {
                onSuccess: ({ data }) => {
-                  toast.success(translate("pages.api-key.messages.create-success"));
+                  toast.success(
+                     translate("pages.api-key.messages.create-success"),
+                  );
                   if (data?.key) setNewApiKey(data.key);
                   setAlertOpen(true);
                   queryClient.invalidateQueries({
@@ -125,14 +137,20 @@ export function CreateApiKeyCredenza({
          <Credenza open={open} onOpenChange={onOpenChange}>
             <CredenzaContent>
                <CredenzaHeader>
-                  <CredenzaTitle>{translate("pages.api-key.modals.create.title")}</CredenzaTitle>
+                  <CredenzaTitle>
+                     {translate("pages.api-key.modals.create.title")}
+                  </CredenzaTitle>
                </CredenzaHeader>
                <form onSubmit={(e) => handleSubmit(e)}>
                   <CredenzaBody>
                      <form.AppField name="name">
                         {(field) => (
                            <field.FieldContainer>
-                              <field.FieldLabel>{translate("pages.api-key.modals.create.name-label")}</field.FieldLabel>
+                              <field.FieldLabel>
+                                 {translate(
+                                    "pages.api-key.modals.create.name-label",
+                                 )}
+                              </field.FieldLabel>
                               <Input
                                  id={field.name}
                                  name={field.name}
@@ -140,7 +158,9 @@ export function CreateApiKeyCredenza({
                                  onChange={(e) =>
                                     field.handleChange(e.target.value)
                                  }
-                                 placeholder={translate("pages.api-key.modals.create.name-placeholder")}
+                                 placeholder={translate(
+                                    "pages.api-key.modals.create.name-placeholder",
+                                 )}
                                  value={field.state.value}
                               />
                               <field.FieldMessage />

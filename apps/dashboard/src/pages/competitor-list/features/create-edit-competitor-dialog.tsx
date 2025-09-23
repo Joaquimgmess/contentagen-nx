@@ -69,7 +69,9 @@ export function CreateEditCompetitorDialog({
    const createCompetitorMutation = useMutation(
       trpc.competitor.create.mutationOptions({
          onSuccess: async (data) => {
-            toast.success(translate("pages.competitor-list.messages.create-success"));
+            toast.success(
+               translate("pages.competitor-list.messages.create-success"),
+            );
             await queryClient.invalidateQueries({
                queryKey: trpc.competitor.list.queryKey(),
             });
@@ -83,7 +85,11 @@ export function CreateEditCompetitorDialog({
             form.reset();
          },
          onError: (error) => {
-            toast.error(translate("pages.competitor-list.messages.create-error", { error: error.message }));
+            toast.error(
+               translate("pages.competitor-list.messages.create-error", {
+                  error: error.message,
+               }),
+            );
          },
       }),
    );
@@ -91,7 +97,9 @@ export function CreateEditCompetitorDialog({
    const updateCompetitorMutation = useMutation(
       trpc.competitor.update.mutationOptions({
          onSuccess: async () => {
-            toast.success(translate("pages.competitor-list.messages.update-success"));
+            toast.success(
+               translate("pages.competitor-list.messages.update-success"),
+            );
             await queryClient.invalidateQueries({
                queryKey: trpc.competitor.list.queryKey(),
             });
@@ -102,7 +110,11 @@ export function CreateEditCompetitorDialog({
             form.reset();
          },
          onError: (error) => {
-            toast.error(translate("pages.competitor-list.messages.update-error", { error: error.message }));
+            toast.error(
+               translate("pages.competitor-list.messages.update-error", {
+                  error: error.message,
+               }),
+            );
          },
       }),
    );
@@ -115,12 +127,22 @@ export function CreateEditCompetitorDialog({
          <CredenzaContent className="sm:max-w-[425px]">
             <CredenzaHeader>
                <CredenzaTitle>
-                  {competitor ? translate("pages.competitor-list.modals.create-edit.edit-title") : translate("pages.competitor-list.modals.create-edit.create-title")}
+                  {competitor
+                     ? translate(
+                          "pages.competitor-list.modals.create-edit.edit-title",
+                       )
+                     : translate(
+                          "pages.competitor-list.modals.create-edit.create-title",
+                       )}
                </CredenzaTitle>
                <CredenzaDescription>
                   {competitor
-                     ? translate("pages.competitor-list.modals.create-edit.edit-description")
-                     : translate("pages.competitor-list.modals.create-edit.create-description")}
+                     ? translate(
+                          "pages.competitor-list.modals.create-edit.edit-description",
+                       )
+                     : translate(
+                          "pages.competitor-list.modals.create-edit.create-description",
+                       )}
                </CredenzaDescription>
             </CredenzaHeader>
             <form onSubmit={handleSubmit}>
@@ -128,9 +150,15 @@ export function CreateEditCompetitorDialog({
                   <form.AppField name="websiteUrl">
                      {(field) => (
                         <field.FieldContainer>
-                           <field.FieldLabel>{translate("pages.competitor-list.modals.create-edit.website-url-label")}</field.FieldLabel>
+                           <field.FieldLabel>
+                              {translate(
+                                 "pages.competitor-list.modals.create-edit.website-url-label",
+                              )}
+                           </field.FieldLabel>
                            <Input
-                              placeholder={translate("pages.competitor-list.modals.create-edit.website-url-placeholder")}
+                              placeholder={translate(
+                                 "pages.competitor-list.modals.create-edit.website-url-placeholder",
+                              )}
                               value={field.state.value}
                               onChange={(e) =>
                                  field.handleChange(e.target.value)
@@ -149,14 +177,22 @@ export function CreateEditCompetitorDialog({
                      onClick={() => onOpenChange(false)}
                      disabled={isLoading}
                   >
-                     {translate("pages.competitor-list.modals.create-edit.cancel")}
+                     {translate(
+                        "pages.competitor-list.modals.create-edit.cancel",
+                     )}
                   </Button>
                   <Button type="submit" disabled={isLoading}>
                      {isLoading
-                        ? translate("pages.competitor-list.modals.create-edit.saving")
+                        ? translate(
+                             "pages.competitor-list.modals.create-edit.saving",
+                          )
                         : competitor
-                          ? translate("pages.competitor-list.modals.create-edit.update")
-                          : translate("pages.competitor-list.modals.create-edit.create")}
+                          ? translate(
+                               "pages.competitor-list.modals.create-edit.update",
+                            )
+                          : translate(
+                               "pages.competitor-list.modals.create-edit.create",
+                            )}
                   </Button>
                </CredenzaFooter>
             </form>

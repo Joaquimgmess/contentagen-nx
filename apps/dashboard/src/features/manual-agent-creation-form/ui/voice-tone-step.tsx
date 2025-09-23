@@ -16,7 +16,9 @@ const getCommunicationExample = (style: string): string => {
       case "third_person":
          return `**${translate("pages.agent-creation-form.voice-tone.third-person-example")}**\n\n> ${translate("pages.agent-creation-form.voice-tone.third-person-text.line1")}\n> ${translate("pages.agent-creation-form.voice-tone.third-person-text.line2")}\n> ${translate("pages.agent-creation-form.voice-tone.third-person-text.line3")}`;
       default:
-         return translate("pages.agent-creation-form.voice-tone.assistance-prompt");
+         return translate(
+            "pages.agent-creation-form.voice-tone.assistance-prompt",
+         );
    }
 };
 
@@ -28,7 +30,11 @@ export function VoiceToneStep({ form }: { form: AgentForm }) {
       <form.AppField name="voice">
          {(field) => (
             <field.FieldContainer className="space-y-2">
-               <field.FieldLabel>{translate("pages.agent-creation-form.voice-tone.communication-style.label")}</field.FieldLabel>
+               <field.FieldLabel>
+                  {translate(
+                     "pages.agent-creation-form.voice-tone.communication-style.label",
+                  )}
+               </field.FieldLabel>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   {voiceOptions.map((option) => (
                      <button
@@ -57,7 +63,9 @@ export function VoiceToneStep({ form }: { form: AgentForm }) {
                {field.state.value?.communication && (
                   <div className="mt-4">
                      <div className="text-xs font-semibold mb-1 text-muted-foreground">
-                        {translate("pages.agent-creation-form.voice-tone.example-communication")}
+                        {translate(
+                           "pages.agent-creation-form.voice-tone.example-communication",
+                        )}
                      </div>
                      <Markdown
                         content={getCommunicationExample(

@@ -27,7 +27,9 @@ const getLanguageLabel = (value: string): string => {
 
    const translationKey = keyMap[value];
    if (translationKey) {
-      return translate(`pages.agent-creation-form.language.languages.${translationKey}`);
+      return translate(
+         `pages.agent-creation-form.language.languages.${translationKey}`,
+      );
    }
    return value; // fallback
 };
@@ -42,7 +44,11 @@ export function LanguageStep({ form }: { form: AgentForm }) {
          <form.AppField name="language.primary">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>{translate("pages.agent-creation-form.language.primary-language.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.agent-creation-form.language.primary-language.label",
+                     )}
+                  </field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                      {primaryLanguageOptions.map((option) => (
                         <button
@@ -78,7 +84,11 @@ export function LanguageStep({ form }: { form: AgentForm }) {
 
                return (
                   <field.FieldContainer className="space-y-2">
-                     <field.FieldLabel>{translate("pages.agent-creation-form.language.variant.label")}</field.FieldLabel>
+                     <field.FieldLabel>
+                        {translate(
+                           "pages.agent-creation-form.language.variant.label",
+                        )}
+                     </field.FieldLabel>
                      <Select
                         value={field.state.value || "none"}
                         onValueChange={(value) => {
@@ -101,13 +111,21 @@ export function LanguageStep({ form }: { form: AgentForm }) {
                            <SelectValue
                               placeholder={
                                  primaryLanguage
-                                    ? translate("pages.agent-creation-form.language.variant.placeholder")
-                                    : translate("pages.agent-creation-form.language.variant.placeholder-select-language")
+                                    ? translate(
+                                         "pages.agent-creation-form.language.variant.placeholder",
+                                      )
+                                    : translate(
+                                         "pages.agent-creation-form.language.variant.placeholder-select-language",
+                                      )
                               }
                            />
                         </SelectTrigger>
                         <SelectContent>
-                           <SelectItem value="none">{translate("pages.agent-creation-form.language.none")}</SelectItem>
+                           <SelectItem value="none">
+                              {translate(
+                                 "pages.agent-creation-form.language.none",
+                              )}
+                           </SelectItem>
                            {filteredVariants.map((variant) => (
                               <SelectItem key={variant} value={variant}>
                                  {getLanguageLabel(variant)}

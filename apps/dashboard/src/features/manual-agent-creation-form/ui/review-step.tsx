@@ -57,7 +57,9 @@ export function ReviewStep({ form }: { form: AgentForm }) {
       },
       {
          icon: <Brain className="w-4 h-4" />,
-         label: translate("pages.agent-creation-form.review.fields.brand-integration"),
+         label: translate(
+            "pages.agent-creation-form.review.fields.brand-integration",
+         ),
          value: formatValue(
             String(form.getFieldValue("brand.integrationStyle") ?? ""),
          ),
@@ -71,7 +73,9 @@ export function ReviewStep({ form }: { form: AgentForm }) {
       },
       {
          icon: <PaintbrushIcon className="w-4 h-4" />,
-         label: translate("pages.agent-creation-form.review.fields.formatting-style"),
+         label: translate(
+            "pages.agent-creation-form.review.fields.formatting-style",
+         ),
          value: formatValue(
             String(form.getFieldValue("formatting.style") ?? ""),
          ),
@@ -81,7 +85,9 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    // Communication style as a double-width item
    const communicationStyle = {
       icon: <SpeakerIcon className="w-4 h-4" />,
-      label: translate("pages.agent-creation-form.review.fields.communication-style"),
+      label: translate(
+         "pages.agent-creation-form.review.fields.communication-style",
+      ),
       value: formatValue(
          String(form.getFieldValue("voice.communication") ?? ""),
       ),
@@ -94,7 +100,9 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    if (languageVariant) {
       optionalItems.push({
          icon: <GlobeIcon className="w-4 h-4" />,
-         label: translate("pages.agent-creation-form.review.fields.language-variant"),
+         label: translate(
+            "pages.agent-creation-form.review.fields.language-variant",
+         ),
          value: formatValue(String(languageVariant)),
       });
    }
@@ -118,7 +126,9 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    if (description) {
       fullWidthItems.push({
          icon: <FileTextIcon className="w-4 h-4" />,
-         label: translate("pages.agent-creation-form.review.fields.description"),
+         label: translate(
+            "pages.agent-creation-form.review.fields.description",
+         ),
          value: String(description).replace(/<[^>]*>/g, ""),
       });
    }
@@ -127,7 +137,9 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    if (blacklistWords) {
       fullWidthItems.push({
          icon: <Brain className="w-4 h-4" />,
-         label: translate("pages.agent-creation-form.review.fields.blacklist-words"),
+         label: translate(
+            "pages.agent-creation-form.review.fields.blacklist-words",
+         ),
          value: String(blacklistWords).replace(/<[^>]*>/g, ""),
       });
    }
@@ -183,7 +195,9 @@ export function ReviewStepSubscribe({ form }: { form: AgentForm }) {
       >
          {({ canSubmit, isSubmitting }) => (
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-               {isSubmitting ? translate("pages.agent-creation-form.review.submitting") : translate("pages.agent-creation-form.review.submit")}
+               {isSubmitting
+                  ? translate("pages.agent-creation-form.review.submitting")
+                  : translate("pages.agent-creation-form.review.submit")}
             </Button>
          )}
       </form.Subscribe>

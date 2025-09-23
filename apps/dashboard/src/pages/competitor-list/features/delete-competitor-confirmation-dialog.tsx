@@ -23,14 +23,22 @@ export function DeleteCompetitorConfirmationDialog({
    const deleteCompetitorMutation = useMutation(
       trpc.competitor.delete.mutationOptions({
          onSuccess: () => {
-            toast.success(translate("pages.competitor-list.messages.delete-success", { name: competitor.name }));
+            toast.success(
+               translate("pages.competitor-list.messages.delete-success", {
+                  name: competitor.name,
+               }),
+            );
             queryClient.invalidateQueries({
                queryKey: trpc.competitor.list.queryKey(),
             });
             onOpenChange(false);
          },
          onError: (error) => {
-            toast.error(translate("pages.competitor-list.messages.delete-error", { error: error.message }));
+            toast.error(
+               translate("pages.competitor-list.messages.delete-error", {
+                  error: error.message,
+               }),
+            );
          },
       }),
    );
@@ -46,7 +54,9 @@ export function DeleteCompetitorConfirmationDialog({
          onDelete={handleDelete}
          onCancel={() => onOpenChange(false)}
          title={translate("pages.competitor-list.modals.delete.title")}
-         message={translate("pages.competitor-list.modals.delete.description", { name: competitor.name })}
+         message={translate("pages.competitor-list.modals.delete.description", {
+            name: competitor.name,
+         })}
          icon={AlertTriangleIcon}
          variant="destructive"
       />

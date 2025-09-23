@@ -17,7 +17,11 @@ export function PurposeStep({ form }: { form: AgentForm }) {
       <form.AppField name="purpose">
          {(field) => (
             <field.FieldContainer className="space-y-2">
-               <field.FieldLabel>{translate("pages.agent-creation-form.purpose.primary-channel.label")}</field.FieldLabel>
+               <field.FieldLabel>
+                  {translate(
+                     "pages.agent-creation-form.purpose.primary-channel.label",
+                  )}
+               </field.FieldLabel>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                   {channelOptions.map((option) => (
                      <button

@@ -12,7 +12,12 @@ const getIntegrationExample = (style: string): string => {
    const titleKey = `${exampleKey}.title`;
    const textKey = `${exampleKey}.text`;
 
-   if (style === "strict_guideline" || style === "flexible_guideline" || style === "reference_only" || style === "creative_blend") {
+   if (
+      style === "strict_guideline" ||
+      style === "flexible_guideline" ||
+      style === "reference_only" ||
+      style === "creative_blend"
+   ) {
       const title = translate(titleKey);
       const text = translate(textKey);
       return `**${title}**\n\n${text}`;
@@ -39,7 +44,11 @@ export function BrandStep({ form }: { form: AgentForm }) {
          <form.AppField name="brand.integrationStyle">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>{translate("pages.agent-creation-form.brand.integration-style.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.agent-creation-form.brand.integration-style.label",
+                     )}
+                  </field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                      {integrationStyleOptions.map((option) => (
                         <button
@@ -65,7 +74,9 @@ export function BrandStep({ form }: { form: AgentForm }) {
                   {field.state.value && (
                      <div className="mt-4">
                         <div className="text-xs font-semibold mb-1 text-muted-foreground">
-                           {translate("pages.agent-creation-form.brand.example-integration")}
+                           {translate(
+                              "pages.agent-creation-form.brand.example-integration",
+                           )}
                         </div>
                         <Markdown
                            content={getIntegrationExample(field.state.value)}
@@ -79,7 +90,9 @@ export function BrandStep({ form }: { form: AgentForm }) {
             {(field) => (
                <field.FieldContainer className="space-y-2">
                   <field.FieldLabel>
-                     {translate("pages.agent-creation-form.brand.blacklist-words.label")}
+                     {translate(
+                        "pages.agent-creation-form.brand.blacklist-words.label",
+                     )}
                   </field.FieldLabel>
                   <TiptapEditor
                      value={
@@ -91,7 +104,9 @@ export function BrandStep({ form }: { form: AgentForm }) {
                      onBlur={field.handleBlur}
                      name={field.name}
                      id={field.name}
-                     placeholder={translate("pages.agent-creation-form.brand.blacklist-words.placeholder")}
+                     placeholder={translate(
+                        "pages.agent-creation-form.brand.blacklist-words.placeholder",
+                     )}
                      className="w-full"
                      error={
                         field.state.meta.isTouched &&

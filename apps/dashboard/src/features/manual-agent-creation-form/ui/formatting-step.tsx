@@ -16,12 +16,20 @@ const getFormattingExample = (style: string, listStyle?: string): string => {
    // Generate translated list style examples
    let listStyleExample = "";
    if (listStyle === "bullets") {
-      const title = translate("pages.agent-creation-form.formatting.examples.list-style.bullets.title");
-      const items = translate("pages.agent-creation-form.formatting.examples.list-style.bullets.items") as string[];
+      const title = translate(
+         "pages.agent-creation-form.formatting.examples.list-style.bullets.title",
+      );
+      const items = translate(
+         "pages.agent-creation-form.formatting.examples.list-style.bullets.items",
+      ) as string[];
       listStyleExample = `**${title}**\n- ${items[0]}\n- ${items[1]}\n- ${items[2]}`;
    } else if (listStyle === "numbered") {
-      const title = translate("pages.agent-creation-form.formatting.examples.list-style.numbered.title");
-      const items = translate("pages.agent-creation-form.formatting.examples.list-style.numbered.items") as string[];
+      const title = translate(
+         "pages.agent-creation-form.formatting.examples.list-style.numbered.title",
+      );
+      const items = translate(
+         "pages.agent-creation-form.formatting.examples.list-style.numbered.items",
+      ) as string[];
       listStyleExample = `**${title}**\n1. ${items[0]}\n2. ${items[1]}\n3. ${items[2]}`;
    }
 
@@ -98,7 +106,11 @@ export function FormattingStep({ form }: { form: AgentForm }) {
          <form.AppField name="formatting.style">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>{translate("pages.agent-creation-form.formatting.style.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.agent-creation-form.formatting.style.label",
+                     )}
+                  </field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                      {styleOptions.map((option) => (
                         <button
@@ -125,7 +137,11 @@ export function FormattingStep({ form }: { form: AgentForm }) {
          <form.AppField name="formatting.listStyle">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>{translate("pages.agent-creation-form.formatting.list-style")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.agent-creation-form.formatting.list-style",
+                     )}
+                  </field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                      {listStyleOptions.map((option) => (
                         <button
@@ -160,7 +176,9 @@ export function FormattingStep({ form }: { form: AgentForm }) {
                style ? (
                   <div className="mt-4">
                      <div className="text-xs font-semibold mb-1 text-muted-foreground">
-                        {translate("pages.agent-creation-form.formatting.example-formatting")}
+                        {translate(
+                           "pages.agent-creation-form.formatting.example-formatting",
+                        )}
                      </div>
                      <Markdown
                         content={getFormattingExample(style, listStyle)}
@@ -190,7 +208,11 @@ export function FormattingStepSubscribe({
             const isValid = value && (!errors || errors.length === 0);
             return (
                <Button onClick={next} type="button" disabled={!isValid}>
-                  {isLastStep ? translate("pages.agent-creation-form.actions.create-agent") : translate("pages.agent-creation-form.actions.next")}
+                  {isLastStep
+                     ? translate(
+                          "pages.agent-creation-form.actions.create-agent",
+                       )
+                     : translate("pages.agent-creation-form.actions.next")}
                </Button>
             );
          }}

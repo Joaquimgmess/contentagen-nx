@@ -44,7 +44,7 @@ const resources = {
       "pages.content-request-form": contentRequestFormEnUs,
       "pages.agent-create": agentCreateEnUs,
       "pages.agent-edit": agentEditEnUs,
-      "common": commonEnUs,
+      common: commonEnUs,
    },
 };
 

@@ -46,12 +46,18 @@ export function BulkActionsCredenza({
                result.totalSelected &&
                result.approvableCount &&
                result.approvableCount < result.totalSelected
-                  ? translate("pages.ideas-list.bulk-actions.approve.success-partial", {
-                       approved: result.approvedCount,
-                       total: result.totalSelected,
-                       skipped: result.totalSelected - result.approvableCount
-                    })
-                  : translate("pages.ideas-list.bulk-actions.approve.success", { count: result.approvedCount });
+                  ? translate(
+                       "pages.ideas-list.bulk-actions.approve.success-partial",
+                       {
+                          approved: result.approvedCount,
+                          total: result.totalSelected,
+                          skipped:
+                             result.totalSelected - result.approvableCount,
+                       },
+                    )
+                  : translate("pages.ideas-list.bulk-actions.approve.success", {
+                       count: result.approvedCount,
+                    });
             toast.success(message);
             onOpenChange(false);
             onClearSelection();
@@ -60,7 +66,9 @@ export function BulkActionsCredenza({
             });
          },
          onError: (error) => {
-            toast.error(translate("pages.ideas-list.bulk-actions.approve.error"));
+            toast.error(
+               translate("pages.ideas-list.bulk-actions.approve.error"),
+            );
             console.error("Bulk approve error:", error);
          },
       }),
@@ -69,7 +77,9 @@ export function BulkActionsCredenza({
    const bulkDeleteMutation = useMutation(
       trpc.ideas.delete.mutationOptions({
          onSuccess: async () => {
-            toast.success(translate("pages.ideas-list.bulk-actions.delete.success"));
+            toast.success(
+               translate("pages.ideas-list.bulk-actions.delete.success"),
+            );
             onOpenChange(false);
             onClearSelection();
             await queryClient.invalidateQueries({
@@ -77,7 +87,9 @@ export function BulkActionsCredenza({
             });
          },
          onError: (error) => {
-            toast.error(translate("pages.ideas-list.bulk-actions.delete.error"));
+            toast.error(
+               translate("pages.ideas-list.bulk-actions.delete.error"),
+            );
             console.error("Bulk delete error:", error);
          },
       }),
@@ -111,9 +123,13 @@ export function BulkActionsCredenza({
          <Credenza open={open} onOpenChange={onOpenChange}>
             <CredenzaContent>
                <CredenzaHeader>
-                  <CredenzaTitle>{translate("pages.ideas-list.bulk-actions.title")}</CredenzaTitle>
+                  <CredenzaTitle>
+                     {translate("pages.ideas-list.bulk-actions.title")}
+                  </CredenzaTitle>
                   <CredenzaDescription>
-                     {translate("pages.ideas-list.bulk-actions.description", { count: selectedItems.length })}
+                     {translate("pages.ideas-list.bulk-actions.description", {
+                        count: selectedItems.length,
+                     })}
                   </CredenzaDescription>
                </CredenzaHeader>
                <CredenzaBody className="grid grid-cols-2 gap-4">
@@ -126,9 +142,16 @@ export function BulkActionsCredenza({
                      }
                   >
                      <CheckCircle className="h-8 w-8" />
-                     <span className="text-sm font-medium">{translate("pages.ideas-list.bulk-actions.approve.label")}</span>
+                     <span className="text-sm font-medium">
+                        {translate(
+                           "pages.ideas-list.bulk-actions.approve.label",
+                        )}
+                     </span>
                      <span className="text-xs text-muted-foreground">
-                        {translate("pages.ideas-list.bulk-actions.approve.items", { count: selectedItems.length })}
+                        {translate(
+                           "pages.ideas-list.bulk-actions.approve.items",
+                           { count: selectedItems.length },
+                        )}
                      </span>
                   </SquaredIconButton>
 
@@ -142,9 +165,16 @@ export function BulkActionsCredenza({
                      destructive
                   >
                      <Trash2 className="h-8 w-8" />
-                     <span className="text-sm font-medium">{translate("pages.ideas-list.bulk-actions.delete.label")}</span>
+                     <span className="text-sm font-medium">
+                        {translate(
+                           "pages.ideas-list.bulk-actions.delete.label",
+                        )}
+                     </span>
                      <span className="text-xs text-muted-foreground">
-                        {translate("pages.ideas-list.bulk-actions.delete.items", { count: selectedItems.length })}
+                        {translate(
+                           "pages.ideas-list.bulk-actions.delete.items",
+                           { count: selectedItems.length },
+                        )}
                      </span>
                   </SquaredIconButton>
                </CredenzaBody>

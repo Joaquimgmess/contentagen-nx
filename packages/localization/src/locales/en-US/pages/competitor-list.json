@@ -33,8 +33,12 @@
       "analyzing": "Analyzing"
    },
    "messages": {
-      "delete-success": "Competitor deleted successfully!",
-      "delete-error": "Failed to delete competitor. Please try again.",
+      "delete-success": "{{name}} has been deleted successfully.",
+      "delete-error": "Failed to delete competitor: {{error}}",
+      "create-success": "Competitor created successfully!",
+      "create-error": "Failed to create competitor: {{error}}",
+      "update-success": "Competitor updated successfully!",
+      "update-error": "Failed to update competitor: {{error}}",
       "analyze-success": "Analysis started successfully!",
       "analyze-error": "Failed to start analysis. Please try again."
    },
@@ -44,9 +48,21 @@
    "modals": {
       "delete": {
          "title": "Delete Competitor",
-         "description": "Are you sure you want to delete this competitor? This action cannot be undone.",
+         "description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone and will remove all associated feature tracking data.",
          "confirm": "Delete",
          "cancel": "Cancel"
+      },
+      "create-edit": {
+         "create-title": "Add New Competitor",
+         "edit-title": "Edit Competitor",
+         "create-description": "Add a new competitor to track and analyze.",
+         "edit-description": "Update the competitor information below.",
+         "website-url-label": "Website URL *",
+         "website-url-placeholder": "https://example.com",
+         "cancel": "Cancel",
+         "create": "Create",
+         "update": "Update",
+         "saving": "Saving..."
       }
    }
 }

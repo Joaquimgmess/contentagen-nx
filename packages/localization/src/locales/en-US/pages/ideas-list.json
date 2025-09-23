@@ -13,6 +13,21 @@
       }
    },
    "bulk-actions": {
+      "title": "Bulk Actions",
+      "description": "Perform actions on {{count}} selected items",
+      "approve": {
+         "label": "Approve",
+         "items": "{{count}} items",
+         "success": "Successfully approved {{count}} ideas",
+         "success-partial": "Successfully approved {{approved}} out of {{total}} selected ideas ({{skipped}} were already approved or in wrong status)",
+         "error": "Failed to approve ideas"
+      },
+      "delete": {
+         "label": "Delete",
+         "items": "{{count}} items",
+         "success": "Successfully deleted ideas",
+         "error": "Failed to delete ideas"
+      },
       "delete-confirmation": {
          "message": "This will permanently delete {{count}} idea",
          "message_plural": "This will permanently delete {{count}} ideas"

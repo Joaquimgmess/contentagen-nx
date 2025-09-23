@@ -1,0 +1,42 @@
+{
+   "title": "Competitor Details",
+   "loading": {
+      "steps": {
+         "pending": {
+            "label": "Initializing",
+            "description": "Setting up competitor analysis"
+         },
+         "crawling": {
+            "label": "Crawling",
+            "description": "Gathering data from competitor website"
+         },
+         "analyzing": {
+            "label": "Analyzing",
+            "description": "Extracting features and insights"
+         }
+      },
+      "progress": {
+         "step-counter": "Step {{current}} of {{total}}",
+         "percentage": "{{percent}}% complete",
+         "fallback-message": "Processing competitor data"
+      }
+   },
+   "actions": {
+      "card": {
+         "title": "Quick Actions",
+         "description": "Perform common tasks related to the competitor."
+      },
+      "buttons": {
+         "visit-website": "Visit Website",
+         "refresh-analysis": "Refresh Analysis",
+         "analyzing": "Analyzing...",
+         "upload-logo": "Upload Logo",
+         "edit-competitor": "Edit Competitor",
+         "delete-competitor": "Delete Competitor"
+      }
+   },
+   "messages": {
+      "analysis-started": "Competitor analysis started!",
+      "analysis-error": "Error starting analysis: {{error}}"
+   }
+}

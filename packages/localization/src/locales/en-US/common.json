@@ -1,0 +1,62 @@
+{
+   "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "update": "Update",
+      "submit": "Submit",
+      "view": "View",
+      "back": "Back",
+      "next": "Next",
+      "loading": "Loading",
+      "saving": "Saving...",
+      "submitting": "Submitting...",
+      "updating": "Updating...",
+      "creating": "Creating...",
+      "deleting": "Deleting..."
+   },
+   "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "completed": "Completed",
+      "processing": "Processing",
+      "analyzing": "Analyzing",
+      "loading": "Loading..."
+   },
+   "messages": {
+      "success": "Success",
+      "error": "Error",
+      "unknown-error": "An unknown error occurred",
+      "operation-success": "Operation completed successfully",
+      "operation-error": "Operation failed. Please try again.",
+      "loading": "Loading...",
+      "no-data": "No data available",
+      "confirm-action": "Are you sure you want to continue?",
+      "action-cannot-be-undone": "This action cannot be undone."
+   },
+   "form": {
+      "required": "Required",
+      "optional": "Optional",
+      "invalid-email": "Please enter a valid email address",
+      "invalid-url": "Please enter a valid URL",
+      "min-length": "Must be at least {{min}} characters",
+      "max-length": "Must be no more than {{max}} characters",
+      "field-required": "This field is required"
+   },
+   "navigation": {
+      "home": "Home",
+      "back": "Back",
+      "close": "Close",
+      "open": "Open"
+   },
+   "time": {
+      "created": "Created",
+      "updated": "Updated",
+      "last-modified": "Last Modified",
+      "date": "Date",
+      "time": "Time"
+   }
+}

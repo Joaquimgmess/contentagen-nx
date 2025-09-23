@@ -10,14 +10,20 @@ export function BasicInfoStep({ form }: { form: AgentForm }) {
          <form.AppField name="metadata.name">
             {(field) => (
                <field.FieldContainer>
-                  <field.FieldLabel>{translate("pages.agent-creation-form.basic-info.agent-name.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.agent-creation-form.basic-info.agent-name.label",
+                     )}
+                  </field.FieldLabel>
                   <Input
                      autoComplete="off"
                      id={field.name}
                      name={field.name}
                      onBlur={field.handleBlur}
                      onChange={(e) => field.handleChange(e.target.value)}
-                     placeholder={translate("pages.agent-creation-form.basic-info.agent-name.placeholder")}
+                     placeholder={translate(
+                        "pages.agent-creation-form.basic-info.agent-name.placeholder",
+                     )}
                      value={field.state.value}
                      className="w-full"
                   />
@@ -28,7 +34,11 @@ export function BasicInfoStep({ form }: { form: AgentForm }) {
          <form.AppField name="metadata.description">
             {(field) => (
                <field.FieldContainer>
-                  <field.FieldLabel>{translate("pages.agent-creation-form.basic-info.description.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.agent-creation-form.basic-info.description.label",
+                     )}
+                  </field.FieldLabel>
                   <TiptapEditor
                      value={field.state.value || "<p></p>"}
                      onChange={(val) => {
@@ -37,7 +47,9 @@ export function BasicInfoStep({ form }: { form: AgentForm }) {
                      onBlur={field.handleBlur}
                      name={field.name}
                      id={field.name}
-                     placeholder={translate("pages.agent-creation-form.basic-info.description.placeholder")}
+                     placeholder={translate(
+                        "pages.agent-creation-form.basic-info.description.placeholder",
+                     )}
                      className="w-full"
                   />
                   <field.FieldMessage />

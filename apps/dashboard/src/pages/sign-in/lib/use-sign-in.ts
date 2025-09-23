@@ -11,13 +11,17 @@ type codes = "INVALID_EMAIL_OR_PASSWORD" | "default";
 export const useSignIn = () => {
    const schema = z.object({
       email: z.email(translate("pages.sign-in.validation.email-invalid")),
-      password: z.string().min(8, translate("pages.sign-in.validation.password-min-length")),
+      password: z
+         .string()
+         .min(8, translate("pages.sign-in.validation.password-min-length")),
    });
    const router = useRouter();
    const getErrorMessage = useMemo(
       () => ({
          default: translate("pages.sign-in.errors.unknown"),
-         INVALID_EMAIL_OR_PASSWORD: translate("pages.sign-in.errors.invalid-credentials"),
+         INVALID_EMAIL_OR_PASSWORD: translate(
+            "pages.sign-in.errors.invalid-credentials",
+         ),
       }),
       [],
    );
@@ -30,7 +34,8 @@ export const useSignIn = () => {
          {
             onError: ({ error }) => {
                toast.error(
-                  getErrorMessage[error.code as codes] || translate("pages.sign-in.errors.unknown"),
+                  getErrorMessage[error.code as codes] ||
+                     translate("pages.sign-in.errors.unknown"),
                   {
                      id: "sign-in-toast",
                   },
@@ -54,7 +59,8 @@ export const useSignIn = () => {
             {
                onError: ({ error }) => {
                   toast.error(
-                     getErrorMessage[error.code as codes] || translate("pages.sign-in.errors.unknown"),
+                     getErrorMessage[error.code as codes] ||
+                        translate("pages.sign-in.errors.unknown"),
                      {
                         id: "sign-in-toast",
                      },
@@ -67,7 +73,10 @@ export const useSignIn = () => {
                },
                onSuccess: ({ data }) => {
                   toast.success(translate("pages.sign-in.messages.success"), {
-                     description: translate("pages.sign-in.messages.welcome", { brand: brandConfig.name, name: data.user.name }),
+                     description: translate("pages.sign-in.messages.welcome", {
+                        brand: brandConfig.name,
+                        name: data.user.name,
+                     }),
                      id: "sign-in-toast",
                   });
                   router.navigate({

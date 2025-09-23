@@ -26,7 +26,14 @@ import { betterAuthClient } from "@/integrations/clients";
 import { translate } from "@packages/localization";
 
 const profileSchema = z.object({
-   name: z.string().min(1, translate("pages.profile.forms.update-profile.validation.name-required")),
+   name: z
+      .string()
+      .min(
+         1,
+         translate(
+            "pages.profile.forms.update-profile.validation.name-required",
+         ),
+      ),
    image: z.any().nullable(),
 });
 
@@ -58,13 +65,26 @@ export function UpdateProfileForm({
             },
             {
                onError: ({ error }: any) => {
-                  toast.error(error?.message || translate("pages.profile.forms.update-profile.messages.error"));
+                  toast.error(
+                     error?.message ||
+                        translate(
+                           "pages.profile.forms.update-profile.messages.error",
+                        ),
+                  );
                },
                onRequest: () => {
-                  toast.loading(translate("pages.profile.forms.update-profile.messages.loading"));
+                  toast.loading(
+                     translate(
+                        "pages.profile.forms.update-profile.messages.loading",
+                     ),
+                  );
                },
                onSuccess: () => {
-                  toast.success(translate("pages.profile.forms.update-profile.messages.success"));
+                  toast.success(
+                     translate(
+                        "pages.profile.forms.update-profile.messages.success",
+                     ),
+                  );
                   formApi.reset();
                   onOpenChange(false);
                },
@@ -84,7 +104,9 @@ export function UpdateProfileForm({
       <Credenza open={open} onOpenChange={onOpenChange}>
          <CredenzaContent>
             <CredenzaHeader>
-               <CredenzaTitle>{translate("pages.profile.forms.update-profile.title")}</CredenzaTitle>
+               <CredenzaTitle>
+                  {translate("pages.profile.forms.update-profile.title")}
+               </CredenzaTitle>
             </CredenzaHeader>
             <form
                onSubmit={form.handleSubmit}
@@ -94,13 +116,19 @@ export function UpdateProfileForm({
                <form.AppField name="name">
                   {(field) => (
                      <field.FieldContainer>
-                        <field.FieldLabel>{translate("pages.profile.forms.update-profile.fields.name.label")}</field.FieldLabel>
+                        <field.FieldLabel>
+                           {translate(
+                              "pages.profile.forms.update-profile.fields.name.label",
+                           )}
+                        </field.FieldLabel>
                         <Input
                            id={field.name}
                            name={field.name}
                            type="text"
                            autoComplete="name"
-                           placeholder={translate("pages.profile.forms.update-profile.fields.name.placeholder")}
+                           placeholder={translate(
+                              "pages.profile.forms.update-profile.fields.name.placeholder",
+                           )}
                            value={field.state.value}
                            onBlur={field.handleBlur}
                            onChange={(e) => field.handleChange(e.target.value)}
@@ -110,7 +138,11 @@ export function UpdateProfileForm({
                   )}
                </form.AppField>{" "}
                <div>
-                  <label className="text-sm font-medium">{translate("pages.profile.forms.update-profile.fields.image.label")}</label>
+                  <label className="text-sm font-medium">
+                     {translate(
+                        "pages.profile.forms.update-profile.fields.image.label",
+                     )}
+                  </label>
                   <Dropzone
                      accept={{ "image/*": [] }}
                      maxFiles={1}
@@ -140,7 +172,9 @@ export function UpdateProfileForm({
                      variant="outline"
                      onClick={() => onOpenChange(false)}
                   >
-                     {translate("pages.profile.forms.update-profile.actions.cancel")}
+                     {translate(
+                        "pages.profile.forms.update-profile.actions.cancel",
+                     )}
                   </Button>
                   <form.Subscribe>
                      {(formState) => (
@@ -149,7 +183,9 @@ export function UpdateProfileForm({
                            onClick={() => setConfirmOpen(true)}
                            disabled={!formState.canSubmit}
                         >
-                           {translate("pages.profile.forms.update-profile.actions.save")}
+                           {translate(
+                              "pages.profile.forms.update-profile.actions.save",
+                           )}
                         </Button>
                      )}
                   </form.Subscribe>{" "}
@@ -158,14 +194,22 @@ export function UpdateProfileForm({
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                <AlertDialogContent>
                   <AlertDialogHeader>
-                     <AlertDialogTitle>{translate("pages.profile.forms.update-profile.confirm.title")}</AlertDialogTitle>
+                     <AlertDialogTitle>
+                        {translate(
+                           "pages.profile.forms.update-profile.confirm.title",
+                        )}
+                     </AlertDialogTitle>
                      <AlertDialogDescription>
-                        {translate("pages.profile.forms.update-profile.confirm.description")}
+                        {translate(
+                           "pages.profile.forms.update-profile.confirm.description",
+                        )}
                      </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                      <AlertDialogCancel onClick={() => setConfirmOpen(false)}>
-                        {translate("pages.profile.forms.update-profile.confirm.cancel")}
+                        {translate(
+                           "pages.profile.forms.update-profile.confirm.cancel",
+                        )}
                      </AlertDialogCancel>
                      <AlertDialogAction
                         onClick={() => {
@@ -173,7 +217,9 @@ export function UpdateProfileForm({
                            form.handleSubmit();
                         }}
                      >
-                        {translate("pages.profile.forms.update-profile.confirm.confirm")}
+                        {translate(
+                           "pages.profile.forms.update-profile.confirm.confirm",
+                        )}
                      </AlertDialogAction>
                   </AlertDialogFooter>
                </AlertDialogContent>

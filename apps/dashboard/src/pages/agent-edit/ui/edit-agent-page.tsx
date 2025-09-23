@@ -19,7 +19,10 @@ export function EditAgentPage() {
             });
          },
          onError: (error) => {
-            console.error(translate("pages.agent-edit.messages.error-console"), error);
+            console.error(
+               translate("pages.agent-edit.messages.error-console"),
+               error,
+            );
             toast.error(translate("pages.agent-edit.messages.error"));
          },
       }),

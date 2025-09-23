@@ -25,8 +25,22 @@ import { betterAuthClient } from "@/integrations/clients";
 import { translate } from "@packages/localization";
 
 const passwordSchema = z.object({
-   currentPassword: z.string().min(1, translate("pages.profile.forms.update-password.validation.current-required")),
-   newPassword: z.string().min(8, translate("pages.profile.forms.update-password.validation.new-min-length")),
+   currentPassword: z
+      .string()
+      .min(
+         1,
+         translate(
+            "pages.profile.forms.update-password.validation.current-required",
+         ),
+      ),
+   newPassword: z
+      .string()
+      .min(
+         8,
+         translate(
+            "pages.profile.forms.update-password.validation.new-min-length",
+         ),
+      ),
 });
 
 export function UpdatePasswordForm({
@@ -50,13 +64,26 @@ export function UpdatePasswordForm({
             },
             {
                onError: ({ error }: any) => {
-                  toast.error(error?.message || translate("pages.profile.forms.update-password.messages.error"));
+                  toast.error(
+                     error?.message ||
+                        translate(
+                           "pages.profile.forms.update-password.messages.error",
+                        ),
+                  );
                },
                onRequest: () => {
-                  toast.loading(translate("pages.profile.forms.update-password.messages.loading"));
+                  toast.loading(
+                     translate(
+                        "pages.profile.forms.update-password.messages.loading",
+                     ),
+                  );
                },
                onSuccess: () => {
-                  toast.success(translate("pages.profile.forms.update-password.messages.success"));
+                  toast.success(
+                     translate(
+                        "pages.profile.forms.update-password.messages.success",
+                     ),
+                  );
                   formApi.reset();
                   onOpenChange(false);
                },
@@ -76,7 +103,9 @@ export function UpdatePasswordForm({
       <Credenza open={open} onOpenChange={onOpenChange}>
          <CredenzaContent>
             <CredenzaHeader>
-               <CredenzaTitle>{translate("pages.profile.forms.update-password.title")}</CredenzaTitle>
+               <CredenzaTitle>
+                  {translate("pages.profile.forms.update-password.title")}
+               </CredenzaTitle>
             </CredenzaHeader>
             <form
                onSubmit={form.handleSubmit}
@@ -86,13 +115,19 @@ export function UpdatePasswordForm({
                <form.AppField name="currentPassword">
                   {(field) => (
                      <field.FieldContainer>
-                        <field.FieldLabel>{translate("pages.profile.forms.update-password.fields.current-password.label")}</field.FieldLabel>
+                        <field.FieldLabel>
+                           {translate(
+                              "pages.profile.forms.update-password.fields.current-password.label",
+                           )}
+                        </field.FieldLabel>
                         <Input
                            id={field.name}
                            name={field.name}
                            type="password"
                            autoComplete="current-password"
-                           placeholder={translate("pages.profile.forms.update-password.fields.current-password.placeholder")}
+                           placeholder={translate(
+                              "pages.profile.forms.update-password.fields.current-password.placeholder",
+                           )}
                            value={field.state.value}
                            onBlur={field.handleBlur}
                            onChange={(e) => field.handleChange(e.target.value)}
@@ -104,13 +139,19 @@ export function UpdatePasswordForm({
                <form.AppField name="newPassword">
                   {(field) => (
                      <field.FieldContainer>
-                        <field.FieldLabel>{translate("pages.profile.forms.update-password.fields.new-password.label")}</field.FieldLabel>
+                        <field.FieldLabel>
+                           {translate(
+                              "pages.profile.forms.update-password.fields.new-password.label",
+                           )}
+                        </field.FieldLabel>
                         <Input
                            id={field.name}
                            name={field.name}
                            type="password"
                            autoComplete="new-password"
-                           placeholder={translate("pages.profile.forms.update-password.fields.new-password.placeholder")}
+                           placeholder={translate(
+                              "pages.profile.forms.update-password.fields.new-password.placeholder",
+                           )}
                            value={field.state.value}
                            onBlur={field.handleBlur}
                            onChange={(e) => field.handleChange(e.target.value)}
@@ -125,7 +166,9 @@ export function UpdatePasswordForm({
                      variant="outline"
                      onClick={() => onOpenChange(false)}
                   >
-                     {translate("pages.profile.forms.update-password.actions.cancel")}
+                     {translate(
+                        "pages.profile.forms.update-password.actions.cancel",
+                     )}
                   </Button>
                   <form.Subscribe>
                      {(formState) => (
@@ -134,7 +177,9 @@ export function UpdatePasswordForm({
                            onClick={() => setConfirmOpen(true)}
                            disabled={!formState.canSubmit}
                         >
-                           {translate("pages.profile.forms.update-password.actions.change")}
+                           {translate(
+                              "pages.profile.forms.update-password.actions.change",
+                           )}
                         </Button>
                      )}
                   </form.Subscribe>{" "}
@@ -144,15 +189,21 @@ export function UpdatePasswordForm({
                <AlertDialogContent>
                   <AlertDialogHeader>
                      <AlertDialogTitle>
-                        {translate("pages.profile.forms.update-password.confirm.title")}
+                        {translate(
+                           "pages.profile.forms.update-password.confirm.title",
+                        )}
                      </AlertDialogTitle>
                      <AlertDialogDescription>
-                        {translate("pages.profile.forms.update-password.confirm.description")}
+                        {translate(
+                           "pages.profile.forms.update-password.confirm.description",
+                        )}
                      </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                      <AlertDialogCancel onClick={() => setConfirmOpen(false)}>
-                        {translate("pages.profile.forms.update-password.confirm.cancel")}
+                        {translate(
+                           "pages.profile.forms.update-password.confirm.cancel",
+                        )}
                      </AlertDialogCancel>
                      <AlertDialogAction
                         onClick={() => {
@@ -160,7 +211,9 @@ export function UpdatePasswordForm({
                            form.handleSubmit();
                         }}
                      >
-                        {translate("pages.profile.forms.update-password.confirm.confirm")}
+                        {translate(
+                           "pages.profile.forms.update-password.confirm.confirm",
+                        )}
                      </AlertDialogAction>
                   </AlertDialogFooter>
                </AlertDialogContent>

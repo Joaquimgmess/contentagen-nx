@@ -12,7 +12,9 @@ import { CompetitorListProvider } from "../lib/competitor-list-context";
 function CompetitorListPageContent() {
    return (
       <main className="h-full w-full flex flex-col gap-4">
-         <TalkingMascot message={translate("pages.competitor-list.mascot-message")} />
+         <TalkingMascot
+            message={translate("pages.competitor-list.mascot-message")}
+         />
          <CompetitorListToolbar />
          <Suspense fallback={<CompetitorCardsSkeleton />}>
             <CompetitorCardsList />

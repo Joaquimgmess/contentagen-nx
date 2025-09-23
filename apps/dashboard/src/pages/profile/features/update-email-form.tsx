@@ -25,7 +25,11 @@ import { betterAuthClient } from "@/integrations/clients";
 import { translate } from "@packages/localization";
 
 const emailSchema = z.object({
-   email: z.string().email(translate("pages.profile.forms.update-email.validation.email-invalid")),
+   email: z
+      .string()
+      .email(
+         translate("pages.profile.forms.update-email.validation.email-invalid"),
+      ),
 });
 
 export function UpdateEmailForm({
@@ -47,14 +51,25 @@ export function UpdateEmailForm({
             },
             {
                onError: ({ error }: any) => {
-                  toast.error(error?.message || translate("pages.profile.forms.update-email.messages.error"));
+                  toast.error(
+                     error?.message ||
+                        translate(
+                           "pages.profile.forms.update-email.messages.error",
+                        ),
+                  );
                },
                onRequest: () => {
-                  toast.loading(translate("pages.profile.forms.update-email.messages.loading"));
+                  toast.loading(
+                     translate(
+                        "pages.profile.forms.update-email.messages.loading",
+                     ),
+                  );
                },
                onSuccess: () => {
                   toast.success(
-                     translate("pages.profile.forms.update-email.messages.success"),
+                     translate(
+                        "pages.profile.forms.update-email.messages.success",
+                     ),
                   );
                   formApi.reset();
                   onOpenChange(false);
@@ -75,7 +90,9 @@ export function UpdateEmailForm({
       <Credenza open={open} onOpenChange={onOpenChange}>
          <CredenzaContent>
             <CredenzaHeader>
-               <CredenzaTitle>{translate("pages.profile.forms.update-email.title")}</CredenzaTitle>
+               <CredenzaTitle>
+                  {translate("pages.profile.forms.update-email.title")}
+               </CredenzaTitle>
             </CredenzaHeader>
             <form
                onSubmit={form.handleSubmit}
@@ -83,19 +100,29 @@ export function UpdateEmailForm({
                autoComplete="off"
             >
                <div>
-                  <label className="text-sm font-medium">{translate("pages.profile.forms.update-email.fields.current-email.label")}</label>
+                  <label className="text-sm font-medium">
+                     {translate(
+                        "pages.profile.forms.update-email.fields.current-email.label",
+                     )}
+                  </label>
                   <Input value={currentEmail} disabled className="bg-muted" />
                </div>
                <form.AppField name="email">
                   {(field) => (
                      <field.FieldContainer>
-                        <field.FieldLabel>{translate("pages.profile.forms.update-email.fields.new-email.label")}</field.FieldLabel>
+                        <field.FieldLabel>
+                           {translate(
+                              "pages.profile.forms.update-email.fields.new-email.label",
+                           )}
+                        </field.FieldLabel>
                         <Input
                            id={field.name}
                            name={field.name}
                            type="email"
                            autoComplete="email"
-                           placeholder={translate("pages.profile.forms.update-email.fields.new-email.placeholder")}
+                           placeholder={translate(
+                              "pages.profile.forms.update-email.fields.new-email.placeholder",
+                           )}
                            value={field.state.value}
                            onBlur={field.handleBlur}
                            onChange={(e) => field.handleChange(e.target.value)}
@@ -110,7 +137,9 @@ export function UpdateEmailForm({
                      variant="outline"
                      onClick={() => onOpenChange(false)}
                   >
-                     {translate("pages.profile.forms.update-email.actions.cancel")}
+                     {translate(
+                        "pages.profile.forms.update-email.actions.cancel",
+                     )}
                   </Button>
                   <form.Subscribe>
                      {(formState) => (
@@ -119,7 +148,9 @@ export function UpdateEmailForm({
                            onClick={() => setConfirmOpen(true)}
                            disabled={!formState.canSubmit}
                         >
-                           {translate("pages.profile.forms.update-email.actions.send")}
+                           {translate(
+                              "pages.profile.forms.update-email.actions.send",
+                           )}
                         </Button>
                      )}
                   </form.Subscribe>{" "}
@@ -128,14 +159,22 @@ export function UpdateEmailForm({
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                <AlertDialogContent>
                   <AlertDialogHeader>
-                     <AlertDialogTitle>{translate("pages.profile.forms.update-email.confirm.title")}</AlertDialogTitle>
+                     <AlertDialogTitle>
+                        {translate(
+                           "pages.profile.forms.update-email.confirm.title",
+                        )}
+                     </AlertDialogTitle>
                      <AlertDialogDescription>
-                        {translate("pages.profile.forms.update-email.confirm.description")}
+                        {translate(
+                           "pages.profile.forms.update-email.confirm.description",
+                        )}
                      </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                      <AlertDialogCancel onClick={() => setConfirmOpen(false)}>
-                        {translate("pages.profile.forms.update-email.confirm.cancel")}
+                        {translate(
+                           "pages.profile.forms.update-email.confirm.cancel",
+                        )}
                      </AlertDialogCancel>
                      <AlertDialogAction
                         onClick={() => {
@@ -143,7 +182,9 @@ export function UpdateEmailForm({
                            form.handleSubmit();
                         }}
                      >
-                        {translate("pages.profile.forms.update-email.confirm.confirm")}
+                        {translate(
+                           "pages.profile.forms.update-email.confirm.confirm",
+                        )}
                      </AlertDialogAction>
                   </AlertDialogFooter>
                </AlertDialogContent>

@@ -38,7 +38,9 @@ export function OrganizationPageMembersTable({
       <>
          <Card className="col-span-2">
             <CardHeader>
-               <CardTitle>{translate("pages.organization.members.title")}</CardTitle>
+               <CardTitle>
+                  {translate("pages.organization.members.title")}
+               </CardTitle>
                <CardDescription>
                   {translate("pages.organization.details.description")}
                </CardDescription>
@@ -66,7 +68,10 @@ export function OrganizationPageMembersTable({
                               setInviteOpen(true);
                            }}
                         >
-                           <UserPlus className="w-4 h-4 mr-2" /> {translate("pages.organization.actions.invite-member")}
+                           <UserPlus className="w-4 h-4 mr-2" />{" "}
+                           {translate(
+                              "pages.organization.actions.invite-member",
+                           )}
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>
@@ -78,9 +83,13 @@ export function OrganizationPageMembersTable({
                   <Table>
                      <TableHeader>
                         <TableRow>
-                           <TableHead>{translate("pages.organization.fields.name")}</TableHead>
+                           <TableHead>
+                              {translate("pages.organization.fields.name")}
+                           </TableHead>
                            <TableHead>Email</TableHead>
-                           <TableHead>{translate("pages.organization.members.role")}</TableHead>
+                           <TableHead>
+                              {translate("pages.organization.members.role")}
+                           </TableHead>
                         </TableRow>
                      </TableHeader>
                      <TableBody>
@@ -103,7 +112,9 @@ export function OrganizationPageMembersTable({
                      </TableBody>
                   </Table>
                ) : (
-                  <div className="text-muted-foreground">{translate("pages.organization.messages.no-members")}</div>
+                  <div className="text-muted-foreground">
+                     {translate("pages.organization.messages.no-members")}
+                  </div>
                )}
             </CardContent>
          </Card>

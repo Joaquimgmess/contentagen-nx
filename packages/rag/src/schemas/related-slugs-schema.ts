@@ -30,5 +30,3 @@ export const relatedSlugs = pgTable(
 
 export type RelatedSlugs = typeof relatedSlugs.$inferSelect;
 export type RelatedSlugsInsert = typeof relatedSlugs.$inferInsert;
-
-

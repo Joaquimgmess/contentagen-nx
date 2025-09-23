@@ -16,14 +16,20 @@ export function BasicInfoStep({ form }: { form: ContentRequestForm }) {
          <form.AppField name="description">
             {(field) => (
                <field.FieldContainer>
-                  <field.FieldLabel>{translate("pages.content-request-form.basic-info.headline.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.content-request-form.basic-info.headline.label",
+                     )}
+                  </field.FieldLabel>
                   <TiptapEditor
                      id={field.name}
                      name={field.name}
                      value={field.state.value}
                      onChange={field.handleChange}
                      onBlur={field.handleBlur}
-                     placeholder={translate("pages.content-request-form.basic-info.headline.placeholder")}
+                     placeholder={translate(
+                        "pages.content-request-form.basic-info.headline.placeholder",
+                     )}
                   />
                   <field.FieldMessage />
                </field.FieldContainer>
@@ -33,7 +39,11 @@ export function BasicInfoStep({ form }: { form: ContentRequestForm }) {
          <form.AppField name="layout">
             {(field) => (
                <field.FieldContainer className="space-y-2">
-                  <field.FieldLabel>{translate("pages.content-request-form.basic-info.layout.label")}</field.FieldLabel>
+                  <field.FieldLabel>
+                     {translate(
+                        "pages.content-request-form.basic-info.layout.label",
+                     )}
+                  </field.FieldLabel>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                      {layoutOptions.map((option) => (
                         <button

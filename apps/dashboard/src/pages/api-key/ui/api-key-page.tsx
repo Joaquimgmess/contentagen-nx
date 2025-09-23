@@ -84,7 +84,9 @@ export function ApiKeyPage() {
          <div className="grid grid-cols-1 md:grid-cols-3  gap-4">
             <Card className="col-span-1 order-first md:order-last ">
                <CardHeader>
-                  <CardTitle>{translate("pages.api-key.statistics.title")}</CardTitle>
+                  <CardTitle>
+                     {translate("pages.api-key.statistics.title")}
+                  </CardTitle>
                   <CardDescription>
                      {translate("pages.api-key.statistics.description")}
                   </CardDescription>
@@ -126,7 +128,9 @@ export function ApiKeyPage() {
             </Card>
             <Card className="col-span-1 md:col-span-2">
                <CardHeader>
-                  <CardTitle>{translate("pages.api-key.section.title")}</CardTitle>
+                  <CardTitle>
+                     {translate("pages.api-key.section.title")}
+                  </CardTitle>
                   <CardDescription>
                      {translate("pages.api-key.section.description")}
                   </CardDescription>

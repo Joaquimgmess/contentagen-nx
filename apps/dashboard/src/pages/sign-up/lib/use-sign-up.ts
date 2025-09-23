@@ -13,8 +13,12 @@ export const useSignUp = () => {
    const schema = z
       .object({
          confirmPassword: z.string(),
-         email: z.string().email(translate("pages.sign-up.validation.email-invalid")),
-         name: z.string().min(2, translate("pages.sign-up.validation.name-min-length")),
+         email: z
+            .string()
+            .email(translate("pages.sign-up.validation.email-invalid")),
+         name: z
+            .string()
+            .min(2, translate("pages.sign-up.validation.name-min-length")),
          password: z
             .string()
             .min(8, translate("pages.sign-up.validation.password-min-length")),
@@ -43,7 +47,8 @@ export const useSignUp = () => {
             {
                onError: ({ error }) => {
                   toast.error(
-                     getErrorMessage[error.code as codes] || translate("pages.sign-up.errors.unknown"),
+                     getErrorMessage[error.code as codes] ||
+                        translate("pages.sign-up.errors.unknown"),
                      {
                         id: "sign-up-toast",
                      },
@@ -56,7 +61,9 @@ export const useSignUp = () => {
                },
                onSuccess: ({ data }) => {
                   toast.success(translate("pages.sign-up.messages.success"), {
-                     description: translate("pages.sign-up.messages.welcome", { name: data.user.name }),
+                     description: translate("pages.sign-up.messages.welcome", {
+                        name: data.user.name,
+                     }),
                      id: "sign-up-toast",
                   });
                   router.navigate({

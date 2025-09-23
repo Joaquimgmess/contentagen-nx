@@ -17,7 +17,11 @@ export function AudienceStep({ form }: { form: AgentForm }) {
       <form.AppField name="audience">
          {(field) => (
             <field.FieldContainer className="space-y-2">
-               <field.FieldLabel>{translate("pages.agent-creation-form.audience.audience-base.label")}</field.FieldLabel>
+               <field.FieldLabel>
+                  {translate(
+                     "pages.agent-creation-form.audience.audience-base.label",
+                  )}
+               </field.FieldLabel>
                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
                   {audienceOptions.map((option) => (
                      <button

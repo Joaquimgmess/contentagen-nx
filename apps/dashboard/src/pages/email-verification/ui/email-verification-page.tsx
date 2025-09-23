@@ -40,7 +40,11 @@ export function EmailVerificationPage() {
                <form.AppField name="otp">
                   {(field) => (
                      <field.FieldContainer className="flex flex-col items-center">
-                        <field.FieldLabel>{translate("pages.email-verification.form.verification-code.label")}</field.FieldLabel>
+                        <field.FieldLabel>
+                           {translate(
+                              "pages.email-verification.form.verification-code.label",
+                           )}
+                        </field.FieldLabel>
                         <InputOTP
                            autoComplete="one-time-code"
                            className="gap-2 "

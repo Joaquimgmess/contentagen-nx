@@ -62,7 +62,8 @@ export function CompetitorListToolbar() {
                </Button>
 
                <span className="text-sm text-muted-foreground px-2">
-                  {page} {translate("pages.competitor-list.toolbar.of")} {totalPages}
+                  {page} {translate("pages.competitor-list.toolbar.of")}{" "}
+                  {totalPages}
                </span>
 
                <Button
@@ -77,7 +78,9 @@ export function CompetitorListToolbar() {
 
             {selectedItemsCount > 0 && (
                <span className="text-sm text-muted-foreground">
-                  {translate("pages.competitor-list.toolbar.selected-count", { count: selectedItemsCount })}
+                  {translate("pages.competitor-list.toolbar.selected-count", {
+                     count: selectedItemsCount,
+                  })}
                </span>
             )}
 

@@ -18,7 +18,10 @@ export function CreateAgentPage() {
             });
          },
          onError: (error) => {
-            console.error(translate("pages.agent-create.messages.error-console"), error);
+            console.error(
+               translate("pages.agent-create.messages.error-console"),
+               error,
+            );
             toast.error(translate("pages.agent-create.messages.error"));
          },
       }),

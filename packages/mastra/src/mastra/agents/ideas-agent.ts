@@ -8,16 +8,16 @@ import { dateTool } from "../tools/date-tool";
 import { queryCompetitorFeatureInformation } from "../tools/query-competitor-features-tool";
 
 const openrouter = createOpenRouter({
-  apiKey: serverEnv.OPENROUTER_API_KEY,
+   apiKey: serverEnv.OPENROUTER_API_KEY,
 });
 
 const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
-  const languageNames = {
-    en: "English",
-    pt: "Portuguese",
-  };
+   const languageNames = {
+      en: "English",
+      pt: "Portuguese",
+   };
 
-  return `
+   return `
 ## OUTPUT LANGUAGE REQUIREMENT
 You MUST provide ALL your responses, content ideas, titles, descriptions, and analysis in ${languageNames[language]}.
 Regardless of the source data language, your entire output must be written in ${languageNames[language]}.
@@ -26,12 +26,12 @@ This includes all blog post titles, meta descriptions, and any other text conten
 };
 
 export const ideaGenerationAgent = new Agent({
-  name: "Content Idea Generation Agent",
-  instructions: ({ runtimeContext }) => {
-    const locale = runtimeContext.get("language") as "en" | "pt";
-    const languageOutputInstruction = getLanguageOutputInstruction(locale);
+   name: "Content Idea Generation Agent",
+   instructions: ({ runtimeContext }) => {
+      const locale = runtimeContext.get("language") as "en" | "pt";
+      const languageOutputInstruction = getLanguageOutputInstruction(locale);
 
-    return `You are an expert content strategist who understands both human psychology and search behavior. Your mission is to generate compelling blog post ideas that people genuinely want to read and share.
+      return `You are an expert content strategist who understands both human psychology and search behavior. Your mission is to generate compelling blog post ideas that people genuinely want to read and share.
 
 ${languageOutputInstruction}
 
@@ -132,13 +132,13 @@ Always respond with the exact structured format required, containing:
 - Each with title, description, layout, confidence score, rationale, and metadata
 - No additional commentary or explanation outside the structured output
    `;
-  },
-  model: openrouter("deepseek/deepseek-chat-v3.1"),
-  tools: {
-    queryBrandKnowledgeTool,
-    queryCompetitorBrandInformation,
-    queryCompetitorFeatureInformation,
-    tavilySearchTool,
-    dateTool,
-  },
+   },
+   model: openrouter("deepseek/deepseek-chat-v3.1"),
+   tools: {
+      queryBrandKnowledgeTool,
+      queryCompetitorBrandInformation,
+      queryCompetitorFeatureInformation,
+      tavilySearchTool,
+      dateTool,
+   },
 });

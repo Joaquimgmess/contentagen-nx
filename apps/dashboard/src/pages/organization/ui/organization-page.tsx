@@ -54,7 +54,9 @@ export function OrganizationPage() {
 
    return (
       <div className="flex flex-col gap-4">
-         <TalkingMascot message={translate("pages.organization.mascot-message")} />
+         <TalkingMascot
+            message={translate("pages.organization.mascot-message")}
+         />
          {org ? (
             <div className="grid  grid-cols-3 gap-4">
                <OrganizationPageMembersTable organization={org} />
@@ -62,7 +64,9 @@ export function OrganizationPage() {
                <div className="col-span-1 flex flex-col gap-4">
                   <Card>
                      <CardHeader>
-                        <CardTitle>{translate("pages.organization.details.title")}</CardTitle>
+                        <CardTitle>
+                           {translate("pages.organization.details.title")}
+                        </CardTitle>
                         <CardDescription>
                            {translate("pages.organization.details.description")}
                         </CardDescription>

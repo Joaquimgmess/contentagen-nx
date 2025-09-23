@@ -54,7 +54,9 @@ function RouteComponent() {
                );
             },
             onSuccess: async () => {
-               toast.success(translate("pages.organization-invitation.messages.success"));
+               toast.success(
+                  translate("pages.organization-invitation.messages.success"),
+               );
                await handleLogout();
             },
          },
@@ -64,7 +66,9 @@ function RouteComponent() {
    return (
       <Card>
          <CardHeader>
-            <CardTitle>{translate("pages.organization-invitation.title")}</CardTitle>
+            <CardTitle>
+               {translate("pages.organization-invitation.title")}
+            </CardTitle>
          </CardHeader>
          <CardContent>
             <Button

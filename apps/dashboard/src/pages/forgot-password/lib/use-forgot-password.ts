@@ -12,14 +12,25 @@ export function useForgotPassword() {
    const schema = z
       .object({
          confirmPassword: z.string(),
-         email: z.string().email(translate("pages.forgot-password.validation.email-invalid")),
-         otp: z.string().min(6, translate("pages.forgot-password.validation.otp-length")),
+         email: z
+            .string()
+            .email(translate("pages.forgot-password.validation.email-invalid")),
+         otp: z
+            .string()
+            .min(6, translate("pages.forgot-password.validation.otp-length")),
          password: z
             .string()
-            .min(8, translate("pages.forgot-password.validation.password-min-length")),
+            .min(
+               8,
+               translate(
+                  "pages.forgot-password.validation.password-min-length",
+               ),
+            ),
       })
       .refine((data) => data.password === data.confirmPassword, {
-         message: translate("pages.forgot-password.validation.passwords-no-match"),
+         message: translate(
+            "pages.forgot-password.validation.passwords-no-match",
+         ),
          path: ["confirmPassword"],
       });
 
@@ -41,19 +52,28 @@ export function useForgotPassword() {
             },
             {
                onError: () => {
-                  toast.error(translate("pages.forgot-password.messages.reset-error"), {
-                     id: "forgot-password-toast",
-                  });
+                  toast.error(
+                     translate("pages.forgot-password.messages.reset-error"),
+                     {
+                        id: "forgot-password-toast",
+                     },
+                  );
                },
                onRequest: () => {
-                  toast.loading(translate("pages.forgot-password.messages.reset-loading"), {
-                     id: "forgot-password-toast",
-                  });
+                  toast.loading(
+                     translate("pages.forgot-password.messages.reset-loading"),
+                     {
+                        id: "forgot-password-toast",
+                     },
+                  );
                },
                onSuccess: () => {
-                  toast.success(translate("pages.forgot-password.messages.reset-success"), {
-                     id: "forgot-password-toast",
-                  });
+                  toast.success(
+                     translate("pages.forgot-password.messages.reset-success"),
+                     {
+                        id: "forgot-password-toast",
+                     },
+                  );
                   router.navigate({
                      to: "/auth/sign-in",
                   });
@@ -88,21 +108,30 @@ export function useForgotPassword() {
          {
             onError: () => {
                setSendingOtp(false);
-               toast.error(translate("pages.forgot-password.messages.send-error"), {
-                  id: "send-otp-toast",
-               });
+               toast.error(
+                  translate("pages.forgot-password.messages.send-error"),
+                  {
+                     id: "send-otp-toast",
+                  },
+               );
             },
             onRequest: () => {
                setSendingOtp(true);
-               toast.loading(translate("pages.forgot-password.messages.send-loading"), {
-                  id: "send-otp-toast",
-               });
+               toast.loading(
+                  translate("pages.forgot-password.messages.send-loading"),
+                  {
+                     id: "send-otp-toast",
+                  },
+               );
             },
             onSuccess: () => {
                setSendingOtp(false);
-               toast.success(translate("pages.forgot-password.messages.send-success"), {
-                  id: "send-otp-toast",
-               });
+               toast.success(
+                  translate("pages.forgot-password.messages.send-success"),
+                  {
+                     id: "send-otp-toast",
+                  },
+               );
             },
          },
       );

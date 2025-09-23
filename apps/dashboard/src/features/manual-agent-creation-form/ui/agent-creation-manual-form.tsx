@@ -21,14 +21,38 @@ export const agentFormSchema = PersonaConfigSchema;
 
 export type AgentForm = ReturnType<typeof useAgentForm>;
 const steps = [
-   { id: "step-basic-info", title: translate("pages.agent-creation-form.steps.basic-info") },
-   { id: "step-audience", title: translate("pages.agent-creation-form.steps.audience") },
-   { id: "step-purpose", title: translate("pages.agent-creation-form.steps.purpose") },
-   { id: "step-voice-tone", title: translate("pages.agent-creation-form.steps.voice-tone") },
-   { id: "step-brand", title: translate("pages.agent-creation-form.steps.brand") },
-   { id: "step-language", title: translate("pages.agent-creation-form.steps.language") },
-   { id: "step-formatting", title: translate("pages.agent-creation-form.steps.formatting") },
-   { id: "step-review", title: translate("pages.agent-creation-form.steps.review") },
+   {
+      id: "step-basic-info",
+      title: translate("pages.agent-creation-form.steps.basic-info"),
+   },
+   {
+      id: "step-audience",
+      title: translate("pages.agent-creation-form.steps.audience"),
+   },
+   {
+      id: "step-purpose",
+      title: translate("pages.agent-creation-form.steps.purpose"),
+   },
+   {
+      id: "step-voice-tone",
+      title: translate("pages.agent-creation-form.steps.voice-tone"),
+   },
+   {
+      id: "step-brand",
+      title: translate("pages.agent-creation-form.steps.brand"),
+   },
+   {
+      id: "step-language",
+      title: translate("pages.agent-creation-form.steps.language"),
+   },
+   {
+      id: "step-formatting",
+      title: translate("pages.agent-creation-form.steps.formatting"),
+   },
+   {
+      id: "step-review",
+      title: translate("pages.agent-creation-form.steps.review"),
+   },
 ] as const;
 const { Stepper } = defineStepper(...steps);
 
@@ -46,23 +70,39 @@ export function AgentCreationManualForm({
    const getMascotMessage = (step: (typeof steps)[number]["id"]) => {
       switch (step) {
          case "step-basic-info":
-            return translate("pages.agent-creation-form.mascot-messages.basic-info");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.basic-info",
+            );
          case "step-audience":
-            return translate("pages.agent-creation-form.mascot-messages.audience");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.audience",
+            );
          case "step-purpose":
-            return translate("pages.agent-creation-form.mascot-messages.purpose");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.purpose",
+            );
          case "step-voice-tone":
-            return translate("pages.agent-creation-form.mascot-messages.voice-tone");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.voice-tone",
+            );
          case "step-brand":
             return translate("pages.agent-creation-form.mascot-messages.brand");
          case "step-language":
-            return translate("pages.agent-creation-form.mascot-messages.language");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.language",
+            );
          case "step-formatting":
-            return translate("pages.agent-creation-form.mascot-messages.formatting");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.formatting",
+            );
          case "step-review":
-            return translate("pages.agent-creation-form.mascot-messages.review");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.review",
+            );
          default:
-            return translate("pages.agent-creation-form.mascot-messages.default");
+            return translate(
+               "pages.agent-creation-form.mascot-messages.default",
+            );
       }
    };
    return (

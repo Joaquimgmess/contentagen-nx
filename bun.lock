@@ -19,7 +19,7 @@
     },
     "apps/blog": {
       "name": "blog",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@arcjet/astro": "catalog:security",
         "@astrojs/check": "catalog:astro",
@@ -48,7 +48,7 @@
     },
     "apps/dashboard": {
       "name": "dashboard",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/api": "workspace:*",
         "@packages/authentication": "workspace:*",
@@ -93,7 +93,7 @@
     },
     "apps/docs": {
       "name": "docs",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@astrojs/check": "catalog:astro",
         "@astrojs/mdx": "catalog:astro",
@@ -113,7 +113,7 @@
     },
     "apps/landing-page": {
       "name": "landing-page",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@arcjet/astro": "catalog:security",
         "@astrojs/check": "catalog:astro",
@@ -141,7 +141,7 @@
     },
     "apps/server": {
       "name": "server",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@bull-board/elysia": "^6.12.0",
         "@elysiajs/cors": "catalog:server",
@@ -167,7 +167,7 @@
     },
     "packages/api": {
       "name": "@packages/api",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/authentication": "workspace:*",
         "@packages/chroma-db": "workspace:*",
@@ -191,7 +191,7 @@
     },
     "packages/arcjet": {
       "name": "@packages/arcjet",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@arcjet/astro": "catalog:security",
         "@arcjet/bun": "catalog:security",
@@ -206,7 +206,7 @@
     },
     "packages/authentication": {
       "name": "@packages/authentication",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/database": "workspace:*",
         "@packages/payment": "workspace:*",
@@ -221,11 +221,11 @@
     },
     "packages/brand": {
       "name": "@packages/brand",
-      "version": "0.3.0",
+      "version": "0.4.0",
     },
     "packages/chroma-db": {
       "name": "@packages/chroma-db",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@chroma-core/openai": "catalog:chroma",
         "@packages/environment": "workspace:*",
@@ -238,7 +238,7 @@
     },
     "packages/database": {
       "name": "@packages/database",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "drizzle-orm": "catalog:database",
         "drizzle-zod": "catalog:database",
@@ -256,7 +256,7 @@
     },
     "packages/environment": {
       "name": "@packages/environment",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/errors": "workspace:*",
         "zod": "catalog:validation",
@@ -270,7 +270,7 @@
     },
     "packages/errors": {
       "name": "@packages/errors",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "zod": "catalog:validation",
       },
@@ -281,7 +281,7 @@
     },
     "packages/files": {
       "name": "@packages/files",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/environment": "workspace:*",
         "fflate": "catalog:files",
@@ -295,7 +295,7 @@
     },
     "packages/helpers": {
       "name": "@packages/helpers",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/database": "workspace:*",
         "slugify": "^1.6.6",
@@ -307,7 +307,7 @@
     },
     "packages/localization": {
       "name": "@packages/localization",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "i18next": "^25.5.2",
         "i18next-browser-languagedetector": "^8.2.0",
@@ -321,7 +321,7 @@
     },
     "packages/mastra": {
       "name": "@packages/mastra",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@mastra/core": "^0.17.1",
         "@mastra/libsql": "^0.14.2",
@@ -348,7 +348,7 @@
     },
     "packages/openrouter": {
       "name": "@packages/openrouter",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@openrouter/ai-sdk-provider": "catalog:openrouter",
         "ai": "catalog:openrouter",
@@ -361,7 +361,7 @@
     },
     "packages/payment": {
       "name": "@packages/payment",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/environment": "workspace:*",
         "@packages/openrouter": "workspace:*",
@@ -374,7 +374,7 @@
     },
     "packages/posthog": {
       "name": "@packages/posthog",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/environment": "workspace:*",
         "posthog-js": "^1.259.0",
@@ -387,7 +387,7 @@
     },
     "packages/prompts": {
       "name": "@packages/prompts",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/chroma-db": "workspace:*",
         "@packages/database": "workspace:*",
@@ -415,7 +415,7 @@
     },
     "packages/redis": {
       "name": "@packages/redis",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "ioredis": "^5.7.0",
       },
@@ -426,7 +426,7 @@
     },
     "packages/server-events": {
       "name": "@packages/server-events",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "devDependencies": {
         "@tooling/typescript": "workspace:*",
         "typescript": "catalog:development",
@@ -434,7 +434,7 @@
     },
     "packages/tavily": {
       "name": "@packages/tavily",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@tavily/core": "^0.5.9",
       },
@@ -445,7 +445,7 @@
     },
     "packages/transactional": {
       "name": "@packages/transactional",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/brand": "workspace:*",
         "@react-email/components": "catalog:transactional",
@@ -461,7 +461,7 @@
     },
     "packages/ui": {
       "name": "@packages/ui",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@radix-ui/react-accordion": "^1.2.11",
         "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -516,7 +516,7 @@
     },
     "packages/workers": {
       "name": "@packages/workers",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@packages/chroma-db": "workspace:*",
         "@packages/files": "workspace:*",

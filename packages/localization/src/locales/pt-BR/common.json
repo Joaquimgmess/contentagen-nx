@@ -1,18 +1,9 @@
 {
    "actions": {
-      "save": "Salvar",
       "cancel": "Cancelar",
       "delete": "Excluir",
-      "edit": "Editar",
-      "create": "Criar",
       "update": "Atualizar",
-      "submit": "Enviar",
       "view": "Visualizar",
-      "back": "Voltar",
-      "next": "Próximo",
-      "loading": "Carregando",
-      "saving": "Salvando...",
-      "submitting": "Enviando...",
       "updating": "Atualizando...",
       "creating": "Criando...",
       "deleting": "Excluindo..."
@@ -20,43 +11,19 @@
    "status": {
       "active": "Ativo",
       "inactive": "Inativo",
-      "pending": "Pendente",
-      "completed": "Concluído",
-      "processing": "Processando",
-      "analyzing": "Analisando",
       "loading": "Carregando..."
    },
    "messages": {
-      "success": "Sucesso",
-      "error": "Erro",
-      "unknown-error": "Ocorreu um erro desconhecido",
-      "operation-success": "Operação concluída com sucesso",
-      "operation-error": "Operação falhou. Tente novamente.",
-      "loading": "Carregando...",
-      "no-data": "Nenhum dado disponível",
-      "confirm-action": "Tem certeza de que deseja continuar?",
-      "action-cannot-be-undone": "Esta ação não pode ser desfeita."
+      "loading": "Carregando..."
    },
    "form": {
-      "required": "Obrigatório",
-      "optional": "Opcional",
-      "invalid-email": "Digite um endereço de email válido",
-      "invalid-url": "Digite uma URL válida",
-      "min-length": "Deve ter pelo menos {{min}} caracteres",
-      "max-length": "Deve ter no máximo {{max}} caracteres",
       "field-required": "Este campo é obrigatório"
    },
    "navigation": {
-      "home": "Início",
-      "back": "Voltar",
-      "close": "Fechar",
-      "open": "Abrir"
+      "close": "Fechar"
    },
    "time": {
-      "created": "Criado",
-      "updated": "Atualizado",
       "last-modified": "Última Modificação",
-      "date": "Data",
       "time": "Hora"
    }
 }

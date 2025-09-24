@@ -39,5 +39,9 @@
       "delete-success": "Idea deleted successfully",
       "delete-error": "Error deleting idea",
       "unknown-error": "Unknown error"
+   },
+   "confirmations": {
+      "approve-message": "This will approve the idea and send it to the content generation pipeline. This action will create content based on the approved idea.",
+      "delete-message": "This will permanently delete the idea and all associated data. This action cannot be undone."
    }
 }

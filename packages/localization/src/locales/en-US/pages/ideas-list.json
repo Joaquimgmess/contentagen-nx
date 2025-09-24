@@ -35,5 +35,12 @@
       "approve-confirmation": {
          "message": "This will approve the selected ideas that are in pending status and send them to the content generation pipeline. Only pending items will be approved. This action will create content based on the approved ideas."
       }
+   },
+   "card": {
+      "unknown-agent": "Unknown",
+      "no-description": "No description",
+      "unknown-date": "Unknown",
+      "generating": "Generating",
+      "view-details": "View idea details"
    }
 }

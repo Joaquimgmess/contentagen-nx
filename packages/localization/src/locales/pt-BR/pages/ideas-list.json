@@ -35,5 +35,12 @@
       "approve-confirmation": {
          "message": "Isso aprovará as ideias selecionadas que estão em status pendente e as enviará para o pipeline de geração de conteúdo. Apenas itens pendentes serão aprovados. Esta ação criará conteúdo baseado nas ideias aprovadas."
       }
+   },
+   "card": {
+      "unknown-agent": "Desconhecido",
+      "no-description": "Sem descrição",
+      "unknown-date": "Desconhecido",
+      "generating": "Gerando",
+      "view-details": "Ver detalhes da ideia"
    }
 }

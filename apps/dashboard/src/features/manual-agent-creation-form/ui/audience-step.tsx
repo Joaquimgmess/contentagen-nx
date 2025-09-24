@@ -6,7 +6,6 @@ import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getAudienceLabel = (value: string): string => {
-   // Try to get translated label first
    const translationKey = `pages.agent-creation-form.audience.options.${value}`;
    return translate(translationKey);
 };

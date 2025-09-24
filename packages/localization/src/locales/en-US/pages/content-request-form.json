@@ -28,5 +28,9 @@
    "actions": {
       "next": "Next",
       "back": "Back"
+   },
+   "messages": {
+      "generation-started": "Content begun generation successfully!",
+      "creation-failed": "Failed to create content"
    }
 }

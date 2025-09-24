@@ -28,5 +28,9 @@
    "actions": {
       "next": "Próximo",
       "back": "Voltar"
+   },
+   "messages": {
+      "generation-started": "Geração de conteúdo iniciada com sucesso!",
+      "creation-failed": "Falha ao criar conteúdo"
    }
 }

@@ -86,7 +86,9 @@ export function OrganizationPageMembersTable({
                            <TableHead>
                               {translate("pages.organization.fields.name")}
                            </TableHead>
-                           <TableHead>Email</TableHead>
+                           <TableHead>
+                              {translate("pages.organization.table.email")}
+                           </TableHead>
                            <TableHead>
                               {translate("pages.organization.members.role")}
                            </TableHead>

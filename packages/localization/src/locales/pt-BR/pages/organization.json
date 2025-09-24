@@ -51,6 +51,7 @@
    "modals": {
       "invite": {
          "title": "Convidar Membro",
+         "description": "Digite o endereço de email da pessoa que você deseja convidar como membro.",
          "email-label": "Email",
          "email-placeholder": "Digite o endereço de email",
          "role-label": "Função",
@@ -69,5 +70,13 @@
          "confirm": "Excluir",
          "cancel": "Cancelar"
       }
+   },
+   "toasts": {
+      "invitation-sent": "Convite enviado para {{email}}",
+      "invitation-failed": "Falha ao enviar convite",
+      "invalid-email": "Por favor, digite um email válido"
+   },
+   "table": {
+      "email": "Email"
    }
 }

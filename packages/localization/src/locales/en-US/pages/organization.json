@@ -51,6 +51,7 @@
    "modals": {
       "invite": {
          "title": "Invite Member",
+         "description": "Enter the email address of the person you want to invite as a member.",
          "email-label": "Email",
          "email-placeholder": "Enter email address",
          "role-label": "Role",
@@ -69,5 +70,13 @@
          "confirm": "Delete",
          "cancel": "Cancel"
       }
+   },
+   "toasts": {
+      "invitation-sent": "Invitation sent to {{email}}",
+      "invitation-failed": "Failed to send invitation",
+      "invalid-email": "Please enter a valid email"
+   },
+   "table": {
+      "email": "Email"
    }
 }

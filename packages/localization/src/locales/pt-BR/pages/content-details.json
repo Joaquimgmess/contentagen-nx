@@ -41,9 +41,12 @@
    },
    "versions": {
       "title": "Versões do Conteúdo",
-      "description": "Visualize e gerencie diferentes versões deste conteúdo.",
+      "description": "Um histórico de todas as mudanças feitas neste conteúdo",
       "current": "Atual",
-      "view-details": "Ver Detalhes"
+      "view-details": "Ver Detalhes",
+      "no-versions": "Nenhuma versão disponível ainda.",
+      "version-number": "Versão {{number}}",
+      "changes-count": "Mudanças feitas nesta versão {{count}}"
    },
    "content": {
       "title": "Conteúdo Gerado",
@@ -88,6 +91,28 @@
          "step-counter": "Etapa {{current}} de {{total}}",
          "percentage": "{{percent}}% concluído",
          "fallback-message": "Processando seu conteúdo"
+      }
+   },
+   "edit": {
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "placeholder": "Edite seu conteúdo...",
+      "success": "Corpo do conteúdo editado com sucesso!",
+      "error": "Falha ao editar corpo do conteúdo. Tente novamente.",
+      "validation": {
+         "body-required": "Corpo é obrigatório"
+      }
+   },
+   "upload": {
+      "title": "Enviar Imagem do Conteúdo",
+      "description": "Envie uma imagem para o seu conteúdo. A imagem será exibida com o seu conteúdo gerado.",
+      "success": "Imagem enviada com sucesso!",
+      "error": "Falha ao enviar imagem",
+      "uploading": "Enviando...",
+      "upload-button": "Enviar Imagem",
+      "validation": {
+         "invalid-file": "Por favor, selecione um arquivo de imagem",
+         "file-too-large": "O tamanho do arquivo deve ser menor que 10MB"
       }
    },
    "messages": {

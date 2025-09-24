@@ -22,33 +22,6 @@
       "current-plan": "Current Plan",
       "usage": "Usage",
       "upgrade": "Upgrade Plan",
-      "manage-billing": "Manage Billing"
-   },
-   "sessions": {
-      "title": "Active Sessions",
-      "description": "Manage your active login sessions.",
-      "current-session": "Current Session",
-      "revoke": "Revoke",
-      "revoke-all": "Revoke All Other Sessions"
-   },
-   "preferences": {
-      "title": "Preferences",
-      "description": "Customize your experience.",
-      "workflow": {
-         "title": "Workflow Preferences",
-         "notify-missing-images": "Notify about missing images",
-         "workflow-title": "Content workflow Preferences",
-         "workflow-description": "Customize your content workflow settings.",
-         "missing-urls-title": "Notify on missing urls",
-         "missing-urls-description": "Receive notifications when posts are missing image URLs."
-      }
-   },
-   "billing": {
-      "title": "Billing & Subscription",
-      "description": "Manage your subscription and billing information.",
-      "current-plan": "Current Plan",
-      "usage": "Usage",
-      "upgrade": "Upgrade Plan",
       "manage-billing": "Manage Billing",
       "current-plan-title": "Current plan",
       "current-plan-description": "This is your current subscription plan details. You can manage your subscription or view usage metrics below.",
@@ -89,6 +62,18 @@
       "created": "Created:",
       "last-active": "Last Active:",
       "revoke-confirm": "Are you sure you want to revoke this session?"
+   },
+   "preferences": {
+      "title": "Preferences",
+      "description": "Customize your experience.",
+      "workflow": {
+         "title": "Workflow Preferences",
+         "notify-missing-images": "Notify about missing images",
+         "workflow-title": "Content workflow Preferences",
+         "workflow-description": "Customize your content workflow settings.",
+         "missing-urls-title": "Notify on missing urls",
+         "missing-urls-description": "Receive notifications when posts are missing image URLs."
+      }
    },
    "toast": {
       "preference-updated": "Preference updated successfully",

@@ -18,7 +18,7 @@ import { z } from "zod";
 import { useRouter } from "@tanstack/react-router";
 import { translate } from "@packages/localization";
 const createCompetitorSchema = z.object({
-   websiteUrl: z.url("Please enter a valid URL"),
+   websiteUrl: z.url(translate("pages.competitor-list.validation.invalid-url")),
 });
 
 export type CreateCompetitorFormData = typeof createCompetitorSchema;

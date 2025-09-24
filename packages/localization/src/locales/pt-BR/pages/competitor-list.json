@@ -45,6 +45,17 @@
    "empty-state": {
       "no-competitors": "Nenhum concorrente ainda"
    },
+   "card": {
+      "features-count": "{{count}} funcionalidades",
+      "website-label": "Site do seu concorrente: {{url}}",
+      "view-details": "Ver detalhes",
+      "edit-competitor": "Editar concorrente",
+      "visit-website": "Visitar site",
+      "delete-competitor": "Excluir concorrente"
+   },
+   "validation": {
+      "invalid-url": "Por favor, insira uma URL válida"
+   },
    "modals": {
       "delete": {
          "title": "Excluir Concorrente",

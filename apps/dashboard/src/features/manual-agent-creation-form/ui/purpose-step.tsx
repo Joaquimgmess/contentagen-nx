@@ -5,8 +5,15 @@ import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getChannelLabel = (value: string): string => {
-   const translationKey = `pages.agent-creation-form.purpose.options.${value}`;
-   return translate(translationKey);
+   const purposeTranslations = {
+      blog_post: translate(
+         "pages.agent-creation-form.purpose.options.blog_post",
+      ),
+   } as const;
+
+   return (
+      purposeTranslations[value as keyof typeof purposeTranslations] || value
+   );
 };
 
 export function PurposeStep({ form }: { form: AgentForm }) {

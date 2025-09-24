@@ -12,26 +12,33 @@ import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getLanguageLabel = (value: string): string => {
-   // Map schema values to translation keys
-   const keyMap: Record<string, string> = {
-      en: "english",
-      pt: "portuguese",
-      es: "spanish",
-      "en-US": "english-us",
-      "en-GB": "english-uk",
-      "pt-BR": "portuguese-brazil",
-      "pt-PT": "portuguese-portugal",
-      "es-ES": "spanish-spain",
-      "es-MX": "spanish-mexico",
-   };
+   const languageTranslations = {
+      en: translate("pages.agent-creation-form.language.languages.english"),
+      pt: translate("pages.agent-creation-form.language.languages.portuguese"),
+      es: translate("pages.agent-creation-form.language.languages.spanish"),
+      "en-US": translate(
+         "pages.agent-creation-form.language.languages.english-us",
+      ),
+      "en-GB": translate(
+         "pages.agent-creation-form.language.languages.english-uk",
+      ),
+      "pt-BR": translate(
+         "pages.agent-creation-form.language.languages.portuguese-brazil",
+      ),
+      "pt-PT": translate(
+         "pages.agent-creation-form.language.languages.portuguese-portugal",
+      ),
+      "es-ES": translate(
+         "pages.agent-creation-form.language.languages.spanish-spain",
+      ),
+      "es-MX": translate(
+         "pages.agent-creation-form.language.languages.spanish-mexico",
+      ),
+   } as const;
 
-   const translationKey = keyMap[value];
-   if (translationKey) {
-      return translate(
-         `pages.agent-creation-form.language.languages.${translationKey}`,
-      );
-   }
-   return value; // fallback
+   return (
+      languageTranslations[value as keyof typeof languageTranslations] || value
+   );
 };
 
 export function LanguageStep({ form }: { form: AgentForm }) {

@@ -6,8 +6,24 @@ import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getAudienceLabel = (value: string): string => {
-   const translationKey = `pages.agent-creation-form.audience.options.${value}`;
-   return translate(translationKey);
+   const audienceTranslations = {
+      general_public: translate(
+         "pages.agent-creation-form.audience.options.general_public",
+      ),
+      professionals: translate(
+         "pages.agent-creation-form.audience.options.professionals",
+      ),
+      beginners: translate(
+         "pages.agent-creation-form.audience.options.beginners",
+      ),
+      customers: translate(
+         "pages.agent-creation-form.audience.options.customers",
+      ),
+   } as const;
+
+   return (
+      audienceTranslations[value as keyof typeof audienceTranslations] || value
+   );
 };
 
 export function AudienceStep({ form }: { form: AgentForm }) {

@@ -8,19 +8,44 @@ import { translate } from "@packages/localization";
 
 // Example string generator for integration style
 const getIntegrationExample = (style: string): string => {
-   const exampleKey = `pages.agent-creation-form.brand.examples.${style}`;
-   const titleKey = `${exampleKey}.title`;
-   const textKey = `${exampleKey}.text`;
+   const brandExamples = {
+      strict_guideline: {
+         title: translate(
+            "pages.agent-creation-form.brand.examples.strict_guideline.title",
+         ),
+         text: translate(
+            "pages.agent-creation-form.brand.examples.strict_guideline.text",
+         ),
+      },
+      flexible_guideline: {
+         title: translate(
+            "pages.agent-creation-form.brand.examples.flexible_guideline.title",
+         ),
+         text: translate(
+            "pages.agent-creation-form.brand.examples.flexible_guideline.text",
+         ),
+      },
+      reference_only: {
+         title: translate(
+            "pages.agent-creation-form.brand.examples.reference_only.title",
+         ),
+         text: translate(
+            "pages.agent-creation-form.brand.examples.reference_only.text",
+         ),
+      },
+      creative_blend: {
+         title: translate(
+            "pages.agent-creation-form.brand.examples.creative_blend.title",
+         ),
+         text: translate(
+            "pages.agent-creation-form.brand.examples.creative_blend.text",
+         ),
+      },
+   } as const;
 
-   if (
-      style === "strict_guideline" ||
-      style === "flexible_guideline" ||
-      style === "reference_only" ||
-      style === "creative_blend"
-   ) {
-      const title = translate(titleKey);
-      const text = translate(textKey);
-      return `**${title}**\n\n${text}`;
+   const example = brandExamples[style as keyof typeof brandExamples];
+   if (example) {
+      return `**${example.title}**\n\n${example.text}`;
    }
 
    return translate("pages.agent-creation-form.brand.examples.default");
@@ -28,8 +53,22 @@ const getIntegrationExample = (style: string): string => {
 
 // Helper function to convert schema values to display labels
 const getBrandLabel = (value: string): string => {
-   const translationKey = `pages.agent-creation-form.brand.options.${value}`;
-   return translate(translationKey);
+   const brandTranslations = {
+      strict_guideline: translate(
+         "pages.agent-creation-form.brand.options.strict_guideline",
+      ),
+      flexible_guideline: translate(
+         "pages.agent-creation-form.brand.options.flexible_guideline",
+      ),
+      reference_only: translate(
+         "pages.agent-creation-form.brand.options.reference_only",
+      ),
+      creative_blend: translate(
+         "pages.agent-creation-form.brand.options.creative_blend",
+      ),
+   } as const;
+
+   return brandTranslations[value as keyof typeof brandTranslations] || value;
 };
 
 export function BrandStep({ form }: { form: AgentForm }) {

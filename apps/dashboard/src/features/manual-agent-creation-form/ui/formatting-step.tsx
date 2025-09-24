@@ -7,8 +7,28 @@ import { translate } from "@packages/localization";
 
 // Helper function to convert schema values to display labels
 const getFormatLabel = (value: string): string => {
-   const translationKey = `pages.agent-creation-form.formatting.options.${value}`;
-   return translate(translationKey);
+   const formattingTranslations = {
+      structured: translate(
+         "pages.agent-creation-form.formatting.options.structured",
+      ),
+      narrative: translate(
+         "pages.agent-creation-form.formatting.options.narrative",
+      ),
+      list_based: translate(
+         "pages.agent-creation-form.formatting.options.list_based",
+      ),
+      bullets: translate(
+         "pages.agent-creation-form.formatting.options.bullets",
+      ),
+      numbered: translate(
+         "pages.agent-creation-form.formatting.options.numbered",
+      ),
+   } as const;
+
+   return (
+      formattingTranslations[value as keyof typeof formattingTranslations] ||
+      value
+   );
 };
 
 // Example string generator for formatting style

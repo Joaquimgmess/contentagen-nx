@@ -41,9 +41,12 @@
    },
    "versions": {
       "title": "Content Versions",
-      "description": "View and manage different versions of this content.",
+      "description": "A history of all changes made to this content",
       "current": "Current",
-      "view-details": "View Details"
+      "view-details": "View Details",
+      "no-versions": "No versions available yet.",
+      "version-number": "Version {{number}}",
+      "changes-count": "Changes made in this version {{count}}"
    },
    "content": {
       "title": "Generated Content",
@@ -88,6 +91,28 @@
          "step-counter": "Step {{current}} of {{total}}",
          "percentage": "{{percent}}% complete",
          "fallback-message": "Processing your content"
+      }
+   },
+   "edit": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "placeholder": "Edit your content...",
+      "success": "Content body edited successfully!",
+      "error": "Failed to edit content body. Please try again.",
+      "validation": {
+         "body-required": "Body is required"
+      }
+   },
+   "upload": {
+      "title": "Upload Content Image",
+      "description": "Upload an image for your content. The image will be displayed with your generated content.",
+      "success": "Image uploaded successfully!",
+      "error": "Failed to upload image",
+      "uploading": "Uploading...",
+      "upload-button": "Upload Image",
+      "validation": {
+         "invalid-file": "Please select an image file",
+         "file-too-large": "File size must be less than 10MB"
       }
    },
    "messages": {

@@ -76,7 +76,7 @@ export function CompetitorLoadingDisplay({
             behavior: "smooth",
          });
       }
-   }, [currentStepIndex]);
+   }, [currentStepIndex, competitorSteps.length]);
 
    const getCurrentMessage = useMemo(() => {
       return `${currentStep?.description || translate("pages.competitor-details.loading.progress.fallback-message")}...`;

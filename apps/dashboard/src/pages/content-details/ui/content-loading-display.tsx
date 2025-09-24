@@ -100,7 +100,7 @@ export function ContentLoadingDisplay({ status }: ContentLoadingDisplayProps) {
             behavior: "smooth",
          });
       }
-   }, [currentStepIndex]);
+   }, [currentStepIndex, contentSteps.length]);
 
    const getCurrentMessage = useMemo(() => {
       return `${currentStep?.description || translate("pages.content-details.loading.progress.fallback-message")}...`;

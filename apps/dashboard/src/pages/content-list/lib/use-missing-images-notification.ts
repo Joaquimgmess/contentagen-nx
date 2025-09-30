@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useTRPC } from "@/integrations/clients";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { createToast } from "@packages/utils/create-toast";
+import { translate } from "@packages/localization";
 
 export function useMissingImagesNotification() {
    const trpc = useTRPC();
@@ -31,12 +32,13 @@ export function useMissingImagesNotification() {
          (missingImagesData.total !== lastMissingCount.current ||
             Date.now() - lastNotificationTime.current > 1000 * 60 * 60) // 1 hour
       ) {
-         toast.warning(
-            `You have ${missingImagesData.total} posts missing image URLs.`,
-            {
-               duration: 10000,
-            },
-         );
+         createToast({
+            type: "warning",
+            message: translate("pages.content-list.messages.missing-images", {
+               count: missingImagesData.total,
+            }),
+            duration: 10000,
+         });
          lastNotificationTime.current = Date.now();
          lastMissingCount.current = missingImagesData.total;
       }

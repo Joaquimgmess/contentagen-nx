@@ -13,7 +13,7 @@ import {
 import { ContentDetailsQuickActions } from "./content-details-quick-actions";
 import { ContentStatsCard } from "./content-stats-card";
 import { useSubscription } from "@trpc/tanstack-react-query";
-import { toast } from "sonner";
+import { createToast } from "@packages/utils/create-toast";
 import { useMemo } from "react";
 import { useMissingImagesNotification } from "../../content-list/lib/use-missing-images-notification";
 import { useState } from "react";
@@ -69,15 +69,17 @@ export function ContentRequestDetailsPage() {
          },
          {
             onData(data) {
-               toast.success(
-                  data.message ||
+               createToast({
+                  type: "success",
+                  message:
+                     data.message ||
                      translate(
                         "pages.content-details.messages.status-updated",
                         {
                            status: data.status,
                         },
                      ),
-               );
+               });
                queryClient.invalidateQueries({
                   queryKey: trpc.content.get.queryKey({
                      id,

@@ -9,7 +9,7 @@ import { Button } from "@packages/ui/components/button";
 import { ExternalLink, RefreshCw, Edit, Trash, Upload } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
+import { createToast } from "@packages/utils/create-toast";
 import {
    Tooltip,
    TooltipTrigger,
@@ -38,19 +38,26 @@ export function CompetitorDetailsActions({
    const analyzeMutation = useMutation(
       trpc.competitor.analyze.mutationOptions({
          onSuccess: () => {
-            toast.success(
-               translate("pages.competitor-details.messages.analysis-started"),
-            );
+            createToast({
+               type: "success",
+               message: translate(
+                  "pages.competitor-details.messages.analysis-started",
+               ),
+            });
             queryClient.invalidateQueries({
                queryKey: trpc.competitor.get.queryKey({ id: competitor.id }),
             });
          },
          onError: (error) => {
-            toast.error(
-               translate("pages.competitor-details.messages.analysis-error", {
-                  error: error.message ?? "Unknown error",
-               }),
-            );
+            createToast({
+               type: "danger",
+               message: translate(
+                  "pages.competitor-details.messages.analysis-error",
+                  {
+                     error: error.message ?? "Unknown error",
+                  },
+               ),
+            });
          },
       }),
    );

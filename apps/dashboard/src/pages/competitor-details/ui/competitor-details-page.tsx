@@ -12,7 +12,7 @@ import { CompetitorLogoUploadDialog } from "../features/competitor-logo-upload-d
 import { useState, useMemo } from "react";
 import { CompetitorLoadingDisplay } from "./competitor-loading-display";
 import { useSubscription } from "@trpc/tanstack-react-query";
-import { toast } from "sonner";
+import { createToast } from "@packages/utils/create-toast";
 import {
    Card,
    CardContent,
@@ -65,9 +65,13 @@ export function CompetitorDetailsPage() {
          },
          {
             async onData(data) {
-               toast.success(
-                  `Competitor features status updated to ${data.status}`,
-               );
+               createToast({
+                  type: "success",
+                  message: translate(
+                     "pages.competitor-details.messages.features-status-updated",
+                     { status: data.status },
+                  ),
+               });
                await queryClient.invalidateQueries({
                   queryKey: trpc.competitor.get.queryKey({
                      id,
@@ -86,9 +90,16 @@ export function CompetitorDetailsPage() {
          },
          {
             async onData(data) {
-               toast.success(
-                  `Competitor analysis status updated to ${data.status}${data.message ? `: ${data.message}` : ""}`,
-               );
+               createToast({
+                  type: "success",
+                  message: translate(
+                     "pages.competitor-details.messages.analysis-status-updated",
+                     {
+                        status: data.status,
+                        message: data.message || "",
+                     },
+                  ),
+               });
                await queryClient.invalidateQueries({
                   queryKey: trpc.competitor.get.queryKey({
                      id,

@@ -1,7 +1,9 @@
 {
    "dependencies": {
       "@trpc/server": "catalog:trpc",
-      "slugify": "^1.6.6"
+      "slugify": "^1.6.6",
+      "posthog-js": "^1.259.0",
+      "sonner": "catalog:ui"
    },
    "devDependencies": {
       "@tooling/typescript": "workspace:*",
@@ -36,6 +38,10 @@
       "./number": {
          "types": "./dist/src/numbers.d.ts",
          "default": "./src/numbers.ts"
+      },
+      "./create-toast": {
+         "types": "./dist/src/create-toast.d.ts",
+         "default": "./src/create-toast.ts"
       }
    },
    "version": "0.16.0"

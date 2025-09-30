@@ -1,6 +1,19 @@
 import posthog from "posthog-js";
 import { toast } from "sonner";
-import { getErrorModalStore } from "./error-modal-context";
+
+// Type for the error modal opener function
+type OpenErrorModalFn = (params: {
+   title: string;
+   description: string;
+}) => void;
+
+// Global reference to the error modal opener
+let globalOpenErrorModal: OpenErrorModalFn | null = null;
+
+// Function to register the error modal opener (called by ErrorModalProvider)
+export function registerErrorModalOpener(openFn: OpenErrorModalFn) {
+   globalOpenErrorModal = openFn;
+}
 
 export function createToast({
    type,
@@ -29,8 +42,14 @@ export function createToast({
       description: message,
    });
 
-   getErrorModalStore.getState().actions.openModal({
-      title: title || "Ops! Ocorreu um erro",
-      description: message,
-   });
+   // Open error modal if registered
+   if (globalOpenErrorModal) {
+      globalOpenErrorModal({
+         title: title || "Ops! Ocorreu um erro",
+         description: message,
+      });
+   } else {
+      // Fallback to error toast if modal not available
+      toast.error(message, { position: "top-center" });
+   }
 }

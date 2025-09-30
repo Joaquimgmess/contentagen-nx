@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Mutation, UseMutationResult } from "@tanstack/react-query";
+import type { Mutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import {
    Dialog,
@@ -9,14 +9,11 @@ import {
    DialogTitle,
    DialogDescription,
    DialogFooter,
-} from "./dialog";
-import { Button } from "./button";
-import { Textarea } from "./textarea";
+} from "@packages/ui/components/dialog";
+import { Button } from "@packages/ui/components/button";
+import { Textarea } from "@packages/ui/components/textarea";
 import { MegaphoneIcon } from "lucide-react";
-import {
-   useErrorModalStore,
-   useRegisterErrorModal,
-} from "../lib/error-modal-context";
+import { useErrorModalStore } from "@/lib/error-modal-context";
 import { createToast } from "@packages/utils/create-toast";
 
 type BugReportInput = {
@@ -34,17 +31,19 @@ type BugReportInput = {
 };
 
 type ErrorModalProps = {
-   submitBugReportMutation: UseMutationResult<
-      { success: boolean },
-      Error,
-      BugReportInput,
-      unknown
-   >;
+   submitBugReport: {
+      mutate: (
+         input: BugReportInput,
+         options?: {
+            onSuccess?: () => void;
+            onError?: (error: unknown) => void;
+         },
+      ) => void;
+      isPending: boolean;
+   };
 };
 
-export const ErrorModal = ({ submitBugReportMutation }: ErrorModalProps) => {
-   useRegisterErrorModal(); // Registra contexto globalmente
-
+export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
    const { state, actions } = useErrorModalStore();
    const [showBugReport, setShowBugReport] = useState(false);
    const [bugDescription, setBugDescription] = useState("");
@@ -86,7 +85,7 @@ export const ErrorModal = ({ submitBugReportMutation }: ErrorModalProps) => {
          });
 
       // 📤 ENVIA PARA BACKEND
-      submitBugReportMutation.mutate(
+      submitBugReport.mutate(
          {
             userReport: bugDescription,
             mutationCache: errorMutations,
@@ -108,10 +107,12 @@ export const ErrorModal = ({ submitBugReportMutation }: ErrorModalProps) => {
                actions.closeModal();
             },
             onError: (error) => {
+               const errorMessage =
+                  error instanceof Error ? error.message : "Erro desconhecido";
                createToast({
                   type: "danger",
                   title: "Erro ao enviar relatório",
-                  message: error.message,
+                  message: errorMessage,
                });
             },
          },
@@ -156,20 +157,17 @@ export const ErrorModal = ({ submitBugReportMutation }: ErrorModalProps) => {
                      <Button
                         variant="outline"
                         onClick={() => setShowBugReport(false)}
-                        disabled={submitBugReportMutation.isPending}
+                        disabled={submitBugReport.isPending}
                      >
                         Voltar
                      </Button>
                      <Button
                         onClick={handleSubmitBug}
                         disabled={
-                           !bugDescription.trim() ||
-                           submitBugReportMutation.isPending
+                           !bugDescription.trim() || submitBugReport.isPending
                         }
                      >
-                        {submitBugReportMutation.isPending
-                           ? "Enviando..."
-                           : "Enviar"}
+                        {submitBugReport.isPending ? "Enviando..." : "Enviar"}
                      </Button>
                   </DialogFooter>
                </div>

@@ -4,8 +4,10 @@ import {
    useState,
    useCallback,
    useMemo,
+   useEffect,
 } from "react";
 import type { ReactNode } from "react";
+import { registerErrorModalOpener } from "@packages/utils/create-toast";
 
 type ModalState = {
    isOpen: boolean;
@@ -44,6 +46,11 @@ export const ErrorModalProvider = ({ children }: { children: ReactNode }) => {
       setState(null);
    }, []);
 
+   // Register the openModal function with the global createToast utility
+   useEffect(() => {
+      registerErrorModalOpener(openModal);
+   }, [openModal]);
+
    const value = useMemo(
       () => ({
          state,
@@ -60,31 +67,4 @@ export const ErrorModalProvider = ({ children }: { children: ReactNode }) => {
          {children}
       </ErrorModalContext.Provider>
    );
-};
-
-// Helper para acessar fora de componentes React (como no create-toast)
-export const getErrorModalStore = (() => {
-   let currentContext: ErrorModalContextType | null = null;
-
-   return {
-      set: (context: ErrorModalContextType) => {
-         currentContext = context;
-      },
-      getState: () => {
-         if (!currentContext) {
-            throw new Error("ErrorModalContext not initialized");
-         }
-         return currentContext;
-      },
-   };
-})();
-
-// Hook interno para registrar o contexto globalmente
-export const useRegisterErrorModal = () => {
-   const context = useErrorModalStore();
-
-   // Registra o contexto globalmente para uso fora de componentes React
-   useMemo(() => {
-      getErrorModalStore.set(context);
-   }, [context]);
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
+import { useTranslation } from "react-i18next";
 import {
    Dialog,
    DialogContent,
@@ -43,6 +44,7 @@ type ErrorModalProps = {
 };
 
 export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
+   const { t } = useTranslation();
    const { state, actions } = useErrorModalStore();
    const [showBugReport, setShowBugReport] = useState(false);
    const [bugDescription, setBugDescription] = useState("");
@@ -95,8 +97,7 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
             onSuccess: () => {
                createToast({
                   type: "success",
-                  message:
-                     "Obrigado pelo feedback! Recebemos seu relato e vamos investigar o problema.",
+                  message: t("common.errorModal.successMessage"),
                });
                setBugDescription("");
                setShowBugReport(false);
@@ -104,10 +105,12 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
             },
             onError: (error) => {
                const errorMessage =
-                  error instanceof Error ? error.message : "Erro desconhecido";
+                  error instanceof Error
+                     ? error.message
+                     : t("common.errorModal.errorMessage");
                createToast({
                   type: "danger",
-                  title: "Erro ao enviar relatório",
+                  title: t("common.errorModal.errorTitle"),
                   message: errorMessage,
                });
             },
@@ -129,13 +132,7 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                   {state?.title}
                </DialogTitle>
                {!showBugReport && (
-                  <DialogDescription>
-                     <div
-                        dangerouslySetInnerHTML={{
-                           __html: state?.description ?? "",
-                        }}
-                     />
-                  </DialogDescription>
+                  <DialogDescription>{state?.description}</DialogDescription>
                )}
             </DialogHeader>
 
@@ -144,7 +141,7 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                   <Textarea
                      value={bugDescription}
                      onChange={(e) => setBugDescription(e.target.value)}
-                     placeholder="Por favor, descreva o que você estava tentando fazer quando o erro ocorreu..."
+                     placeholder={t("common.errorModal.placeholder")}
                      rows={6}
                      className="resize-none"
                   />
@@ -154,7 +151,7 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                         onClick={() => setShowBugReport(false)}
                         disabled={submitBugReport.isPending}
                      >
-                        Voltar
+                        {t("common.errorModal.backButton")}
                      </Button>
                      <Button
                         onClick={handleSubmitBug}
@@ -162,7 +159,9 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                            !bugDescription.trim() || submitBugReport.isPending
                         }
                      >
-                        {submitBugReport.isPending ? "Enviando..." : "Enviar"}
+                        {submitBugReport.isPending
+                           ? t("common.errorModal.submittingButton")
+                           : t("common.errorModal.submitButton")}
                      </Button>
                   </DialogFooter>
                </div>
@@ -181,10 +180,11 @@ function BugReportButton({
 }: {
    setShowBugReport: (value: boolean) => void;
 }) {
+   const { t } = useTranslation();
    return (
       <Button onClick={() => setShowBugReport(true)} variant="outline">
          <MegaphoneIcon className="w-4 h-4 mr-2" />
-         Reportar este erro
+         {t("common.errorModal.reportButton")}
       </Button>
    );
 }

@@ -98,7 +98,6 @@ export const bugReportRouter = router({
                user_report: input.userReport,
                current_url: input.currentURL,
                mutation_cache: JSON.stringify(sanitizedMutationCache),
-               mutation_cache_count: sanitizedMutationCache.length,
                timestamp: new Date().toISOString(),
             },
          });

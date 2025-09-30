@@ -25,5 +25,24 @@
    "time": {
       "last-modified": "Last Modified",
       "time": "Time"
+   },
+   "errorModal": {
+      "title": "Oops! An error occurred",
+      "reportButton": "Report this error",
+      "backButton": "Back",
+      "submitButton": "Submit",
+      "submittingButton": "Submitting...",
+      "placeholder": "Please describe what you were trying to do when the error occurred...",
+      "successTitle": "Report submitted",
+      "successMessage": "Thank you for your feedback! We have received your report and will investigate the issue.",
+      "errorTitle": "Error submitting report",
+      "errorMessage": "Unable to submit the report. Please try again later.",
+      "validationError": "Please describe what happened before submitting"
+   },
+   "bugReport": {
+      "validation": {
+         "userReportRequired": "Bug description is required",
+         "authRequired": "User must be authenticated"
+      }
    }
 }

@@ -1,5 +1,6 @@
 import posthog from "posthog-js";
 import { toast } from "sonner";
+import i18n from "@packages/localization";
 
 type OpenErrorModalFn = (params: {
    title: string;
@@ -38,7 +39,7 @@ export function createToast({
 
    if (globalOpenErrorModal) {
       globalOpenErrorModal({
-         title: title || "Ops! Ocorreu um erro",
+         title: title || i18n.t("common.errorModal.title"),
          description: message,
       });
    } else {

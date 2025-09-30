@@ -2,28 +2,22 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { PostHog } from "posthog-node";
 import { posthogHost, posthogApiKey } from "@packages/posthog/server";
+import { eq } from "drizzle-orm";
+import { user, organization, member } from "@packages/database/schema";
 
-// Schema de validação para bug report
 export const bugReportSchema = z.object({
-   // Erro que foi mostrado ao usuário
    error: z.object({
       title: z.string(),
       description: z.string(),
    }),
-
-   // Descrição escrita pelo usuário
    userReport: z.string().min(1, "Descrição do bug é obrigatória"),
-
-   // Mutation cache do React Query
    mutationCache: z.array(
       z.object({
-         key: z.string(), // Ex: "profile.update"
-         error: z.unknown(), // Erro serializado
-         input: z.unknown(), // Input da mutation
+         key: z.string(),
+         error: z.unknown(),
+         input: z.unknown(),
       }),
    ),
-
-   // URL onde o erro ocorreu
    currentURL: z.string(),
 });
 
@@ -39,7 +33,34 @@ export const surveyRouter = router({
             throw new Error("User must be authenticated");
          }
 
-         // 🔒 FILTRO DE SEGURANÇA: Remove senhas do mutation cache
+         const userData = await resolvedCtx.db
+            .select({
+               id: user.id,
+               name: user.name,
+               email: user.email,
+               role: user.role,
+               createdAt: user.createdAt,
+               image: user.image,
+            })
+            .from(user)
+            .where(eq(user.id, userId))
+            .limit(1);
+
+         const userInfo = userData[0];
+
+         const memberData = await resolvedCtx.db
+            .select({
+               organizationId: member.organizationId,
+               organizationName: organization.name,
+               memberRole: member.role,
+            })
+            .from(member)
+            .innerJoin(organization, eq(member.organizationId, organization.id))
+            .where(eq(member.userId, userId))
+            .limit(1);
+
+         const orgInfo = memberData[0];
+
          const sanitizedMutationCache = input.mutationCache.map((mutation) => {
             if (mutation.input && typeof mutation.input === "object") {
                const sanitizedInput = Object.fromEntries(
@@ -55,7 +76,6 @@ export const surveyRouter = router({
             return mutation;
          });
 
-         // 📊 ENVIA EVENTO PARA POSTHOG
          const posthog = new PostHog(posthogApiKey, {
             host: posthogHost,
          });
@@ -67,6 +87,13 @@ export const surveyRouter = router({
                properties: {
                   user_id: userId,
                   user_email: userEmail,
+                  user_name: userInfo?.name || "N/A",
+                  user_role: userInfo?.role || "N/A",
+                  user_created_at: userInfo?.createdAt || "N/A",
+                  user_image: userInfo?.image || "N/A",
+                  organization_id: orgInfo?.organizationId || "N/A",
+                  organization_name: orgInfo?.organizationName || "N/A",
+                  member_role: orgInfo?.memberRole || "N/A",
                   error_title: input.error.title,
                   error_description: input.error.description,
                   user_report: input.userReport,
@@ -76,11 +103,9 @@ export const surveyRouter = router({
                },
             });
 
-            // Ensure event is sent before returning
             await posthog.shutdown();
          } catch (error) {
             console.error("Failed to send bug report to PostHog:", error);
-            // Não lançamos erro para não bloquear o usuário
          }
 
          return { success: true };

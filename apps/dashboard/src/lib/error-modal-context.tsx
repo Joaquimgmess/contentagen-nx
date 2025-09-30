@@ -46,7 +46,6 @@ export const ErrorModalProvider = ({ children }: { children: ReactNode }) => {
       setState(null);
    }, []);
 
-   // Register the openModal function with the global createToast utility
    useEffect(() => {
       registerErrorModalOpener(openModal);
    }, [openModal]);

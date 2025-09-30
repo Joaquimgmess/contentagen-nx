@@ -52,7 +52,6 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
    const handleSubmitBug = () => {
       if (!bugDescription.trim()) return;
 
-      // 🔍 CAPTURA MUTATION CACHE DO REACT QUERY
       const errorMutations = queryClient
          .getMutationCache()
          .getAll()
@@ -65,7 +64,6 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                      ? {
                           message: mutation.state.error.message,
                           data: (() => {
-                             // Remove stack trace (muito grande)
                              const { stack: _, ...dataWithoutStack } =
                                 (mutation.state.error.data as Record<
                                    string,
@@ -84,7 +82,6 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
             };
          });
 
-      // 📤 ENVIA PARA BACKEND
       submitBugReport.mutate(
          {
             userReport: bugDescription,
@@ -144,7 +141,6 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
             </DialogHeader>
 
             {showBugReport ? (
-               // 📝 FORMULÁRIO DE RELATÓRIO
                <div className="flex flex-col gap-4">
                   <Textarea
                      value={bugDescription}
@@ -172,7 +168,6 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                   </DialogFooter>
                </div>
             ) : (
-               // ❌ TELA DE ERRO COM BOTÃO DE REPORTE
                <DialogFooter>
                   <BugReportButton setShowBugReport={setShowBugReport} />
                </DialogFooter>
@@ -190,7 +185,6 @@ function BugReportButton({
    const [errorMutationCache, setErrorMutationCache] = useState<Mutation[]>([]);
    const queryClient = useQueryClient();
 
-   // ⏱️ DELAY DE 500ms para usuário ler o erro primeiro
    useEffect(() => {
       const timer = setTimeout(() => {
          setErrorMutationCache(
@@ -204,7 +198,6 @@ function BugReportButton({
       return () => clearTimeout(timer);
    }, [queryClient]);
 
-   // 🚫 Se não houver mutations com erro, não mostra botão
    if (!errorMutationCache.length) return null;
 
    return (

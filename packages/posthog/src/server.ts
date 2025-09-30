@@ -8,6 +8,3 @@ export function getElysiaPosthogConfig() {
    });
    return internalPosthog;
 }
-
-// Export config for use in other packages
-export { posthogPublicKey as posthogApiKey, posthogHost };

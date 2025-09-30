@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { PostHog } from "posthog-node";
-import { posthogHost, posthogApiKey } from "@packages/posthog/server";
+import { getElysiaPosthogConfig } from "@packages/posthog/server";
 import { eq } from "drizzle-orm";
 import { user, organization, member } from "@packages/database/schema";
+
+const posthog = getElysiaPosthogConfig();
 
 export const bugReportSchema = z.object({
    error: z.object({
@@ -76,10 +77,6 @@ export const bugReportRouter = router({
             return mutation;
          });
 
-         const posthog = new PostHog(posthogApiKey, {
-            host: posthogHost,
-         });
-
          posthog.capture({
             distinctId: userId,
             event: "bug_report_submitted",
@@ -102,7 +99,7 @@ export const bugReportRouter = router({
             },
          });
 
-         await posthog.shutdown();
+         await posthog.flush();
 
          return { success: true };
       }),

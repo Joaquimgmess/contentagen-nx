@@ -80,33 +80,30 @@ export const bugReportRouter = router({
             host: posthogHost,
          });
 
-         try {
-            posthog.capture({
-               distinctId: userId,
-               event: "bug_report_submitted",
-               properties: {
-                  user_id: userId,
-                  user_email: userEmail,
-                  user_name: userInfo?.name || "N/A",
-                  user_role: userInfo?.role || "N/A",
-                  user_created_at: userInfo?.createdAt || "N/A",
-                  user_image: userInfo?.image || "N/A",
-                  organization_id: orgInfo?.organizationId || "N/A",
-                  organization_name: orgInfo?.organizationName || "N/A",
-                  member_role: orgInfo?.memberRole || "N/A",
-                  error_title: input.error.title,
-                  error_description: input.error.description,
-                  user_report: input.userReport,
-                  current_url: input.currentURL,
-                  mutation_cache: sanitizedMutationCache,
-                  timestamp: new Date().toISOString(),
-               },
-            });
+         posthog.capture({
+            distinctId: userId,
+            event: "bug_report_submitted",
+            properties: {
+               user_id: userId,
+               user_email: userEmail,
+               user_name: userInfo?.name || "N/A",
+               user_role: userInfo?.role || "N/A",
+               user_created_at: userInfo?.createdAt || "N/A",
+               user_image: userInfo?.image || "N/A",
+               organization_id: orgInfo?.organizationId || "N/A",
+               organization_name: orgInfo?.organizationName || "N/A",
+               member_role: orgInfo?.memberRole || "N/A",
+               error_title: input.error.title,
+               error_description: input.error.description,
+               user_report: input.userReport,
+               current_url: input.currentURL,
+               mutation_cache: JSON.stringify(sanitizedMutationCache),
+               mutation_cache_count: sanitizedMutationCache.length,
+               timestamp: new Date().toISOString(),
+            },
+         });
 
-            await posthog.shutdown();
-         } catch (error) {
-            console.error("Failed to send bug report to PostHog:", error);
-         }
+         await posthog.shutdown();
 
          return { success: true };
       }),

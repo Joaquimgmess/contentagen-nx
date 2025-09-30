@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Mutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import {
    Dialog,
@@ -182,24 +181,6 @@ function BugReportButton({
 }: {
    setShowBugReport: (value: boolean) => void;
 }) {
-   const [errorMutationCache, setErrorMutationCache] = useState<Mutation[]>([]);
-   const queryClient = useQueryClient();
-
-   useEffect(() => {
-      const timer = setTimeout(() => {
-         setErrorMutationCache(
-            queryClient
-               .getMutationCache()
-               .getAll()
-               .filter((mutation) => mutation.state.status === "error"),
-         );
-      }, 500);
-
-      return () => clearTimeout(timer);
-   }, [queryClient]);
-
-   if (!errorMutationCache.length) return null;
-
    return (
       <Button onClick={() => setShowBugReport(true)} variant="outline">
          <MegaphoneIcon className="w-4 h-4 mr-2" />

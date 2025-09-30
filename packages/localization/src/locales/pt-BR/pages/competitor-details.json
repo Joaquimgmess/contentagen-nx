@@ -89,6 +89,8 @@
    },
    "messages": {
       "analysis-started": "Análise do concorrente iniciada!",
-      "analysis-error": "Erro ao iniciar análise: {{error}}"
+      "analysis-error": "Erro ao iniciar análise: {{error}}",
+      "features-status-updated": "Status das funcionalidades do concorrente atualizado para {{status}}",
+      "analysis-status-updated": "Status da análise do concorrente atualizado para {{status}}{{message}}"
    }
 }

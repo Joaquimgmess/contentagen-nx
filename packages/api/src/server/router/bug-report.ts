@@ -21,7 +21,7 @@ export const bugReportSchema = z.object({
    currentURL: z.string(),
 });
 
-export const surveyRouter = router({
+export const bugReportRouter = router({
    submitBugReport: protectedProcedure
       .input(bugReportSchema)
       .mutation(async ({ ctx, input }) => {

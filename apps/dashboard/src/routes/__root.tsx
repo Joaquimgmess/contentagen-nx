@@ -108,7 +108,7 @@ function RootComponent() {
 function ErrorModalWithMutation() {
    const trpc = useTRPC();
    const submitBugReport = useMutation(
-      trpc.survey.submitBugReport.mutationOptions(),
+      trpc.bugReport.submitBugReport.mutationOptions(),
    );
 
    return <ErrorModal submitBugReport={submitBugReport} />;

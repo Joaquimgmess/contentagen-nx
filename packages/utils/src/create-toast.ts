@@ -17,18 +17,30 @@ export function createToast({
    type,
    title,
    message,
+   duration,
 }: {
    title?: string;
-   type: "danger" | "success" | "warning";
+   type: "danger" | "success" | "warning" | "info" | "loading";
    message: string;
+   duration?: number;
 }) {
    if (type === "success") {
-      toast.success(message);
+      toast.success(message, { duration });
       return;
    }
 
    if (type === "warning") {
-      toast.warning(message, { position: "top-center" });
+      toast.warning(message, { position: "top-center", duration });
+      return;
+   }
+
+   if (type === "info") {
+      toast.info(message, { duration });
+      return;
+   }
+
+   if (type === "loading") {
+      toast.loading(message, { duration });
       return;
    }
 
@@ -43,6 +55,6 @@ export function createToast({
          description: message,
       });
    } else {
-      toast.error(message, { position: "top-center" });
+      toast.error(message, { position: "top-center", duration });
    }
 }

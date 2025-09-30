@@ -3,24 +3,33 @@ import { protectedProcedure, router } from "../trpc";
 import { getElysiaPosthogConfig } from "@packages/posthog/server";
 import { eq } from "drizzle-orm";
 import { user, organization, member } from "@packages/database/schema";
+import i18n from "@packages/localization";
 
 const posthog = getElysiaPosthogConfig();
 
-export const bugReportSchema = z.object({
-   error: z.object({
-      title: z.string(),
-      description: z.string(),
-   }),
-   userReport: z.string().min(1, "Descrição do bug é obrigatória"),
-   mutationCache: z.array(
-      z.object({
-         key: z.string(),
-         error: z.unknown(),
-         input: z.unknown(),
+const createBugReportSchema = (locale: string) => {
+   const t = (key: string) => i18n.t(key, { lng: locale });
+
+   return z.object({
+      error: z.object({
+         title: z.string(),
+         description: z.string(),
       }),
-   ),
-   currentURL: z.string(),
-});
+      userReport: z
+         .string()
+         .min(1, t("common.bugReport.validation.userReportRequired")),
+      mutationCache: z.array(
+         z.object({
+            key: z.string(),
+            error: z.unknown(),
+            input: z.unknown(),
+         }),
+      ),
+      currentURL: z.string(),
+   });
+};
+
+export const bugReportSchema = createBugReportSchema("pt");
 
 export const bugReportRouter = router({
    submitBugReport: protectedProcedure
@@ -29,9 +38,11 @@ export const bugReportRouter = router({
          const resolvedCtx = await ctx;
          const userId = resolvedCtx.session?.user.id;
          const userEmail = resolvedCtx.session?.user.email;
+         const locale = resolvedCtx.language || "en";
+         const t = (key: string) => i18n.t(key, { lng: locale });
 
          if (!userId) {
-            throw new Error("User must be authenticated");
+            throw new Error(t("common.bugReport.validation.authRequired"));
          }
 
          const userData = await resolvedCtx.db

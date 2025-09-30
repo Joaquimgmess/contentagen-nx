@@ -12,9 +12,7 @@ COPY packages/ui/package.json ./packages/ui/
 COPY packages/brand/package.json ./packages/brand/
 COPY packages/posthog/package.json ./packages/posthog/
 COPY packages/environment/package.json ./packages/environment/
-COPY packages/errors/package.json ./packages/errors/
-COPY packages/database/package.json ./packages/database/
-COPY packages/arcjet/package.json ./packages/arcjet/
+COPY packages/utils/package.json ./packages/utils/
 COPY tooling/typescript/package.json ./tooling/typescript/
 
 # Install all dependencies (including devDependencies needed for the build step)
@@ -27,12 +25,8 @@ COPY . .
 # Build the blog application.
 # The build output will be in /app/apps/blog/dist
 ENV NODE_ENV=production
-ARG ARCJET_KEY
 ARG CONTENTAGEN_API_KEY
 ARG CONTENTAGEN_AGENT_ID
-ENV ARCJET_KEY=$ARCJET_KEY
-ENV CONTENTAGEN_API_KEY=$CONTENTAGEN_API_KEY
-ENV CONTENTAGEN_AGENT_ID=$CONTENTAGEN_AGENT_ID
 RUN bun run --filter=blog build
 
 # ---
@@ -49,7 +43,7 @@ COPY apps/blog/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Set and expose the port. Default to 4322 if not provided.
-ARG PORT=4322
+ARG PORT
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 

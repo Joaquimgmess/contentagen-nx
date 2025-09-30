@@ -13,8 +13,7 @@ COPY packages/ui/package.json ./packages/ui/
 COPY packages/brand/package.json ./packages/brand/
 COPY packages/posthog/package.json ./packages/posthog/
 COPY packages/environment/package.json ./packages/environment/
-COPY packages/errors/package.json ./packages/errors/
-COPY packages/database/package.json ./packages/database/
+COPY packages/utils/package.json ./packages/utils/
 COPY tooling/typescript/package.json ./tooling/typescript/
 
 # Install all dependencies (including devDependencies needed for the build step)
@@ -45,7 +44,7 @@ RUN chmod +x /entrypoint.sh
 COPY --from=builder /app/apps/docs/dist /usr/share/nginx/html
 
 # Set and expose the port. Default to 4323 if not provided.
-ARG PORT=4323
+ARG PORT
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 

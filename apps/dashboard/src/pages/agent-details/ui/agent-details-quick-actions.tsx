@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { Button } from "@packages/ui/components/button";
 import { translate } from "@packages/localization";
-import { File, Edit, Trash, Plus, Camera, AlertTriangle } from "lucide-react";
+import { Edit, Trash, Plus, Camera, FileEdit } from "lucide-react";
 import {
    Card,
    CardContent,
@@ -15,80 +15,66 @@ import {
    TooltipTrigger,
    TooltipContent,
 } from "@packages/ui/components/tooltip";
-import { GenerateBrandFilesCredenza } from "../features/dynamic-brand-files";
 import { DeleteAgentDialog } from "@/features/agent-actions/ui/delete-agent-dialog";
 import { EditAgentAction } from "@/features/agent-actions/ui/edit-agent-action";
 import { ManageAgentPhoto } from "../features/manage-agent-photo";
-import { DeleteAllFiles } from "../features/delete-all-files";
-import type { AgentSelect } from "@packages/database/schema";
-import type { PersonaConfig } from "@packages/database/schemas/agent";
-import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
+import type { RouterOutput } from "@packages/api/client";
 
-export function AgentDetailsQuickActions({ agent }: { agent: AgentSelect }) {
+interface AgentDetailsQuickActionsProps {
+   agent: RouterOutput["agent"]["get"];
+   onEditInstructions?: () => void;
+}
+export function AgentDetailsQuickActions({
+   agent,
+   onEditInstructions,
+}: AgentDetailsQuickActionsProps) {
    const router = useRouter();
 
-   const shouldDisableBrandFileGeneration = useMemo(() => {
-      if (!agent) return true;
-      const currentFileCount = agent?.uploadedFiles?.length || 0;
-      return Boolean(currentFileCount >= AGENT_FILE_UPLOAD_LIMIT);
-   }, [agent]);
-
-   const hasUploadedFiles = useMemo(() => {
-      return (agent?.uploadedFiles?.length || 0) > 0;
-   }, [agent]);
-
-   const [open, setOpen] = useState(false);
    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
    const [managePhotoOpen, setManagePhotoOpen] = useState(false);
-   const [deleteAllFilesOpen, setDeleteAllFilesOpen] = useState(false);
-   const { handleEdit } = EditAgentAction({ agentId: agent.id });
+   const { handleEdit } = EditAgentAction({ agentId: agent?.id ?? "" });
 
    const handleCreateContent = () => {
       router.navigate({
          to: "/agents/$agentId/content/request",
-         params: { agentId: agent.id },
+         params: { agentId: agent?.id ?? "" },
       });
    };
 
    const actions = [
       {
-         icon: File,
-         label: "Generate brand files",
-         onClick: () => setOpen(true),
-         disabled: shouldDisableBrandFileGeneration,
-      },
-
-      {
          icon: Edit,
-         label: "Edit agent",
+         label: translate("pages.agent-details.quick-actions.edit-agent"),
          onClick: handleEdit,
          disabled: false,
       },
       {
+         icon: FileEdit,
+         label: translate(
+            "pages.agent-details.quick-actions.edit-instructions",
+         ),
+         onClick: onEditInstructions,
+         disabled: !onEditInstructions,
+      },
+      {
          icon: Trash,
-         label: "Delete agent",
+         label: translate("pages.agent-details.quick-actions.delete-agent"),
          onClick: () => setDeleteDialogOpen(true),
          disabled: false,
       },
       {
          icon: Plus,
-         label: "Create content",
+         label: translate("pages.agent-details.quick-actions.create-content"),
          onClick: handleCreateContent,
          disabled: false,
       },
       {
          icon: Camera,
-         label: "Manage agent photo",
+         label: translate(
+            "pages.agent-details.quick-actions.manage-agent-photo",
+         ),
          onClick: () => setManagePhotoOpen(true),
          disabled: false,
-      },
-      {
-         icon: AlertTriangle,
-         label: hasUploadedFiles
-            ? "Delete all uploaded files"
-            : "No files to delete",
-         onClick: () => setDeleteAllFilesOpen(true),
-         disabled: !hasUploadedFiles,
       },
    ];
 
@@ -122,11 +108,9 @@ export function AgentDetailsQuickActions({ agent }: { agent: AgentSelect }) {
             </CardContent>
          </Card>
 
-         <GenerateBrandFilesCredenza open={open} onOpenChange={setOpen} />
-
          <DeleteAgentDialog
-            agentId={agent.id}
-            agentName={(agent.personaConfig as PersonaConfig).metadata.name}
+            agentId={agent?.id ?? ""}
+            agentName={agent?.personaConfig.metadata.name ?? ""}
             open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
          />
@@ -135,12 +119,6 @@ export function AgentDetailsQuickActions({ agent }: { agent: AgentSelect }) {
             agent={agent}
             open={managePhotoOpen}
             onOpenChange={setManagePhotoOpen}
-         />
-
-         <DeleteAllFiles
-            agent={agent}
-            open={deleteAllFilesOpen}
-            onOpenChange={setDeleteAllFilesOpen}
          />
       </>
    );

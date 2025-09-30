@@ -11,10 +11,8 @@ COPY apps/landing-page/package.json ./apps/landing-page/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/brand/package.json ./packages/brand/
 COPY packages/posthog/package.json ./packages/posthog/
+COPY packages/utils/package.json ./packages/utils/
 COPY packages/environment/package.json ./packages/environment/
-COPY packages/errors/package.json ./packages/errors/
-COPY packages/database/package.json ./packages/database/
-COPY packages/arcjet/package.json ./packages/arcjet/
 COPY tooling/typescript/package.json ./tooling/typescript/
 
 # Install all dependencies (including devDependencies needed for the build step)
@@ -43,7 +41,7 @@ COPY apps/landing-page/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Set and expose the port. Default to 4321 if not provided.
-ARG PORT=4321
+ARG PORT
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 

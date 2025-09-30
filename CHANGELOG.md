@@ -1,3 +1,156 @@
+## 0.17.0 (2025-09-29)
+
+### 🚀 Features
+
+- **agents): chore(agents:** Remove unused lumen.config.json file ([979fa4b](https://github.com/F-O-T/contentagen-nx/commit/979fa4b))
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.16.0 (2025-09-29)
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.16.0
+- Updated @packages/rag to 0.4.0
+
+## 0.15.0 (2025-09-29)
+
+### 🩹 Fixes
+
+- **mastra:** Validate agent output for required fields ([3965695](https://github.com/F-O-T/contentagen-nx/commit/3965695))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.15.0
+- Updated @packages/rag to 0.4.0
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.13.0 (2025-09-29)
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.13.0
+- Updated @packages/rag to 0.4.0
+
+## 0.12.0 (2025-09-29)
+
+### 🚀 Features
+
+- Remove content loading display component ([2f532e0](https://github.com/F-O-T/contentagen-nx/commit/2f532e0))
+- **dashboard:** Implement multi-step loader for content generation ([3cd4a73](https://github.com/F-O-T/contentagen-nx/commit/3cd4a73))
+- Add content status events to content workflows ([80fd188](https://github.com/F-O-T/contentagen-nx/commit/80fd188))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.12.0
+- Updated @packages/rag to 0.4.0
+
+### ❤️ Thank You
+
+- Manoel
+
+
+## 0.11.0 (2025-09-27)
+
+### 🚀 Features
+
+- **server:** Add create new content workflow to bullboard ([b603c18](https://github.com/F-O-T/contentagen-nx/commit/b603c18))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.11.0
+- Updated @packages/rag to 0.4.0
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.10.0 (2025-09-27)
+
+### 🚀 Features
+
+- **server:** Add create new content workflow to bullboard ([b603c18](https://github.com/F-O-T/contentagen-nx/commit/b603c18))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.10.0
+- Updated @packages/rag to 0.4.0
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.8.0 (2025-09-27)
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.8.0
+- Updated @packages/rag to 0.4.0
+
+## 0.6.0 (2025-09-27)
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.6.0
+- Updated @packages/rag to 0.4.0
+
+## 0.5.0 (2025-09-27)
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.4.0
+- Updated @packages/environment to 0.4.0
+- Updated @packages/database to 0.4.0
+- Updated @packages/payment to 0.4.0
+- Updated @packages/files to 0.4.0
+- Updated @packages/utils to 0.5.0
+- Updated @packages/rag to 0.4.0
+
 ## 0.4.0 (2025-09-22)
 
 ### 🚀 Features

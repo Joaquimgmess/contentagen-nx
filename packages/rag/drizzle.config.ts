@@ -1,11 +1,10 @@
-import { z } from "zod";
 import type { Config } from "drizzle-kit";
-
-const envSchema = z.object({
-   PG_VECTOR_URL: z.string().min(1),
-});
-
-const env = envSchema.parse(process.env);
+import z from "zod";
+const env = z
+   .object({
+      PG_VECTOR_URL: z.string(),
+   })
+   .parse(process.env);
 export default {
    schema: "./src/schema.ts",
    dialect: "postgresql",

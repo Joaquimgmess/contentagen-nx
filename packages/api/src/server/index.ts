@@ -4,7 +4,7 @@ import type { DatabaseInstance } from "@packages/database/client";
 import { createTRPCContext as createTRPCContextInternal, router } from "./trpc";
 import { agentFileRouter } from "./router/agent-file";
 import type { MinioClient } from "@packages/files/client";
-import type { ChromaClient } from "@packages/chroma-db/client";
+import type { PgVectorDatabaseInstance } from "@packages/rag/client";
 import { agentRouter } from "./router/agent";
 import { contentRouter } from "./router/content";
 import { statisticsRouter } from "./router/statistics";
@@ -12,7 +12,6 @@ import { authHelpersRouter } from "./router/auth-helpers";
 import { sdkRouter } from "./router/sdk";
 import { ideasRouter } from "./router/ideas";
 import { preferencesRouter } from "./router/preferences";
-import type { OpenRouterClient } from "@packages/openrouter/client";
 import { competitorRouter } from "./router/competitor";
 import { competitorFileRouter } from "./router/competitor-file";
 
@@ -30,19 +29,17 @@ export const appRouter = router({
 });
 export const createApi = ({
    auth,
-   openRouterClient,
    db,
    minioClient,
    minioBucket,
-   chromaClient,
+   ragClient,
    polarClient,
 }: {
-   openRouterClient: OpenRouterClient; // Replace with actual type if available
    minioBucket: string;
    auth: AuthInstance;
    db: DatabaseInstance;
    minioClient: MinioClient;
-   chromaClient: ChromaClient;
+   ragClient: PgVectorDatabaseInstance;
    polarClient: Polar;
 }) => {
    return {
@@ -54,9 +51,8 @@ export const createApi = ({
             db,
             headers,
             minioBucket,
-            chromaClient,
+            ragClient,
             polarClient,
-            openRouterClient, // Pass the OpenRouter client to the context
          }),
    };
 };

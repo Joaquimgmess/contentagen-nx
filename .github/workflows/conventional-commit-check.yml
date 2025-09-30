@@ -3,10 +3,11 @@ name: Conventional Commits Check
 on:
   pull_request:
     branches: ["*"]
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   conventional-commits-check:
+    if: ${{ github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     
     steps:
@@ -23,31 +24,22 @@ jobs:
           # Get the list of commits in this PR
           COMMITS=$(git rev-list --no-merges origin/master...HEAD)
           
-          # Check each commit for conventional commit format
+          # Check each commit using commitlint
           for commit in $COMMITS; do
-            message=$(git log --format=%B -n 1 $commit)
-            
-            # Check if commit message follows conventional commits format
-            if ! echo "$message" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?(!)?: "; then
-              echo "❌ Commit $commit does not follow conventional commits format:"
-              echo "   $message"
+            echo "Checking commit: $commit"
+            if ! npx commitlint --from $commit --to $commit; then
+              echo "❌ Commit $commit does not follow the conventional commits format or has invalid scope"
               echo ""
-              echo "Please use conventional commits format:"
-              echo "   feat: add new feature"
-              echo "   fix: resolve bug"
-              echo "   docs: update documentation"
-              echo "   etc."
+              echo "Commit message:"
+              git log --format=%B -n 1 $commit
+              echo ""
+              echo "Valid scopes are: blog, dashboard, docs, landing-page, server, agents, api, authentication, brand, database, environment, files, localization, payment, posthog, rag, server-events, transactional, ui, utils, workers, typescript, deps, build, ci, release, chore"
+              echo ""
+              echo "Example format: feat(rag): add new embedding functionality"
               exit 1
             fi
           done
           
-          echo "✅ All commits follow conventional commits format"
+          echo "✅ All commits follow conventional commits format with valid scopes"
 
-      - name: Preview release changes
-        run: |
-          # Preview what Nx release would generate
-          if bunx nx release --dry-run --skip-publish --first-release 2>/dev/null; then
-            echo "✅ Nx release preview successful"
-          else
-            echo "ℹ️  Nx release preview completed (dry-run mode)"
-          fi
+      

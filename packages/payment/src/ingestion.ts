@@ -1,6 +1,10 @@
 import type { Polar } from "@polar-sh/sdk";
 import type { EventCreateCustomer } from "@polar-sh/sdk/models/components/eventcreatecustomer.js";
-import type { MODELS } from "@packages/openrouter/helpers";
+export const MODELS = {
+   "deepseek-v3.1-terminus": "deepseek/deepseek-chat-v3.1-terminus",
+   "grok-4-fast": "x-ai/grok-4-fast",
+   "gpt-5-mini": "openai/gpt-5-mini",
+} as const;
 export const POLAR_BILLING_EVENTS = {
    CREDIT: "credit",
 } as const;
@@ -8,7 +12,8 @@ export const POLAR_BILLING_EVENTS = {
 export const USAGE_TYPE = {
    LLM: "llm_usage",
    WEB_SEARCH: "web_search",
-   RAG: "rag_usage",
+   RAG_OPERATIONS: "rag_operations",
+   DB_OPERATIONS: "db_operations",
 } as const;
 
 export const BILLING_CONFIG = {
@@ -79,10 +84,14 @@ export const createWebSearchUsageMetadata = (params: {
    };
 };
 
-export const createRagUsageMetadata = (params: { agentId: string }) => {
+export const createRagUsageMetadata = (params: {
+   agentId: string;
+   type: "READ" | "WRITE";
+}) => {
    const creditsDebited = calculateCreditsDebited(10);
    return {
-      usage_type: USAGE_TYPE.RAG,
+      usage_type: USAGE_TYPE.RAG_OPERATIONS,
+      operation_type: params.type,
       agent_id: params.agentId,
       credits_debited: creditsDebited,
    };

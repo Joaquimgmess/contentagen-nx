@@ -1,16 +1,16 @@
 import { Worker, Queue, type Job } from "bullmq";
 import { serverEnv } from "@packages/environment/server";
-import { createRedisClient } from "@packages/redis";
-import { registerGracefulShutdown } from "../helpers";
-import { mastra, setRuntimeContext } from "@packages/mastra";
+import { registerGracefulShutdown, createRedisClient } from "../helpers";
+import {
+   mastra,
+   setRuntimeContext,
+   type CustomRuntimeContext,
+} from "@packages/agents";
 export type CompetitorCrawlJob = {
    competitorId: string;
    userId: string;
    websiteUrl: string;
-   runtimeContext?: {
-      language: "en" | "pt";
-      userId: string;
-   };
+   runtimeContext?: CustomRuntimeContext;
 };
 
 const QUEUE = "extract-competitor-brand-info";

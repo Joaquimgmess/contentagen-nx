@@ -1,10 +1,8 @@
 import { useAppForm } from "@packages/ui/components/form";
 import { type FormEvent, useCallback } from "react";
-import {
-   type PersonaConfig,
-   PersonaConfigSchema,
-} from "@packages/database/schemas/agent";
+import type { PersonaConfig } from "@packages/database/schemas/agent";
 import type { AgentCreationManualForm } from "../ui/agent-creation-manual-form";
+import z from "zod";
 
 export function useAgentForm({
    defaultValues,
@@ -13,21 +11,32 @@ export function useAgentForm({
    const form = useAppForm({
       defaultValues: {
          metadata: { name: "", description: "" },
-         voice: { communication: "I" },
-         audience: { base: "general_public" },
-         formatting: { style: "structured" },
-         language: { primary: "en" },
-         brand: { integrationStyle: "strict_guideline" },
-         purpose: undefined,
+         instructions: {
+            audienceProfile: "",
+            writingGuidelines: "",
+            ragIntegration: "",
+         },
+         purpose: "blog_post",
          ...defaultValues,
       } as PersonaConfig,
       onSubmit: async ({ value, formApi }) => {
-         // No custom parsing needed, just submit the PersonaConfig as is
          await onSubmit(value);
          formApi.reset();
       },
       validators: {
-         onBlur: PersonaConfigSchema,
+         //TODO: Onblur is not working when using the schema from the database
+         onBlur: z.object({
+            metadata: z.object({
+               name: z.string().min(1, "This field is required"),
+               description: z.string().min(1, "This field is required"),
+            }),
+            instructions: z.object({
+               audienceProfile: z.string().min(1, "This field is required"),
+               writingGuidelines: z.string().min(1, "This field is required"),
+               ragIntegration: z.string().min(1, "This field is required"),
+            }),
+            purpose: z.enum(["blog_post"]),
+         }),
       },
    });
 

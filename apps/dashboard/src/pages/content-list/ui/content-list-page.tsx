@@ -29,7 +29,11 @@ function ContentListPageContent() {
          {},
          {
             onData(statusData) {
-               toast.success(`Content status updated to ${statusData.status}`);
+               toast.success(
+                  translate("pages.content-list.messages.status-updated", {
+                     status: statusData.status,
+                  }),
+               );
                queryClient.invalidateQueries({
                   queryKey: trpc.content.listAllContent.queryKey(),
                });
@@ -58,17 +62,7 @@ export function ContentListPage() {
    const { data: agents } = useSuspenseQuery(trpc.agent.list.queryOptions());
    const { data } = useSuspenseQuery(
       trpc.content.listAllContent.queryOptions({
-         status: [
-            "draft",
-            "approved",
-            "pending",
-            "planning",
-            "researching",
-            "writing",
-            "editing",
-            "analyzing",
-            "grammar_checking",
-         ],
+         status: ["draft", "approved", "pending"],
          page: search.page,
          limit: 8,
       }),

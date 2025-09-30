@@ -4,27 +4,10 @@ import {
    type CompetitorKnowledgeInsert,
    type CompetitorKnowledgeType,
 } from "../schemas/competitor-knowledge-schema";
-import { eq, and, desc, sql, gt, cosineDistance } from "drizzle-orm";
+import { eq, and, desc, sql, gt, cosineDistance, inArray } from "drizzle-orm";
 import type { PgVectorDatabaseInstance } from "../client";
-import { DatabaseError, NotFoundError } from "@packages/errors";
-import { createEmbedding } from "../helpers";
-
-async function createCompetitorKnowledge(
-   dbClient: PgVectorDatabaseInstance,
-   data: CompetitorKnowledgeInsert,
-) {
-   try {
-      const result = await dbClient
-         .insert(competitorKnowledge)
-         .values(data)
-         .returning();
-      return result[0];
-   } catch (err) {
-      throw new DatabaseError(
-         `Failed to create competitor knowledge: ${(err as Error).message}`,
-      );
-   }
-}
+import { AppError, propagateError } from "@packages/utils/errors";
+import { createEmbedding, createEmbeddings } from "../helpers";
 
 export async function createCompetitorKnowledgeWithEmbedding(
    dbClient: PgVectorDatabaseInstance,
@@ -35,13 +18,17 @@ export async function createCompetitorKnowledgeWithEmbedding(
 ) {
    try {
       const { embedding } = await createEmbedding(data.chunk);
-      return await createCompetitorKnowledge(dbClient, {
-         ...data,
-         embedding,
-      });
+      const result = await dbClient
+         .insert(competitorKnowledge)
+         .values({
+            ...data,
+            embedding: sql`'${JSON.stringify(embedding)}'::vector`,
+         })
+         .returning();
+      return result[0];
    } catch (err) {
-      if (err instanceof NotFoundError) throw err;
-      throw new DatabaseError(
+      propagateError(err);
+      throw AppError.database(
          `Failed to create competitor knowledge with embedding: ${(err as Error).message}`,
       );
    }
@@ -65,7 +52,7 @@ export async function deleteCompetitorKnowledgeByExternalIdAndType(
 
       return result.length;
    } catch (err) {
-      throw new DatabaseError(
+      throw AppError.database(
          `Failed to delete competitor knowledge by external ID and type: ${(err as Error).message}`,
       );
    }
@@ -89,7 +76,7 @@ export async function deleteAllCompetitorKnowledgeByExternalIdAndType(
 
       return result.length;
    } catch (err) {
-      throw new DatabaseError(
+      throw AppError.database(
          `Failed to delete all competitor knowledge by external ID and type: ${(err as Error).message}`,
       );
    }
@@ -104,37 +91,46 @@ interface SearchOptions {
 async function searchCompetitorKnowledgeByCosineSimilarityAndExternalId(
    dbClient: PgVectorDatabaseInstance,
    queryEmbedding: number[],
-   externalId: string,
+   externalId: string | string[],
    options: SearchOptions = {},
-): Promise<CompetitorKnowledgeSelect[]> {
+) {
    try {
-      const { limit = 10, similarityThreshold = 0.7, type } = options;
+      const { limit = 10, similarityThreshold = 0.5, type } = options;
 
       const similarity = sql<number>`1 - (${cosineDistance(competitorKnowledge.embedding, queryEmbedding)})`;
 
+      const externalIdCondition = Array.isArray(externalId)
+         ? inArray(competitorKnowledge.externalId, externalId)
+         : eq(competitorKnowledge.externalId, externalId);
+
       let whereConditions = and(
-         eq(competitorKnowledge.externalId, externalId),
+         externalIdCondition,
          gt(similarity, similarityThreshold),
       );
 
       if (type) {
          whereConditions = and(
-            eq(competitorKnowledge.externalId, externalId),
+            externalIdCondition,
             eq(competitorKnowledge.type, type),
             gt(similarity, similarityThreshold),
          );
       }
 
       const result = await dbClient
-         .select()
+         .select({
+            chunk: competitorKnowledge.chunk,
+            type: competitorKnowledge.type,
+            externalId: competitorKnowledge.externalId,
+            similarity,
+         })
          .from(competitorKnowledge)
          .where(whereConditions)
-         .orderBy(() => desc(similarity))
+         .orderBy((t) => desc(t.similarity))
          .limit(limit);
 
       return result;
    } catch (err) {
-      throw new DatabaseError(
+      throw AppError.database(
          `Failed to search competitor knowledge by cosine similarity and external ID: ${(err as Error).message}`,
       );
    }
@@ -143,9 +139,9 @@ async function searchCompetitorKnowledgeByCosineSimilarityAndExternalId(
 export async function searchCompetitorKnowledgeByTextAndExternalId(
    dbClient: PgVectorDatabaseInstance,
    queryText: string,
-   externalId: string,
+   externalId: string | string[],
    options: SearchOptions = {},
-): Promise<CompetitorKnowledgeSelect[]> {
+) {
    try {
       const { embedding } = await createEmbedding(queryText);
       return await searchCompetitorKnowledgeByCosineSimilarityAndExternalId(
@@ -155,8 +151,52 @@ export async function searchCompetitorKnowledgeByTextAndExternalId(
          options,
       );
    } catch (err) {
-      throw new DatabaseError(
+      throw AppError.database(
          `Failed to search competitor knowledge by text and external ID: ${(err as Error).message}`,
+      );
+   }
+}
+
+export async function createCompetitorKnowledgeWithEmbeddingsBulk(
+   dbClient: PgVectorDatabaseInstance,
+   dataArray: Array<
+      Omit<
+         CompetitorKnowledgeInsert,
+         "embedding" | "id" | "createdAt" | "updatedAt"
+      >
+   >,
+): Promise<CompetitorKnowledgeSelect[]> {
+   try {
+      if (dataArray.length === 0) {
+         return [];
+      }
+
+      const texts = dataArray.map((data) => data.chunk);
+      const embeddings = await createEmbeddings(texts);
+
+      const insertData = dataArray.map((data, index) => {
+         const embedding = embeddings[index];
+         if (!embedding) {
+            throw new Error(
+               `Failed to create embedding for chunk: ${data.chunk.substring(0, 100)}...`,
+            );
+         }
+         return {
+            ...data,
+            embedding,
+         };
+      });
+
+      const result = await dbClient
+         .insert(competitorKnowledge)
+         .values(insertData)
+         .returning();
+
+      return result;
+   } catch (err) {
+      propagateError(err);
+      throw AppError.database(
+         `Failed to create competitor knowledge with embeddings in bulk: ${(err as Error).message}`,
       );
    }
 }

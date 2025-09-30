@@ -1,115 +1,33 @@
 import { Button } from "@packages/ui/components/button";
 import { InfoItem } from "@packages/ui/components/info-item";
-
+import { translate } from "@packages/localization";
 import type { AgentForm } from "../lib/use-agent-form";
-import {
-   UserIcon,
-   FileTextIcon,
-   LayoutGridIcon,
-   UsersIcon,
-   PaintbrushIcon,
-   Brain,
-   SpeakerIcon,
-   GlobeIcon,
-} from "lucide-react";
-
-// Helper function to format values consistently
-const formatValue = (value: string): string => {
-   if (!value) return "";
-   // Handle language codes specially
-   const languageMap: Record<string, string> = {
-      en: "English",
-      pt: "Portuguese",
-      es: "Spanish",
-      "en-US": "English (US)",
-      "en-GB": "English (UK)",
-      "pt-BR": "Portuguese (Brazil)",
-      "pt-PT": "Portuguese (Portugal)",
-      "es-ES": "Spanish (Spain)",
-      "es-MX": "Spanish (Mexico)",
-   };
-
-   if (languageMap[value]) {
-      return languageMap[value];
-   }
-
-   // For other values, format them properly
-   return value.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-};
+import { UserIcon, FileTextIcon, LayoutGridIcon } from "lucide-react";
+import { formatValueForDisplay } from "@packages/utils/text";
 
 export function ReviewStep({ form }: { form: AgentForm }) {
    // Collect all items with their values
    const singleColumnItems = [
       {
          icon: <UserIcon className="w-4 h-4" />,
-         label: "Agent Name",
+         label: translate("pages.agent-creation-form.review.fields.agent-name"),
          value: String(form.getFieldValue("metadata.name") ?? ""),
       },
       {
-         icon: <UsersIcon className="w-4 h-4" />,
-         label: "Audience",
-         value: formatValue(String(form.getFieldValue("audience.base") ?? "")),
-      },
-      {
          icon: <LayoutGridIcon className="w-4 h-4" />,
-         label: "Purpose",
-         value: formatValue(String(form.getFieldValue("purpose") ?? "")),
-      },
-      {
-         icon: <Brain className="w-4 h-4" />,
-         label: "Brand Integration",
-         value: formatValue(
-            String(form.getFieldValue("brand.integrationStyle") ?? ""),
-         ),
-      },
-      {
-         icon: <GlobeIcon className="w-4 h-4" />,
-         label: "Language",
-         value: formatValue(
-            String(form.getFieldValue("language.primary") ?? ""),
-         ),
-      },
-      {
-         icon: <PaintbrushIcon className="w-4 h-4" />,
-         label: "Formatting Style",
-         value: formatValue(
-            String(form.getFieldValue("formatting.style") ?? ""),
+         label: translate("pages.agent-creation-form.review.fields.purpose"),
+         value: formatValueForDisplay(
+            String(form.getFieldValue("purpose") ?? ""),
          ),
       },
    ];
 
    // Communication style as a double-width item
-   const communicationStyle = {
-      icon: <SpeakerIcon className="w-4 h-4" />,
-      label: "Communication Style",
-      value: formatValue(
-         String(form.getFieldValue("voice.communication") ?? ""),
-      ),
-   };
 
    // Optional single-column items
-   const optionalItems = [];
-
-   const languageVariant = form.getFieldValue("language.variant");
-   if (languageVariant) {
-      optionalItems.push({
-         icon: <GlobeIcon className="w-4 h-4" />,
-         label: "Language Variant",
-         value: formatValue(String(languageVariant)),
-      });
-   }
-
-   const listStyle = form.getFieldValue("formatting.listStyle");
-   if (listStyle) {
-      optionalItems.push({
-         icon: <PaintbrushIcon className="w-4 h-4" />,
-         label: "List Style",
-         value: formatValue(String(listStyle)),
-      });
-   }
 
    // Combine core and optional single-column items
-   const allSingleItems = [...singleColumnItems, ...optionalItems];
+   const allSingleItems = [...singleColumnItems];
 
    // Full-width items
    const fullWidthItems = [];
@@ -118,17 +36,10 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    if (description) {
       fullWidthItems.push({
          icon: <FileTextIcon className="w-4 h-4" />,
-         label: "Description",
+         label: translate(
+            "pages.agent-creation-form.review.fields.description",
+         ),
          value: String(description).replace(/<[^>]*>/g, ""),
-      });
-   }
-
-   const blacklistWords = form.getFieldValue("brand.blacklistWords");
-   if (blacklistWords) {
-      fullWidthItems.push({
-         icon: <Brain className="w-4 h-4" />,
-         label: "Blacklist Words",
-         value: String(blacklistWords).replace(/<[^>]*>/g, ""),
       });
    }
 
@@ -136,16 +47,6 @@ export function ReviewStep({ form }: { form: AgentForm }) {
       <div className="space-y-4">
          {/* Grid for items */}
          <div className="grid grid-cols-2 gap-4 text-sm">
-            {/* Communication style spans 2 columns */}
-            <div className="col-span-2">
-               <InfoItem
-                  icon={communicationStyle.icon}
-                  label={communicationStyle.label}
-                  value={communicationStyle.value}
-               />
-            </div>
-
-            {/* Single-column items */}
             {allSingleItems.map((item) => (
                <InfoItem
                   key={item.label}
@@ -173,7 +74,13 @@ export function ReviewStep({ form }: { form: AgentForm }) {
    );
 }
 
-export function ReviewStepSubscribe({ form }: { form: AgentForm }) {
+export function ReviewStepSubscribe({
+   form,
+   mode = "create",
+}: {
+   form: AgentForm;
+   mode?: "create" | "edit";
+}) {
    return (
       <form.Subscribe
          selector={(state) => ({
@@ -183,7 +90,15 @@ export function ReviewStepSubscribe({ form }: { form: AgentForm }) {
       >
          {({ canSubmit, isSubmitting }) => (
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-               {isSubmitting ? "Submitting..." : "Submit"}
+               {isSubmitting
+                  ? mode === "edit"
+                     ? translate("common.actions.updating")
+                     : translate("common.actions.creating")
+                  : mode === "edit"
+                    ? translate("common.actions.update")
+                    : translate(
+                         "pages.agent-creation-form.actions.create-agent",
+                      )}
             </Button>
          )}
       </form.Subscribe>

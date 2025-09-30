@@ -20,7 +20,7 @@ import { contentVersion } from "./content-version";
 
 export const ContentRequestSchema = z.object({
    description: z.string().min(1, "Description is required"),
-   layout: z.enum(["tutorial", "interview", "article", "changelog"]),
+   layout: z.enum(["tutorial", "article", "changelog"]),
 });
 export type ContentRequest = z.infer<typeof ContentRequestSchema>;
 export const ContentStatsSchema = z.object({
@@ -36,6 +36,12 @@ export const ContentStatsSchema = z.object({
       .string()
       .optional()
       .describe("A score representing the quality of the content."),
+   reasonOfTheRating: z
+      .string()
+      .optional()
+      .describe(
+         "The reason for the quality score rating, written in markdown.",
+      ),
 });
 export type ContentStats = z.infer<typeof ContentStatsSchema>;
 
@@ -64,12 +70,7 @@ export const contentStatusEnum = pgEnum("content_status", [
    "pending",
    "draft",
    "approved",
-   "planning",
-   "researching",
-   "writing",
-   "editing",
-   "analyzing",
-   "grammar_checking",
+   "failed",
 ]);
 
 export const shareStatusEnum = pgEnum("share_status", ["private", "shared"]);
@@ -88,7 +89,6 @@ export const content = pgTable(
       meta: jsonb("meta").$type<ContentMeta>().default({}),
       request: jsonb("request").$type<ContentRequest>().notNull(),
       stats: jsonb("stats").$type<ContentStats>().default({}),
-
       currentVersion: integer("current_version").default(0),
       createdAt: timestamp("created_at")
          .$defaultFn(() => new Date())

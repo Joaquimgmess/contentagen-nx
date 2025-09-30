@@ -12,9 +12,11 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 export interface APIClientOptions {
    serverUrl: string;
+
    headers?: Record<string, string> | Headers;
    language?: string;
 }
+
 export const createTrpcClient = ({
    serverUrl,
    headers,

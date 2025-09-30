@@ -1,11 +1,12 @@
-import { z } from "zod";
 import type { Config } from "drizzle-kit";
+import z from "zod";
 
-const envSchema = z.object({
-   DATABASE_URL: z.string().min(1),
-});
+const env = z
+   .object({
+      DATABASE_URL: z.string(),
+   })
+   .parse(process.env);
 
-const env = envSchema.parse(process.env);
 export default {
    schema: "./src/schema.ts",
    dialect: "postgresql",

@@ -10,7 +10,7 @@ import {
 
 export const ideaLayoutType = pgEnum("idea_layout_type", [
    "tutorial",
-   "interview", 
+   "interview",
    "article",
    "changelog",
 ]);
@@ -19,8 +19,7 @@ export const ideasRag = pgTable(
    "ideas_rag",
    {
       id: uuid("id").primaryKey().defaultRandom(),
-      ideaId: text("idea_id").notNull(),
-      agentId: text("agent_id").notNull(),
+      externalId: uuid("external_id").notNull(),
       title: text("title").notNull(),
       description: text("description").notNull(),
       layout: ideaLayoutType("layout").notNull(),
@@ -37,8 +36,6 @@ export const ideasRag = pgTable(
          "hnsw",
          table.embedding.op("vector_cosine_ops"),
       ),
-      index("ideasRagAgentIdIndex").on(table.agentId),
-      index("ideasRagIdeaIdIndex").on(table.ideaId),
    ],
 );
 

@@ -1,6 +1,6 @@
 import type { DatabaseInstance } from "../client";
 import type { ContentSelect } from "../schemas/content";
-import { DatabaseError, NotFoundError } from "@packages/errors";
+import { AppError, propagateError } from "@packages/utils/errors";
 import { eq } from "drizzle-orm";
 
 /**
@@ -38,9 +38,8 @@ export async function hasContentAccess(
          canWrite: false,
       };
    } catch (err) {
-      throw new DatabaseError(
-         `Failed to check content access: ${(err as Error).message}`,
-      );
+      console.error("Failed to check content access permissions:", err);
+      throw AppError.database("Failed to check content access permissions");
    }
 }
 
@@ -59,7 +58,7 @@ export async function getContentWithAccessControl(
          where: (content) => eq(content.id, contentId),
       });
 
-      if (!contentItem) throw new NotFoundError("Content not found");
+      if (!contentItem) throw AppError.database("Content not found");
 
       const { canRead } = await hasContentAccess(
          dbClient,
@@ -68,12 +67,12 @@ export async function getContentWithAccessControl(
          organizationId,
       );
 
-      if (!canRead) throw new NotFoundError("Content not found");
+      if (!canRead) throw AppError.database("Content not found");
 
       return contentItem;
    } catch (err) {
-      if (err instanceof NotFoundError) throw err;
-      throw new DatabaseError(
+      propagateError(err);
+      throw AppError.database(
          `Failed to get content with access control: ${(err as Error).message}`,
       );
    }
@@ -104,7 +103,7 @@ export async function canModifyContent(
 
       return canWrite;
    } catch (err) {
-      throw new DatabaseError(
+      throw AppError.database(
          `Failed to check content modification access: ${(err as Error).message}`,
       );
    }

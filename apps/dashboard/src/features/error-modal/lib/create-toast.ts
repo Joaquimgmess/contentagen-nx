@@ -1,5 +1,5 @@
 import posthog from "posthog-js";
-import { createToast as baseCreateToast } from "@packages/utils/create-toast";
+import { toast } from "sonner";
 import i18n from "@packages/localization";
 
 type OpenErrorModalFn = (params: {
@@ -24,8 +24,23 @@ export function createToast({
    message: string;
    duration?: number;
 }) {
-   if (type !== "danger") {
-      baseCreateToast({ type, title, message, duration });
+   if (type === "success") {
+      toast.success(message, { duration });
+      return;
+   }
+
+   if (type === "warning") {
+      toast.warning(message, { position: "top-center", duration });
+      return;
+   }
+
+   if (type === "info") {
+      toast.info(message, { duration });
+      return;
+   }
+
+   if (type === "loading") {
+      toast.loading(message, { duration });
       return;
    }
 
@@ -40,6 +55,6 @@ export function createToast({
          description: message,
       });
    } else {
-      baseCreateToast({ type, title, message, duration });
+      toast.error(message, { position: "top-center", duration });
    }
 }

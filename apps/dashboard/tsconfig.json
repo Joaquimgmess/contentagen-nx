@@ -34,9 +34,6 @@
       "path": "../../packages/database"
     },
     {
-      "path": "../../packages/utils"
-    },
-    {
       "path": "../../packages/transactional"
     },
     {

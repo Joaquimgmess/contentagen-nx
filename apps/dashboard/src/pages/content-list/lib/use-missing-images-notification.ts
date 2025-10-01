@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useTRPC } from "@/integrations/clients";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createToast } from "@packages/utils/create-toast";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import { translate } from "@packages/localization";
 
 export function useMissingImagesNotification() {

@@ -12,7 +12,7 @@ import { CompetitorLogoUploadDialog } from "../features/competitor-logo-upload-d
 import { useState, useMemo } from "react";
 import { CompetitorLoadingDisplay } from "./competitor-loading-display";
 import { useSubscription } from "@trpc/tanstack-react-query";
-import { createToast } from "@packages/utils/create-toast";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import {
    Card,
    CardContent,

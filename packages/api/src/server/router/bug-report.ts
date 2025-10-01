@@ -3,33 +3,26 @@ import { protectedProcedure, router } from "../trpc";
 import { getElysiaPosthogConfig } from "@packages/posthog/server";
 import { eq } from "drizzle-orm";
 import { user, organization, member } from "@packages/database/schema";
+import { APIError } from "@packages/utils/errors";
 import i18n from "@packages/localization";
 
 const posthog = getElysiaPosthogConfig();
 
-const createBugReportSchema = (locale: string) => {
-   const t = (key: string) => i18n.t(key, { lng: locale });
-
-   return z.object({
-      error: z.object({
-         title: z.string(),
-         description: z.string(),
+export const bugReportSchema = z.object({
+   error: z.object({
+      title: z.string(),
+      description: z.string(),
+   }),
+   userReport: z.string().min(1),
+   mutationCache: z.array(
+      z.object({
+         key: z.string(),
+         error: z.unknown(),
+         input: z.unknown(),
       }),
-      userReport: z
-         .string()
-         .min(1, t("common.bugReport.validation.userReportRequired")),
-      mutationCache: z.array(
-         z.object({
-            key: z.string(),
-            error: z.unknown(),
-            input: z.unknown(),
-         }),
-      ),
-      currentURL: z.string(),
-   });
-};
-
-export const bugReportSchema = createBugReportSchema("pt");
+   ),
+   currentURL: z.string(),
+});
 
 export const bugReportRouter = router({
    submitBugReport: protectedProcedure
@@ -39,10 +32,13 @@ export const bugReportRouter = router({
          const userId = resolvedCtx.session?.user.id;
          const userEmail = resolvedCtx.session?.user.email;
          const locale = resolvedCtx.language || "en";
-         const t = (key: string) => i18n.t(key, { lng: locale });
 
          if (!userId) {
-            throw new Error(t("common.bugReport.validation.authRequired"));
+            throw APIError.unauthorized(
+               i18n.t("common.bugReport.validation.authRequired", {
+                  lng: locale,
+               }),
+            );
          }
 
          const userData = await resolvedCtx.db

@@ -67,11 +67,12 @@ export const competitorCrawlWorker = new Worker<CompetitorCrawlJob>(
             userId,
             websiteUrl,
             error: error instanceof Error ? error.message : error,
-            stack: error instanceof Error && error.stack ? error.stack : undefined,
+            stack:
+               error instanceof Error && error.stack ? error.stack : undefined,
          });
          propagateError(error);
          throw AppError.internal(
-            `Extract competitor brand info workflow failed: ${(error as Error).message}`
+            `Extract competitor brand info workflow failed: ${(error as Error).message}`,
          );
       }
    },

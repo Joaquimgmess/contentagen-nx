@@ -57,7 +57,7 @@ export async function runCreateCompetitorKnowledgeWorkflow(
       });
       propagateError(error);
       throw AppError.internal(
-         `Competitor knowledge workflow failed: ${(error as Error).message}`
+         `Competitor knowledge workflow failed: ${(error as Error).message}`,
       );
    }
 }

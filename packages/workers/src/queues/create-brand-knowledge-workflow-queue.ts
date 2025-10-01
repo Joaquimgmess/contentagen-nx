@@ -57,7 +57,7 @@ export async function runCreateBrandKnowledgeWorkflow(
       });
       propagateError(error);
       throw AppError.internal(
-         `Brand knowledge workflow failed: ${(error as Error).message}`
+         `Brand knowledge workflow failed: ${(error as Error).message}`,
       );
    }
 }

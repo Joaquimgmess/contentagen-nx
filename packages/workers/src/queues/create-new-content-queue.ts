@@ -66,7 +66,7 @@ export async function runCreateNewContentWorkflow(
       });
       propagateError(error);
       throw AppError.internal(
-         `Create new content workflow failed: ${(error as Error).message}`
+         `Create new content workflow failed: ${(error as Error).message}`,
       );
    }
 }

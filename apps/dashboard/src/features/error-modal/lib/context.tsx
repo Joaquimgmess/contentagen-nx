@@ -7,7 +7,7 @@ import {
    useEffect,
 } from "react";
 import type { ReactNode } from "react";
-import { registerErrorModalOpener } from "@packages/utils/create-toast";
+import { registerErrorModalOpener } from "./create-toast";
 
 type ModalState = {
    isOpen: boolean;

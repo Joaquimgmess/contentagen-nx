@@ -9,7 +9,7 @@ import { Button } from "@packages/ui/components/button";
 import { ExternalLink, RefreshCw, Edit, Trash, Upload } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/integrations/clients";
-import { createToast } from "@packages/utils/create-toast";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import {
    Tooltip,
    TooltipTrigger,

@@ -21,7 +21,7 @@ import { useCallback, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTRPC } from "@/integrations/clients";
-import { createToast } from "@packages/utils/create-toast";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
 import type { CompetitorSelect } from "@packages/database/schema";
 import { translate } from "@packages/localization";

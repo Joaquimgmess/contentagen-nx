@@ -13,8 +13,8 @@ import {
 import { Button } from "@packages/ui/components/button";
 import { Textarea } from "@packages/ui/components/textarea";
 import { MegaphoneIcon } from "lucide-react";
-import { useErrorModalStore } from "@/lib/error-modal-context";
-import { createToast } from "@packages/utils/create-toast";
+import { useErrorModalStore } from "../lib/context";
+import { createToast } from "../lib/create-toast";
 
 type BugReportInput = {
    userReport: string;

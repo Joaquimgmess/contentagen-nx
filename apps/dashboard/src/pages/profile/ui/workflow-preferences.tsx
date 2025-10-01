@@ -8,7 +8,7 @@ import {
    CardTitle,
 } from "@packages/ui/components/card";
 import { Switch } from "@packages/ui/components/switch";
-import { createToast } from "@packages/utils/create-toast";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import {
    useMutation,
    useQueryClient,

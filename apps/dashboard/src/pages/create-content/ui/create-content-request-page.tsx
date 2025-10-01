@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { ContentRequestForm } from "@/features/content-request-form/ui/content-request-form";
 import { useTRPC } from "@/integrations/clients";
-import { createToast } from "@packages/utils/create-toast";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import { translate } from "@packages/localization";
 
 export function AgentContentRequestPage() {

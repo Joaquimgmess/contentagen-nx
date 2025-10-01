@@ -7,6 +7,7 @@ import { getPaymentClient } from "@packages/payment/client";
 import { z } from "zod";
 import { serverEnv } from "@packages/environment/server";
 import { tavily } from "@tavily/core";
+import { AppError, propagateError } from "@packages/utils/errors";
 export const tavilyCrawlTool = createTool({
    id: "tavily-crawl",
    description: "Crawls a website url to extract knowledge and content",
@@ -18,7 +19,7 @@ export const tavilyCrawlTool = createTool({
          .describe(
             "Natual language instructions for the crawler to follow when crawling the website",
          )
-         .max(400),
+         .transform((val) => val.slice(0, 400)),
    }),
    execute: async ({ context }) => {
       const { websiteUrl, userId } = context;
@@ -44,7 +45,10 @@ export const tavilyCrawlTool = createTool({
             `Brand crawl failed for userId=${userId}, websiteUrl="${websiteUrl}".`,
             error,
          );
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Crawl failed for userId=${userId}, websiteUrl="${websiteUrl}": ${(error as Error).message}`,
+         );
       }
    },
 });

@@ -179,7 +179,7 @@ Focus on finding the most effective content angle and structure that can achieve
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to research tutorial: ${(error as Error).message}`
+            `Failed to research tutorial: ${(error as Error).message}`,
          );
       }
    },
@@ -266,7 +266,7 @@ ${researchPrompt}
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to write tutorial: ${(error as Error).message}`
+            `Failed to write tutorial: ${(error as Error).message}`,
          );
       }
    },
@@ -351,7 +351,7 @@ output the edited content in markdown format.
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to edit tutorial: ${(error as Error).message}`
+            `Failed to edit tutorial: ${(error as Error).message}`,
          );
       }
    },
@@ -452,7 +452,7 @@ final:${editor}
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to review tutorial: ${(error as Error).message}`
+            `Failed to review tutorial: ${(error as Error).message}`,
          );
       }
    },

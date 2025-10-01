@@ -184,7 +184,7 @@ Focus on creating a strategy that leverages our brand's unique strengths and dif
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to create article strategy: ${(error as Error).message}`
+            `Failed to create article strategy: ${(error as Error).message}`,
          );
       }
    },
@@ -287,7 +287,7 @@ Focus on finding the most effective content angle and structure that can achieve
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to research article: ${(error as Error).message}`
+            `Failed to research article: ${(error as Error).message}`,
          );
       }
    },
@@ -411,7 +411,7 @@ ${researchPrompt}
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to write article: ${(error as Error).message}`
+            `Failed to write article: ${(error as Error).message}`,
          );
       }
    },
@@ -513,7 +513,7 @@ output the edited content in markdown format.
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to edit article: ${(error as Error).message}`
+            `Failed to edit article: ${(error as Error).message}`,
          );
       }
    },
@@ -613,7 +613,7 @@ final:${editor}
          });
          propagateError(error);
          throw AppError.internal(
-            `Failed to review article: ${(error as Error).message}`
+            `Failed to review article: ${(error as Error).message}`,
          );
       }
    },

@@ -2,7 +2,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { PostHogWrapper } from "@packages/posthog/client";
 import { Toaster } from "@packages/ui/components/sonner";
 import { ThemeProvider } from "@/layout/theme-provider";
-import { ErrorModalProvider } from "@/features/error-modal/lib/context";
+import { ErrorModalProvider } from "@/features/error-modal/lib/error-modal-context";
 import { ErrorModal } from "@/features/error-modal/ui/error-modal";
 import { useTRPC } from "@/integrations/clients";
 import { useMutation } from "@tanstack/react-query";

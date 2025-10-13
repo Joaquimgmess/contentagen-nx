@@ -1,6 +1,17 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
+import { AppError, propagateError } from "@packages/utils/errors";
+export function getDateToolInstructions(): string {
+   return `
+## GET CURRENT DATE TOOL
+Returns today's date in YYYY-MM-DD format.
 
+**When to use:** Need current date for timestamps or metadata
+
+**Parameters:**
+- timezone (string, optional): IANA timezone (e.g., "UTC", "America/New_York")
+`;
+}
 export const dateTool = createTool({
    id: "get-current-date",
    description: "Gets the current date in YYYY-MM-DD format",
@@ -36,7 +47,10 @@ export const dateTool = createTool({
          return { date: `${year}-${month}-${day}` };
       } catch (error) {
          console.error("Failed to get current date:", error);
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to get current date: ${(error as Error).message}`,
+         );
       }
    },
 });

@@ -1,19 +1,16 @@
 import { EventEmitter } from "node:events";
 import type { ContentStatus } from "@packages/database/schemas/content";
 import type { IdeiaStatus } from "@packages/database/schemas/ideas";
-import type {
-   CompetitorFeaturesStatus,
-   CompetitorAnalysisStatus,
-} from "@packages/database/schemas/competitor";
+import type { KnowledgeCreationStatus } from "@packages/database/schemas/competitor";
 import type { ContentRequest } from "@packages/database/schemas/content";
+import type { BrandKnowledgeStatus } from "@packages/database/schemas/brand";
 // 1. Define event names as constants
 export const EVENTS = {
    agentKnowledgeStatus: "agent.knowledge.status",
    contentStatus: "content.status",
    competitorStatus: "competitor.status",
-   competitorFeaturesStatus: "competitor.features.status",
-   competitorAnalysisStatus: "competitor.analysis.status",
    ideaStatus: "idea.status",
+   brandStatus: "brand.status",
 } as const;
 
 // 2. Define the payload type for the status change event
@@ -25,20 +22,17 @@ export type ContentStatusChangedPayload = {
 };
 export type CompetitorStatusChangedPayload = {
    competitorId: string;
-   status: CompetitorFeaturesStatus | CompetitorAnalysisStatus;
-};
-export type CompetitorFeaturesStatusChangedPayload = {
-   competitorId: string;
-   status: CompetitorFeaturesStatus;
-};
-export type CompetitorAnalysisStatusChangedPayload = {
-   competitorId: string;
-   status: CompetitorAnalysisStatus;
+   status: KnowledgeCreationStatus;
    message?: string;
 };
 export type IdeaStatusChangedPayload = {
    ideaId: string;
    status: IdeiaStatus;
+   message?: string;
+};
+export type BrandStatusChangedPayload = {
+   brandId: string;
+   status: BrandKnowledgeStatus;
    message?: string;
 };
 // 3. The event emitter instance
@@ -52,16 +46,9 @@ export function emitCompetitorStatusChanged(
 ) {
    eventEmitter.emit(EVENTS.competitorStatus, payload);
 }
-export function emitCompetitorFeaturesStatusChanged(
-   payload: CompetitorFeaturesStatusChangedPayload,
-) {
-   eventEmitter.emit(EVENTS.competitorFeaturesStatus, payload);
-}
-export function emitCompetitorAnalysisStatusChanged(
-   payload: CompetitorAnalysisStatusChangedPayload,
-) {
-   eventEmitter.emit(EVENTS.competitorAnalysisStatus, payload);
-}
 export function emitIdeaStatusChanged(payload: IdeaStatusChangedPayload) {
    eventEmitter.emit(EVENTS.ideaStatus, payload);
+}
+export function emitBrandStatusChanged(payload: BrandStatusChangedPayload) {
+   eventEmitter.emit(EVENTS.brandStatus, payload);
 }

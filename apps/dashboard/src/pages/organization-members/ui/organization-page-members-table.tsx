@@ -42,7 +42,7 @@ export function OrganizationPageMembersTable({
                   {translate("pages.organization.members.title")}
                </CardTitle>
                <CardDescription>
-                  {translate("pages.organization.details.description")}
+                  Os membros da sua organização e suas funções.
                </CardDescription>
                <CardAction>
                   <DropdownMenu>

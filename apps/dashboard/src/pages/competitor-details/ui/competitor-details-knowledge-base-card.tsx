@@ -21,7 +21,7 @@ import { useCallback, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
 import type { CompetitorSelect } from "@packages/database/schema";
 import { translate } from "@packages/localization";
@@ -59,21 +59,23 @@ export function CompetitorDetailsKnowledgeBaseCard({
    const deleteFileMutation = useMutation(
       trpc.competitorFile.delete.mutationOptions({
          onSuccess: async () => {
-            toast.success(
-               translate(
+            createToast({
+               type: "success",
+               message: translate(
                   "pages.competitor-details.knowledge-base.messages.delete-success",
                ),
-            );
+            });
             await queryClient.invalidateQueries({
                queryKey: trpc.competitor.get.queryKey({ id }),
             });
          },
          onError: () => {
-            toast.error(
-               translate(
+            createToast({
+               type: "danger",
+               message: translate(
                   "pages.competitor-details.knowledge-base.messages.delete-error",
                ),
-            );
+            });
          },
       }),
    );
@@ -126,7 +128,7 @@ export function CompetitorDetailsKnowledgeBaseCard({
                   )}
                </CardDescription>
                <CardAction>
-                  {competitor.analysisStatus === "completed" && (
+                  {competitor.status === "completed" && (
                      <Badge className="font-semibold">
                         {translate(
                            "pages.competitor-details.knowledge-base.indexed-badge",

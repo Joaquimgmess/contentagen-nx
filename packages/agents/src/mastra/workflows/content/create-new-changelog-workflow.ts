@@ -5,10 +5,16 @@ import { APIError, AppError, propagateError } from "@packages/utils/errors";
 import { changelogWriterAgent } from "../../agents/changelog/changelog-writer-agent";
 import { changelogEditorAgent } from "../../agents/changelog/changelog-editor-agent";
 import { changelogReaderAgent } from "../../agents/changelog/changelog-reader-agent";
+import { seoOptimizationAgent } from "../../agents/seo-agent";
 import { emitContentStatusChanged } from "@packages/server-events";
 import { createDb } from "@packages/database/client";
 import { updateContent } from "@packages/database/repositories/content-repository";
 import { serverEnv } from "@packages/environment/server";
+import { getPaymentClient } from "@packages/payment/client";
+import {
+   createAiUsageMetadata,
+   ingestBilling,
+} from "@packages/payment/ingestion";
 
 // Internal helper function to update content status and emit events
 async function updateContentStatus(
@@ -35,6 +41,28 @@ async function updateContentStatus(
       propagateError(error);
       throw APIError.internal("Failed to update content status");
    }
+}
+
+// LLM usage tracking
+type LLMUsage = {
+   inputTokens: number;
+   outputTokens: number;
+   totalTokens: number;
+   reasoningTokens?: number | null;
+   cachedInputTokens?: number | null;
+};
+
+async function ingestUsage(usage: LLMUsage, userId: string) {
+   const paymentClient = getPaymentClient(serverEnv.POLAR_ACCESS_TOKEN);
+   const usageMetadata = createAiUsageMetadata({
+      effort: "grok-4-fast",
+      inputTokens: usage.inputTokens,
+      outputTokens: usage.outputTokens,
+   });
+   await ingestBilling(paymentClient, {
+      externalCustomerId: userId,
+      metadata: usageMetadata,
+   });
 }
 
 const CreateNewContentWorkflowInputSchema = z.object({
@@ -67,11 +95,10 @@ const changelogWritingStep = createStep({
       "Write the changelog based on the content strategy and research",
    inputSchema: CreateNewContentWorkflowInputSchema,
    outputSchema: ContentWritingStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, agentId, contentId, request } = inputData;
 
-         // Update content status and emit event when writing starts
          await updateContentStatus({
             contentId,
             status: "pending",
@@ -85,7 +112,7 @@ create a new ${request.layout} based on the conent request.
 request: ${request.description}
 
 `;
-         const result = await changelogWriterAgent.generateVNext(
+         const result = await changelogWriterAgent.generate(
             [
                {
                   role: "user",
@@ -93,6 +120,7 @@ request: ${request.description}
                },
             ],
             {
+               runtimeContext,
                output: ContentWritingStepOutputSchema.pick({
                   writing: true,
                }),
@@ -103,6 +131,11 @@ request: ${request.description}
             throw AppError.validation(
                'Agent output is missing "research" field',
             );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Update content status and emit event when writing completes
@@ -127,7 +160,10 @@ request: ${request.description}
             message: "Failed to write changelog",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to write changelog: ${(error as Error).message}`,
+         );
       }
    },
 });
@@ -145,7 +181,7 @@ const changelogEditorStep = createStep({
       writing: writingType,
    }),
    outputSchema: ContentEditorStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, request, agentId, contentId, writing } = inputData;
 
@@ -164,7 +200,7 @@ writing: ${writing}
 
 output the edited content in markdown format.
 `;
-         const result = await changelogEditorAgent.generateVNext(
+         const result = await changelogEditorAgent.generate(
             [
                {
                   role: "user",
@@ -172,6 +208,7 @@ output the edited content in markdown format.
                },
             ],
             {
+               runtimeContext,
                output: ContentEditorStepOutputSchema.pick({
                   editor: true,
                }),
@@ -180,6 +217,11 @@ output the edited content in markdown format.
 
          if (!result?.object.editor) {
             throw AppError.validation('Agent output is missing "editor" field');
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Update content status and emit event when editing completes
@@ -204,7 +246,10 @@ output the edited content in markdown format.
             message: "Failed to edit changelog",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to edit changelog: ${(error as Error).message}`,
+         );
       }
    },
 });
@@ -215,15 +260,7 @@ const ContentReviewerStepOutputSchema =
       reasonOfTheRating: z
          .string()
          .describe("The reason for the rating, written in markdown"),
-      keywords: z
-         .array(z.string())
-         .describe("The associeated keywords of the content"),
       sources: z.array(z.string()).describe("The sources found on the search"),
-      metaDescription: z
-         .string()
-         .describe(
-            "The meta description, being a SEO optmizaed description of the article",
-         ),
       editor: editorType,
    }).omit({
       competitorIds: true,
@@ -234,7 +271,7 @@ export const changelogReadAndReviewStep = createStep({
    description: "Read and review the changelog",
    inputSchema: ContentEditorStepOutputSchema,
    outputSchema: ContentReviewerStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, agentId, contentId, request, editor } = inputData;
 
@@ -257,7 +294,7 @@ final:${editor}
 `;
          //TODO: Rework
 
-         const result = await changelogReaderAgent.generateVNext(
+         const result = await changelogReaderAgent.generate(
             [
                {
                   role: "user",
@@ -265,25 +302,13 @@ final:${editor}
                },
             ],
             {
+               runtimeContext,
                output: ContentReviewerStepOutputSchema.pick({
                   rating: true,
                   reasonOfTheRating: true,
-                  keywords: true,
-                  metaDescription: true,
                }),
             },
          );
-         if (!result.object.metaDescription) {
-            throw AppError.validation(
-               'Agent output is missing "metaDescription" field',
-            );
-         }
-         if (!result?.object.rating) {
-            throw AppError.validation('Agent output is missing "review" field');
-         }
-         if (!result?.object.keywords) {
-            throw AppError.validation('Agent output is missing "review" field');
-         }
          if (!result?.object.rating) {
             throw AppError.validation('Agent output is missing "review" field');
          }
@@ -291,6 +316,11 @@ final:${editor}
             throw AppError.validation(
                'Agent output is missing "reasonOfTheRating" field',
             );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Update content status and emit event when review completes
@@ -304,12 +334,10 @@ final:${editor}
          return {
             rating: result.object.rating,
             reasonOfTheRating: result.object.reasonOfTheRating,
-            metaDescription: result.object.metaDescription,
             userId,
             agentId,
             contentId,
             request,
-            keywords: result.object.keywords,
             editor,
             sources: ["Your changelog"],
          };
@@ -327,16 +355,197 @@ final:${editor}
    },
 });
 
+const SeoOptimizationStepOutputSchema =
+   CreateNewContentWorkflowInputSchema.extend({
+      keywords: z
+         .array(z.string())
+         .describe(
+            "The associated keywords of the content for SEO optimization",
+         ),
+      metaDescription: z
+         .string()
+         .describe("The SEO optimized meta description of the content"),
+   }).omit({
+      competitorIds: true,
+      organizationId: true,
+   });
+
+export const changelogSeoOptimizationStep = createStep({
+   id: "changelog-seo-optimization-step",
+   description: "Generate SEO keywords and meta description for the changelog",
+   inputSchema: ContentEditorStepOutputSchema,
+   outputSchema: SeoOptimizationStepOutputSchema,
+   execute: async ({ inputData, runtimeContext }) => {
+      try {
+         const { userId, agentId, contentId, request, editor } = inputData;
+
+         // Update content status and emit event when SEO optimization starts
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "Optimizing SEO for your changelog...",
+            layout: request.layout,
+         });
+
+         const inputPrompt = `
+I need you to perform SEO optimization for this ${request.layout} changelog content.
+
+Content:
+${editor}
+
+Generate SEO-optimized keywords and meta description for this changelog content.
+
+Requirements:
+- Keywords should be relevant to changelog content and technology updates
+- Meta description should be compelling and include primary keywords
+- Follow SEO best practices for character limits and optimization
+`;
+
+         const result = await seoOptimizationAgent.generate(
+            [
+               {
+                  role: "user",
+                  content: inputPrompt,
+               },
+            ],
+            {
+               runtimeContext,
+               output: SeoOptimizationStepOutputSchema.pick({
+                  keywords: true,
+                  metaDescription: true,
+               }),
+            },
+         );
+
+         if (!result?.object.keywords) {
+            throw AppError.validation(
+               'Agent output is missing "keywords" field',
+            );
+         }
+         if (!result?.object.metaDescription) {
+            throw AppError.validation(
+               'Agent output is missing "metaDescription" field',
+            );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
+         }
+
+         // Update content status and emit event when SEO optimization completes
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "SEO optimization completed",
+            layout: request.layout,
+         });
+
+         return {
+            keywords: result.object.keywords,
+            metaDescription: result.object.metaDescription,
+            userId,
+            agentId,
+            contentId,
+            request,
+         };
+      } catch (error) {
+         await updateContentStatus({
+            contentId: inputData.contentId,
+            status: "failed",
+            message: "Failed to optimize SEO for changelog",
+            layout: inputData.request.layout,
+         });
+         console.error(error);
+         propagateError(error);
+         throw APIError.internal("Failed to optimize SEO for changelog");
+      }
+   },
+});
+
+const FinalResultStepOutputSchema = CreateNewContentWorkflowInputSchema.extend({
+   rating: z.number().min(0).max(100),
+   reasonOfTheRating: z
+      .string()
+      .describe("The reason for the rating, written in markdown"),
+   keywords: z
+      .array(z.string())
+      .describe("The associated keywords of the content"),
+   sources: z.array(z.string()).describe("The sources found on the search"),
+   metaDescription: z
+      .string()
+      .describe(
+         "The meta description, being a SEO optimized description of the article",
+      ),
+   editor: editorType,
+}).omit({
+   competitorIds: true,
+   organizationId: true,
+});
+
+export const changelogFinalResultStep = createStep({
+   id: "changelog-final-result-step",
+   description: "Combine reader and SEO results into final output",
+   inputSchema: z.object({
+      "changelog-read-and-review-step": ContentReviewerStepOutputSchema,
+      "changelog-seo-optimization-step": SeoOptimizationStepOutputSchema,
+   }),
+   outputSchema: FinalResultStepOutputSchema,
+   execute: async ({ inputData }) => {
+      const readerResult = inputData["changelog-read-and-review-step"];
+      const seoResult = inputData["changelog-seo-optimization-step"];
+      const { contentId, request } = readerResult;
+      try {
+         // Update content status and emit event when final result compilation starts
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "Compiling final results...",
+            layout: request.layout,
+         });
+
+         // Combine results - prioritize SEO keywords and meta description
+         const finalResult = {
+            rating: readerResult.rating,
+            reasonOfTheRating: readerResult.reasonOfTheRating,
+            keywords: seoResult.keywords,
+            sources: readerResult.sources,
+            metaDescription: seoResult.metaDescription,
+            editor: readerResult.editor,
+            userId: readerResult.userId,
+            agentId: readerResult.agentId,
+            contentId: readerResult.contentId,
+            request: readerResult.request,
+         };
+
+         // Update content status and emit event when final result compilation completes
+
+         return finalResult;
+      } catch (error) {
+         await updateContentStatus({
+            contentId: contentId,
+            status: "failed",
+            message: "Failed to compile final results",
+            layout: request.layout,
+         });
+         console.error(error);
+         propagateError(error);
+         throw APIError.internal("Failed to compile final results");
+      }
+   },
+});
+
 export const createNewChangelogWorkflow = createWorkflow({
    id: "create-new-changelog-workflow",
    description: "Create a new changelog",
    inputSchema: CreateNewContentWorkflowInputSchema,
-   outputSchema: ContentReviewerStepOutputSchema,
+   outputSchema: FinalResultStepOutputSchema,
    retryConfig: {
       attempts: 3,
    },
 })
    .then(changelogWritingStep)
    .then(changelogEditorStep)
-   .then(changelogReadAndReviewStep)
+   .parallel([changelogReadAndReviewStep, changelogSeoOptimizationStep])
+   .then(changelogFinalResultStep)
    .commit();

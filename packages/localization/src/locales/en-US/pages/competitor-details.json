@@ -89,6 +89,8 @@
    },
    "messages": {
       "analysis-started": "Competitor analysis started!",
-      "analysis-error": "Error starting analysis: {{error}}"
+      "analysis-error": "Error starting analysis: {{error}}",
+      "features-status-updated": "Competitor features status updated to {{status}}",
+      "analysis-status-updated": "Competitor analysis status updated to {{status}}{{message}}"
    }
 }

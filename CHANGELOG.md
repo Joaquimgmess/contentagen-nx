@@ -1,3 +1,88 @@
+## 0.22.0 (2025-10-09)
+
+### 🚀 Features
+
+- **agents:** adding new assitant agent ([2e78a1f](https://github.com/F-O-T/contentagen-nx/commit/2e78a1f))
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.21.0 (2025-10-08)
+
+### 🚀 Features
+
+- **agents:** enhance brand knowledge workflows to save features and documents to database ([0ad2fcf](https://github.com/F-O-T/contentagen-nx/commit/0ad2fcf))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.7.0
+- Updated @packages/database to 0.7.0
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.20.0 (2025-10-08)
+
+### 🚀 Features
+
+- **agents): chore(agents:** Remove unused lumen.config.json file ([979fa4b](https://github.com/F-O-T/contentagen-nx/commit/979fa4b))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.6.0
+- Updated @packages/localization to 0.6.0
+- Updated @packages/environment to 0.6.0
+- Updated @packages/database to 0.6.0
+- Updated @packages/payment to 0.6.0
+- Updated @packages/files to 0.6.0
+- Updated @packages/utils to 0.19.0
+- Updated @packages/rag to 0.7.0
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.7.0 (2025-10-08)
+
+### 🚀 Features
+
+- **dashboard:** add transfer agent to organization ([b016c20](https://github.com/F-O-T/contentagen-nx/commit/b016c20))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/api to 0.6.0
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.19.0 (2025-10-02)
+
+### 🚀 Features
+
+- **agents:** implement brand and competitor document handling ([3f23b13](https://github.com/F-O-T/contentagen-nx/commit/3f23b13))
+
+### ❤️ Thank You
+
+- Manoel
+
+## 0.18.0 (2025-10-01)
+
+### 🚀 Features
+
+- **agents:** add new tools for content analysis and SEO optimization ([c45b06d](https://github.com/F-O-T/contentagen-nx/commit/c45b06d))
+- **agents:** enhance agents with additional tools for improved functionality ([30d317f](https://github.com/F-O-T/contentagen-nx/commit/30d317f))
+
+### 🩹 Fixes
+
+- **agents:** improve error handling messages for various steps ([cbf526b](https://github.com/F-O-T/contentagen-nx/commit/cbf526b))
+
+### ❤️ Thank You
+
+- Manoel
+
 ## 0.17.0 (2025-09-29)
 
 ### 🚀 Features

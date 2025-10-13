@@ -52,6 +52,7 @@
    "messages": {
       "delete-success": "Conteúdo deletado com sucesso",
       "delete-error": "Falha ao deletar conteúdo",
-      "status-updated": "Status do conteúdo atualizado para {{status}}"
+      "status-updated": "Status do conteúdo atualizado para {{status}}",
+      "missing-images": "Você tem {{count}} posts sem URLs de imagem."
    }
 }

@@ -3,7 +3,7 @@ name: Large PR Labeler
 on:
   pull_request:
     branches: ["*"]
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   large-pr-check:

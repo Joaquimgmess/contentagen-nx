@@ -54,9 +54,7 @@ export function OrganizationPage() {
 
    return (
       <div className="flex flex-col gap-4">
-         <TalkingMascot
-            message={translate("pages.organization.mascot-message")}
-         />
+         <TalkingMascot message={"Bem vindo a sua organizacao"} />
          {org ? (
             <div className="grid  grid-cols-3 gap-4">
                <OrganizationPageMembersTable organization={org} />

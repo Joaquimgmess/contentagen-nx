@@ -8,7 +8,7 @@ import {
    CardTitle,
 } from "@packages/ui/components/card";
 import { Switch } from "@packages/ui/components/switch";
-import { toast } from "sonner";
+import { createToast } from "@/features/error-modal/lib/create-toast";
 import {
    useMutation,
    useQueryClient,
@@ -39,9 +39,15 @@ export function WorkflowPreferences() {
             notifyMissingImages: checked,
          });
 
-         toast.success(translate("pages.profile.toast.preference-updated"));
+         createToast({
+            type: "success",
+            message: translate("pages.profile.toast.preference-updated"),
+         });
       } catch (error) {
-         toast.error(translate("pages.profile.toast.preference-failed"));
+         createToast({
+            type: "danger",
+            message: translate("pages.profile.toast.preference-failed"),
+         });
          console.error("Error updating workflow preference:", error);
       }
    };

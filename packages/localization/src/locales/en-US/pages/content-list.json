@@ -52,6 +52,7 @@
    "messages": {
       "delete-success": "Content deleted successfully",
       "delete-error": "Failed to delete content",
-      "status-updated": "Content status updated to {{status}}"
+      "status-updated": "Content status updated to {{status}}",
+      "missing-images": "You have {{count}} posts missing image URLs."
    }
 }

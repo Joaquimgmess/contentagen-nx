@@ -2,6 +2,10 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { PostHogWrapper } from "@packages/posthog/client";
 import { Toaster } from "@packages/ui/components/sonner";
 import { ThemeProvider } from "@/layout/theme-provider";
+import { ErrorModalProvider } from "@/features/error-modal/lib/error-modal-context";
+import { ErrorModal } from "@/features/error-modal/ui/error-modal";
+import { useTRPC } from "@/integrations/clients";
+import { useMutation } from "@tanstack/react-query";
 import appCss from "@packages/ui/globals.css?url";
 import {
    HeadContent,
@@ -14,9 +18,16 @@ import type { RouterContext } from "../router";
 import brandConfig from "@packages/brand/index.json";
 import "@packages/localization";
 import i18n from "@packages/localization";
+import { NotFoundComponent } from "@/default/not-found";
 export const Route = createRootRouteWithContext<RouterContext>()({
    ssr: true,
    wrapInSuspense: true,
+   notFoundComponent: () => (
+      <div className="h-screen w-screen">
+         <NotFoundComponent />
+      </div>
+   ),
+
    head: () => ({
       links: [
          {
@@ -87,13 +98,25 @@ function RootComponent() {
                   defaultTheme="system"
                   enableSystem
                >
-                  <Toaster />
-                  <Outlet /> {/* Start rendering router matches */}
-                  <TanStackRouterDevtools position="bottom-left" />
+                  <ErrorModalProvider>
+                     <ErrorModalWithMutation />
+                     <Toaster />
+                     <Outlet /> {/* Start rendering router matches */}
+                     <TanStackRouterDevtools position="bottom-left" />
+                  </ErrorModalProvider>
                </ThemeProvider>
             </PostHogWrapper>
             <Scripts />
          </body>
       </html>
    );
+}
+
+function ErrorModalWithMutation() {
+   const trpc = useTRPC();
+   const submitBugReport = useMutation(
+      trpc.bugReport.submitBugReport.mutationOptions(),
+   );
+
+   return <ErrorModal submitBugReport={submitBugReport} />;
 }

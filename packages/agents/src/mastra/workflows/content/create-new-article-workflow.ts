@@ -7,10 +7,16 @@ import { articleEditorAgent } from "../../agents/article/article-editor-agent";
 import { articleReaderAgent } from "../../agents/article/artcile-reader-agent";
 import { researcherAgent } from "../../agents/researcher-agent";
 import { contentStrategistAgent } from "../../agents/strategist-agent";
+import { seoOptimizationAgent } from "../../agents/seo-agent";
 import { emitContentStatusChanged } from "@packages/server-events";
 import { createDb } from "@packages/database/client";
 import { updateContent } from "@packages/database/repositories/content-repository";
 import { serverEnv } from "@packages/environment/server";
+import { getPaymentClient } from "@packages/payment/client";
+import {
+   createAiUsageMetadata,
+   ingestBilling,
+} from "@packages/payment/ingestion";
 
 // Internal helper function to update content status and emit events
 async function updateContentStatus(
@@ -37,6 +43,28 @@ async function updateContentStatus(
       propagateError(error);
       throw APIError.internal("Failed to update content status");
    }
+}
+
+// LLM usage tracking
+type LLMUsage = {
+   inputTokens: number;
+   outputTokens: number;
+   totalTokens: number;
+   reasoningTokens?: number | null;
+   cachedInputTokens?: number | null;
+};
+
+async function ingestUsage(usage: LLMUsage, userId: string) {
+   const paymentClient = getPaymentClient(serverEnv.POLAR_ACCESS_TOKEN);
+   const usageMetadata = createAiUsageMetadata({
+      effort: "grok-4-fast",
+      inputTokens: usage.inputTokens,
+      outputTokens: usage.outputTokens,
+   });
+   await ingestBilling(paymentClient, {
+      externalCustomerId: userId,
+      metadata: usageMetadata,
+   });
 }
 
 const CreateNewContentWorkflowInputSchema = z.object({
@@ -70,7 +98,7 @@ export const strategyStep = createStep({
    description: "Create brand-aligned content strategy",
    inputSchema: CreateNewContentWorkflowInputSchema,
    outputSchema: StrategyStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const {
             contentId,
@@ -107,7 +135,7 @@ Please develop a strategic brief that:
 Focus on creating a strategy that leverages our brand's unique strengths and differentiates us from competitors.
 `;
 
-         const result = await contentStrategistAgent.generateVNext(
+         const result = await contentStrategistAgent.generate(
             [
                {
                   role: "user",
@@ -115,6 +143,7 @@ Focus on creating a strategy that leverages our brand's unique strengths and dif
                },
             ],
             {
+               runtimeContext,
                output: StrategyStepOutputSchema.pick({
                   strategy: true,
                }),
@@ -125,6 +154,11 @@ Focus on creating a strategy that leverages our brand's unique strengths and dif
             throw AppError.validation(
                'Agent output is missing "strategy" field',
             );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Emit event when strategy completes
@@ -149,22 +183,28 @@ Focus on creating a strategy that leverages our brand's unique strengths and dif
             message: "Failed to create article strategy",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to create article strategy: ${(error as Error).message}`,
+         );
       }
    },
 });
 
 const ResearchStepOutputSchema = CreateNewContentWorkflowInputSchema.extend({
-   research: z.object({
-      keywords: z
-         .array(z.string())
-         .describe("The associeated keywords of the content"),
-      sources: z.array(z.string()).describe("The sources found on the search"),
-      searchIntent: z.string(),
-      competitorAnalysis: z.string(),
-      contentGaps: z.string(),
-      strategicRecommendations: z.string(),
-   }),
+   searchIntent: z.string().describe("The search intent and user expectations"),
+   competitorAnalysis: z
+      .string()
+      .describe("Analysis of top ranking competitors and their strategies"),
+   contentGaps: z
+      .string()
+      .describe("Content gaps and opportunities identified"),
+   strategicRecommendations: z
+      .string()
+      .describe("Strategic recommendations for outranking competitors"),
+   sources: z
+      .array(z.string())
+      .describe("The URLs found during web search research"),
 }).omit({
    competitorIds: true,
    organizationId: true,
@@ -175,7 +215,7 @@ export const researchStep = createStep({
    description: "Perform SERP research and competitive analysis",
    inputSchema: CreateNewContentWorkflowInputSchema,
    outputSchema: ResearchStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const { contentId, userId, agentId, request } = inputData;
 
@@ -188,21 +228,22 @@ export const researchStep = createStep({
          });
 
          const inputPrompt = `
-I need you to perform comprehensive SERP research for the following content request:
+I need you to perform SERP research for the following content request:
 
 **Topic:** ${request.description}
 **Content Type:** ${request.layout}
 
-Please conduct thorough SERP analysis and competitive intelligence gathering to identify:
+Please conduct SERP analysis to identify:
 1. Search intent and user expectations
-2. Top ranking competitors and their content strategies
+2. Top ranking competitors and their strategies
 3. Content gaps and opportunities
-4. Strategic recommendations for outranking competitors
+4. Strategic recommendations for content
+5. Source URLs from web searches used for research
 
-Focus on finding the most effective content angle and structure that can achieve top rankings.
+Focus on the research findings only and include actual URLs found during your web searches.
 `;
 
-         const result = await researcherAgent.generateVNext(
+         const result = await researcherAgent.generate(
             [
                {
                   role: "user",
@@ -210,16 +251,27 @@ Focus on finding the most effective content angle and structure that can achieve
                },
             ],
             {
-               output: ResearchStepOutputSchema.pick({
-                  research: true,
+               runtimeContext,
+
+               output: ResearchStepOutputSchema.omit({
+                  agentId: true,
+                  contentId: true,
+                  userId: true,
+                  request: true,
                }),
             },
          );
 
-         if (!result?.object.research) {
+         console.log("Research Agent Result:", result.object);
+         if (!result?.object.searchIntent) {
             throw AppError.validation(
-               'Agent output is missing "research" field',
+               'Agent output is missing "searchIntent" field',
             );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Emit event when research completes
@@ -231,7 +283,7 @@ Focus on finding the most effective content angle and structure that can achieve
          });
 
          return {
-            research: result.object.research,
+            ...result.object,
             userId,
             agentId,
             request,
@@ -244,13 +296,19 @@ Focus on finding the most effective content angle and structure that can achieve
             message: "Failed to research article",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to research article: ${(error as Error).message}`,
+         );
       }
    },
 });
 const ContentWritingStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
       writing: writingType,
+      sources: z
+         .array(z.string())
+         .describe("The URLs found during web search research"),
    }).omit({
       competitorIds: true,
       organizationId: true,
@@ -264,14 +322,18 @@ const articleWritingStep = createStep({
    description: "Write the article based on the content strategy and research",
    inputSchema: ArticleWritingStepInputSchema,
    outputSchema: ContentWritingStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const {
             "article-research-step": {
                request,
                contentId,
                agentId,
-               research,
+               searchIntent,
+               competitorAnalysis,
+               contentGaps,
+               strategicRecommendations,
+               sources,
                userId,
             },
             "article-strategy-step": { strategy },
@@ -300,10 +362,10 @@ brandPositioning: ${strategy.brandPositioning}
          
 `;
          const researchPrompt = `
-searchIntent: ${research.searchIntent}
-competitorAnalysis: ${research.competitorAnalysis}
-contentGaps: ${research.contentGaps}
-strategicRecommendations: ${research.strategicRecommendations}
+searchIntent: ${searchIntent}
+competitorAnalysis: ${competitorAnalysis}
+contentGaps: ${contentGaps}
+strategicRecommendations: ${strategicRecommendations}
 `;
          const inputPrompt = `
 create a new ${request.layout} based on the conent request.
@@ -315,7 +377,7 @@ ${strategyPrompt}
 ${researchPrompt}
 
 `;
-         const result = await articleWriterAgent.generateVNext(
+         const result = await articleWriterAgent.generate(
             [
                {
                   role: "user",
@@ -323,6 +385,8 @@ ${researchPrompt}
                },
             ],
             {
+               runtimeContext,
+
                output: ContentWritingStepOutputSchema.pick({
                   writing: true,
                }),
@@ -335,6 +399,11 @@ ${researchPrompt}
             );
          }
 
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
+         }
+
          // Emit event when writing completes
          await updateContentStatus({
             contentId,
@@ -344,8 +413,8 @@ ${researchPrompt}
          });
 
          return {
-            research,
             writing: result.object.writing,
+            sources,
             userId,
             agentId,
             request,
@@ -360,22 +429,19 @@ ${researchPrompt}
             message: "Failed to write article",
             layout: request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to write article: ${(error as Error).message}`,
+         );
       }
    },
 });
 const ContentEditorStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
-      research: ResearchStepOutputSchema.pick({
-         research: true,
-      }),
-
       editor: editorType,
-      metaDescription: z
-         .string()
-         .describe(
-            "The meta description, being a SEO optmizaed description of the article",
-         ),
+      sources: z
+         .array(z.string())
+         .describe("The URLs found during web search research"),
    }).omit({
       competitorIds: true,
       organizationId: true,
@@ -383,16 +449,11 @@ const ContentEditorStepOutputSchema =
 const articleEditorStep = createStep({
    id: "article-editor-step",
    description: "Edit the article based on the content research",
-   inputSchema: CreateNewContentWorkflowInputSchema.extend({
-      writing: writingType,
-      research: ResearchStepOutputSchema.pick({
-         research: true,
-      }),
-   }),
+   inputSchema: ContentWritingStepOutputSchema,
    outputSchema: ContentEditorStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
-         const { userId, contentId, research, request, agentId, writing } =
+         const { userId, contentId, request, agentId, writing, sources } =
             inputData;
 
          // Emit event when editing starts
@@ -410,7 +471,7 @@ writing: ${writing}
 
 output the edited content in markdown format.
 `;
-         const result = await articleEditorAgent.generateVNext(
+         const result = await articleEditorAgent.generate(
             [
                {
                   role: "user",
@@ -418,15 +479,20 @@ output the edited content in markdown format.
                },
             ],
             {
+               runtimeContext,
                output: ContentEditorStepOutputSchema.pick({
                   editor: true,
-                  metaDescription: true,
                }),
             },
          );
 
          if (!result?.object.editor) {
             throw AppError.validation('Agent output is missing "editor" field');
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Emit event when editing completes
@@ -439,12 +505,10 @@ output the edited content in markdown format.
 
          return {
             agentId,
-            metaDescription: result.object.metaDescription,
             editor: result.object.editor,
             userId,
-            research,
+            sources,
             contentId,
-
             request,
          };
       } catch (error) {
@@ -454,7 +518,10 @@ output the edited content in markdown format.
             message: "Failed to edit article",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to edit article: ${(error as Error).message}`,
+         );
       }
    },
 });
@@ -462,18 +529,11 @@ output the edited content in markdown format.
 const ContentReviewerStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
       rating: z.number().min(0).max(100),
-      metaDescription: z
-         .string()
-         .describe(
-            "The meta description, being a SEO optmizaed description of the article",
-         ),
-      keywords: z
-         .array(z.string())
-         .describe("The associeated keywords of the content"),
-      sources: z.array(z.string()).describe("The sources found on the search"),
       reasonOfTheRating: z
          .string()
          .describe("The reason for the rating, written in markdown"),
+      sources: z.array(z.string()).describe("The sources found on the search"),
+      editor: editorType,
    }).omit({
       competitorIds: true,
       organizationId: true,
@@ -483,17 +543,10 @@ export const articleReadAndReviewStep = createStep({
    description: "Read and review the article",
    inputSchema: ContentEditorStepOutputSchema,
    outputSchema: ContentReviewerStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
-         const {
-            contentId,
-            metaDescription,
-            research,
-            userId,
-            agentId,
-            request,
-            editor,
-         } = inputData;
+         const { contentId, sources, userId, agentId, request, editor } =
+            inputData;
 
          // Emit event when review starts
          await updateContentStatus({
@@ -512,7 +565,7 @@ original:${request.description}
 final:${editor}
 
 `;
-         const result = await articleReaderAgent.generateVNext(
+         const result = await articleReaderAgent.generate(
             [
                {
                   role: "user",
@@ -520,6 +573,7 @@ final:${editor}
                },
             ],
             {
+               runtimeContext,
                output: ContentReviewerStepOutputSchema.pick({
                   rating: true,
                   reasonOfTheRating: true,
@@ -535,6 +589,11 @@ final:${editor}
             );
          }
 
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
+         }
+
          // Emit event when review completes
          await updateContentStatus({
             contentId,
@@ -546,15 +605,12 @@ final:${editor}
          return {
             rating: result.object.rating,
             reasonOfTheRating: result.object.reasonOfTheRating,
-            metaDescription,
-            keywords: research.research.keywords,
-            sources: research.research.sources,
-            agentId,
             userId,
+            agentId,
             contentId,
-
-            editor,
             request,
+            editor,
+            sources,
          };
       } catch (error) {
          await updateContentStatus({
@@ -563,7 +619,190 @@ final:${editor}
             message: "Failed to review article",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to review article: ${(error as Error).message}`,
+         );
+      }
+   },
+});
+
+const SeoOptimizationStepOutputSchema =
+   CreateNewContentWorkflowInputSchema.extend({
+      keywords: z
+         .array(z.string())
+         .describe(
+            "The associated keywords of the content for SEO optimization",
+         ),
+      metaDescription: z
+         .string()
+         .describe("The SEO optimized meta description of the content"),
+   }).omit({
+      competitorIds: true,
+      organizationId: true,
+   });
+
+export const articleSeoOptimizationStep = createStep({
+   id: "article-seo-optimization-step",
+   description: "Generate SEO keywords and meta description for the article",
+   inputSchema: ContentEditorStepOutputSchema,
+   outputSchema: SeoOptimizationStepOutputSchema,
+   execute: async ({ inputData, runtimeContext }) => {
+      try {
+         const { agentId, userId, contentId, request, editor } = inputData;
+
+         // Update content status and emit event when SEO optimization starts
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "Optimizing SEO for your article...",
+            layout: request.layout,
+         });
+
+         const inputPrompt = `
+I need you to perform SEO optimization for this ${request.layout} content.
+
+Content:
+${editor}
+
+Generate SEO-optimized keywords and meta description for this article content.
+
+Requirements:
+- Keywords should be relevant to the article topic and content
+- Meta description should be compelling and include primary keywords
+- Follow SEO best practices for character limits and optimization
+`;
+
+         const result = await seoOptimizationAgent.generate(
+            [
+               {
+                  role: "user",
+                  content: inputPrompt,
+               },
+            ],
+            {
+               runtimeContext,
+               output: SeoOptimizationStepOutputSchema.pick({
+                  keywords: true,
+                  metaDescription: true,
+               }),
+            },
+         );
+
+         if (!result?.object.keywords) {
+            throw AppError.validation(
+               'Agent output is missing "keywords" field',
+            );
+         }
+         if (!result?.object.metaDescription) {
+            throw AppError.validation(
+               'Agent output is missing "metaDescription" field',
+            );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
+         }
+
+         // Update content status and emit event when SEO optimization completes
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "SEO optimization completed",
+            layout: request.layout,
+         });
+
+         return {
+            keywords: result.object.keywords,
+            metaDescription: result.object.metaDescription,
+            userId,
+            contentId,
+            request,
+            agentId,
+         };
+      } catch (error) {
+         await updateContentStatus({
+            contentId: inputData.contentId,
+            status: "failed",
+            message: "Failed to optimize SEO for article",
+            layout: inputData.request.layout,
+         });
+         console.error(error);
+         propagateError(error);
+         throw APIError.internal("Failed to optimize SEO for article");
+      }
+   },
+});
+
+const FinalResultStepOutputSchema = CreateNewContentWorkflowInputSchema.extend({
+   rating: z.number().min(0).max(100),
+   reasonOfTheRating: z
+      .string()
+      .describe("The reason for the rating, written in markdown"),
+   keywords: z
+      .array(z.string())
+      .describe("The associated keywords of the content"),
+   sources: z.array(z.string()).describe("The sources found on the search"),
+   metaDescription: z
+      .string()
+      .describe(
+         "The meta description, being a SEO optimized description of the article",
+      ),
+   editor: editorType,
+}).omit({
+   competitorIds: true,
+   organizationId: true,
+});
+
+export const articleFinalResultStep = createStep({
+   id: "article-final-result-step",
+   description: "Combine reader and SEO results into final output",
+   inputSchema: z.object({
+      "article-read-and-review-step": ContentReviewerStepOutputSchema,
+      "article-seo-optimization-step": SeoOptimizationStepOutputSchema,
+   }),
+   outputSchema: FinalResultStepOutputSchema,
+   execute: async ({ inputData }) => {
+      const readerResult = inputData["article-read-and-review-step"];
+      const seoResult = inputData["article-seo-optimization-step"];
+      const { contentId, request } = readerResult;
+      try {
+         // Update content status and emit event when final result compilation starts
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "Compiling final results...",
+            layout: request.layout,
+         });
+
+         // Combine results - prioritize SEO keywords and meta description
+         const finalResult = {
+            rating: readerResult.rating,
+            reasonOfTheRating: readerResult.reasonOfTheRating,
+            keywords: seoResult.keywords,
+            sources: readerResult.sources,
+            metaDescription: seoResult.metaDescription,
+            editor: readerResult.editor,
+            userId: readerResult.userId,
+            agentId: readerResult.agentId,
+            contentId: readerResult.contentId,
+            request: readerResult.request,
+         };
+
+         // Update content status and emit event when final result compilation completes
+
+         return finalResult;
+      } catch (error) {
+         await updateContentStatus({
+            contentId: contentId,
+            status: "failed",
+            message: "Failed to compile final results",
+            layout: request.layout,
+         });
+         console.error(error);
+         propagateError(error);
+         throw APIError.internal("Failed to compile final results");
       }
    },
 });
@@ -572,10 +811,11 @@ export const createNewArticleWorkflow = createWorkflow({
    id: "create-new-article-workflow",
    description: "Create a new article",
    inputSchema: CreateNewContentWorkflowInputSchema,
-   outputSchema: ContentReviewerStepOutputSchema,
+   outputSchema: FinalResultStepOutputSchema,
 })
    .parallel([researchStep, strategyStep])
    .then(articleWritingStep)
    .then(articleEditorStep)
-   .then(articleReadAndReviewStep)
+   .parallel([articleReadAndReviewStep, articleSeoOptimizationStep])
+   .then(articleFinalResultStep)
    .commit();

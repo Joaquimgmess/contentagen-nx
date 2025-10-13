@@ -6,10 +6,16 @@ import { tutorialWriterAgent } from "../../agents/tutorial/tutorial-writer-agent
 import { tutorialEditorAgent } from "../../agents/tutorial/tutorial-editor-agent";
 import { tutorialReaderAgent } from "../../agents/tutorial/tutorial-reader-agent";
 import { researcherAgent } from "../../agents/researcher-agent";
+import { seoOptimizationAgent } from "../../agents/seo-agent";
 import { emitContentStatusChanged } from "@packages/server-events";
 import { createDb } from "@packages/database/client";
 import { updateContent } from "@packages/database/repositories/content-repository";
 import { serverEnv } from "@packages/environment/server";
+import { getPaymentClient } from "@packages/payment/client";
+import {
+   createAiUsageMetadata,
+   ingestBilling,
+} from "@packages/payment/ingestion";
 
 // Internal helper function to update content status and emit events
 async function updateContentStatus(
@@ -38,6 +44,28 @@ async function updateContentStatus(
    }
 }
 
+// LLM usage tracking
+type LLMUsage = {
+   inputTokens: number;
+   outputTokens: number;
+   totalTokens: number;
+   reasoningTokens?: number | null;
+   cachedInputTokens?: number | null;
+};
+
+async function ingestUsage(usage: LLMUsage, userId: string) {
+   const paymentClient = getPaymentClient(serverEnv.POLAR_ACCESS_TOKEN);
+   const usageMetadata = createAiUsageMetadata({
+      effort: "grok-4-fast",
+      inputTokens: usage.inputTokens,
+      outputTokens: usage.outputTokens,
+   });
+   await ingestBilling(paymentClient, {
+      externalCustomerId: userId,
+      metadata: usageMetadata,
+   });
+}
+
 const CreateNewContentWorkflowInputSchema = z.object({
    userId: z.string(),
    agentId: z.string(),
@@ -55,17 +83,27 @@ const editorType = z.string().describe("The edited tutorial, ready for review");
 const ContentWritingStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
       writing: writingType,
+      sources: z
+         .array(z.string())
+         .describe("The URLs found during web search research"),
    }).omit({
       competitorIds: true,
       organizationId: true,
    });
 const ResearchStepOutputSchema = CreateNewContentWorkflowInputSchema.extend({
-   research: z.object({
-      searchIntent: z.string(),
-      competitorAnalysis: z.string(),
-      contentGaps: z.string(),
-      strategicRecommendations: z.string(),
-   }),
+   searchIntent: z.string().describe("The search intent and user expectations"),
+   competitorAnalysis: z
+      .string()
+      .describe("Analysis of top ranking competitors and their strategies"),
+   contentGaps: z
+      .string()
+      .describe("Content gaps and opportunities identified"),
+   strategicRecommendations: z
+      .string()
+      .describe("Strategic recommendations for outranking competitors"),
+   sources: z
+      .array(z.string())
+      .describe("The URLs found during web search research"),
 }).omit({
    competitorIds: true,
    organizationId: true,
@@ -75,7 +113,7 @@ export const researchStep = createStep({
    description: "Perform SERP research and competitive analysis",
    inputSchema: CreateNewContentWorkflowInputSchema,
    outputSchema: ResearchStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, request, agentId, contentId } = inputData;
 
@@ -88,21 +126,22 @@ export const researchStep = createStep({
          });
 
          const inputPrompt = `
-I need you to perform comprehensive SERP research for the following content request:
+I need you to perform SERP research for the following content request:
 
 **Topic:** ${request.description}
 **Content Type:** ${request.layout}
 
-Please conduct thorough SERP analysis and competitive intelligence gathering to identify:
+Please conduct SERP analysis to identify:
 1. Search intent and user expectations
-2. Top ranking competitors and their content strategies
+2. Top ranking competitors and their strategies
 3. Content gaps and opportunities
-4. Strategic recommendations for outranking competitors
+4. Strategic recommendations for content
+5. Source URLs from web searches used for research
 
-Focus on finding the most effective content angle and structure that can achieve top rankings.
+Focus on the research findings only and include actual URLs found during your web searches.
 `;
 
-         const result = await researcherAgent.generateVNext(
+         const result = await researcherAgent.generate(
             [
                {
                   role: "user",
@@ -110,16 +149,25 @@ Focus on finding the most effective content angle and structure that can achieve
                },
             ],
             {
-               output: ResearchStepOutputSchema.pick({
-                  research: true,
+               runtimeContext,
+               output: ResearchStepOutputSchema.omit({
+                  agentId: true,
+                  contentId: true,
+                  userId: true,
+                  request: true,
                }),
             },
          );
 
-         if (!result?.object.research) {
+         if (!result?.object.searchIntent) {
             throw AppError.validation(
-               'Agent output is missing "research" field',
+               'Agent output is missing "searchIntent" field',
             );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Emit event when research completes
@@ -131,7 +179,7 @@ Focus on finding the most effective content angle and structure that can achieve
          });
 
          return {
-            research: result.object.research,
+            ...result.object,
             userId,
             request,
             agentId,
@@ -144,7 +192,10 @@ Focus on finding the most effective content angle and structure that can achieve
             message: "Failed to research tutorial",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to research tutorial: ${(error as Error).message}`,
+         );
       }
    },
 });
@@ -154,9 +205,19 @@ const tutorialWritingStep = createStep({
    description: "Write the tutorial based on the content strategy and research",
    inputSchema: ResearchStepOutputSchema,
    outputSchema: ContentWritingStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
-         const { userId, request, research, agentId, contentId } = inputData;
+         const {
+            userId,
+            request,
+            competitorAnalysis,
+            contentGaps,
+            searchIntent,
+            strategicRecommendations,
+            sources,
+            agentId,
+            contentId,
+         } = inputData;
 
          // Emit event when writing starts
          await updateContentStatus({
@@ -167,10 +228,10 @@ const tutorialWritingStep = createStep({
          });
 
          const researchPrompt = `
-searchIntent: ${research.searchIntent}
-competitorAnalysis: ${research.competitorAnalysis}
-contentGaps: ${research.contentGaps}
-strategicRecommendations: ${research.strategicRecommendations}
+searchIntent: ${searchIntent}
+competitorAnalysis: ${competitorAnalysis}
+contentGaps: ${contentGaps}
+strategicRecommendations: ${strategicRecommendations}
 `;
 
          const inputPrompt = `
@@ -181,7 +242,7 @@ request: ${request.description}
 ${researchPrompt}
 
 `;
-         const result = await tutorialWriterAgent.generateVNext(
+         const result = await tutorialWriterAgent.generate(
             [
                {
                   role: "user",
@@ -189,6 +250,7 @@ ${researchPrompt}
                },
             ],
             {
+               runtimeContext,
                output: ContentWritingStepOutputSchema.pick({
                   writing: true,
                }),
@@ -201,6 +263,11 @@ ${researchPrompt}
             );
          }
 
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
+         }
+
          // Emit event when writing completes
          await updateContentStatus({
             contentId,
@@ -211,6 +278,8 @@ ${researchPrompt}
 
          return {
             writing: result.object.writing,
+            sources,
+
             userId,
             request,
             agentId,
@@ -223,13 +292,19 @@ ${researchPrompt}
             message: "Failed to write tutorial",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to write tutorial: ${(error as Error).message}`,
+         );
       }
    },
 });
 const ContentEditorStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
       editor: editorType,
+      sources: z
+         .array(z.string())
+         .describe("The URLs found during web search research"),
    }).omit({
       competitorIds: true,
       organizationId: true,
@@ -237,13 +312,12 @@ const ContentEditorStepOutputSchema =
 const tutorialEditorStep = createStep({
    id: "tutorial-editor-step",
    description: "Edit the tutorial based on the content research",
-   inputSchema: CreateNewContentWorkflowInputSchema.extend({
-      writing: writingType,
-   }),
+   inputSchema: ContentWritingStepOutputSchema,
    outputSchema: ContentEditorStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
-         const { userId, request, writing, agentId, contentId } = inputData;
+         const { userId, request, writing, agentId, contentId, sources } =
+            inputData;
 
          // Emit event when editing starts
          await updateContentStatus({
@@ -260,7 +334,7 @@ writing: ${writing}
 
 output the edited content in markdown format.
 `;
-         const result = await tutorialEditorAgent.generateVNext(
+         const result = await tutorialEditorAgent.generate(
             [
                {
                   role: "user",
@@ -268,6 +342,7 @@ output the edited content in markdown format.
                },
             ],
             {
+               runtimeContext,
                output: ContentEditorStepOutputSchema.pick({
                   editor: true,
                }),
@@ -276,6 +351,11 @@ output the edited content in markdown format.
 
          if (!result?.object.editor) {
             throw AppError.validation('Agent output is missing "editor" field');
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Emit event when editing completes
@@ -292,6 +372,7 @@ output the edited content in markdown format.
             request,
             agentId,
             contentId,
+            sources,
          };
       } catch (error) {
          await updateContentStatus({
@@ -300,7 +381,10 @@ output the edited content in markdown format.
             message: "Failed to edit tutorial",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to edit tutorial: ${(error as Error).message}`,
+         );
       }
    },
 });
@@ -311,10 +395,8 @@ const ContentReviewerStepOutputSchema =
       reasonOfTheRating: z
          .string()
          .describe("The reason for the rating, written in markdown"),
-      keywords: z
-         .array(z.string())
-         .describe("The associeated keywords of the content"),
       sources: z.array(z.string()).describe("The sources found on the search"),
+      editor: editorType,
    }).omit({
       competitorIds: true,
       organizationId: true,
@@ -324,9 +406,10 @@ export const tutorialReadAndReviewStep = createStep({
    description: "Read and review the tutorial",
    inputSchema: ContentEditorStepOutputSchema,
    outputSchema: ContentReviewerStepOutputSchema,
-   execute: async ({ inputData }) => {
+   execute: async ({ inputData, runtimeContext }) => {
       try {
-         const { userId, request, editor, agentId, contentId } = inputData;
+         const { userId, request, editor, agentId, contentId, sources } =
+            inputData;
 
          // Emit event when review starts
          await updateContentStatus({
@@ -347,7 +430,7 @@ final:${editor}
 `;
 
          //TODO: Rework
-         const result = await tutorialReaderAgent.generateVNext(
+         const result = await tutorialReaderAgent.generate(
             [
                {
                   role: "user",
@@ -355,10 +438,10 @@ final:${editor}
                },
             ],
             {
+               runtimeContext,
                output: ContentReviewerStepOutputSchema.pick({
                   rating: true,
                   reasonOfTheRating: true,
-                  keywords: true,
                }),
             },
          );
@@ -369,6 +452,11 @@ final:${editor}
             throw AppError.validation(
                'Agent output is missing "reasonOfTheRating" field',
             );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
          }
 
          // Emit event when review completes
@@ -387,8 +475,7 @@ final:${editor}
             agentId,
             editor,
             contentId,
-            keywords: result.object.keywords,
-            sources: ["Your tutorial"],
+            sources,
          };
       } catch (error) {
          await updateContentStatus({
@@ -397,7 +484,190 @@ final:${editor}
             message: "Failed to review tutorial",
             layout: inputData.request.layout,
          });
-         throw error;
+         propagateError(error);
+         throw AppError.internal(
+            `Failed to review tutorial: ${(error as Error).message}`,
+         );
+      }
+   },
+});
+
+const SeoOptimizationStepOutputSchema =
+   CreateNewContentWorkflowInputSchema.extend({
+      keywords: z
+         .array(z.string())
+         .describe(
+            "The associated keywords of the content for SEO optimization",
+         ),
+      metaDescription: z
+         .string()
+         .describe("The SEO optimized meta description of the content"),
+   }).omit({
+      competitorIds: true,
+      organizationId: true,
+   });
+
+export const tutorialSeoOptimizationStep = createStep({
+   id: "tutorial-seo-optimization-step",
+   description: "Generate SEO keywords and meta description for the tutorial",
+   inputSchema: ContentEditorStepOutputSchema,
+   outputSchema: SeoOptimizationStepOutputSchema,
+   execute: async ({ inputData, runtimeContext }) => {
+      try {
+         const { userId, agentId, contentId, request, editor } = inputData;
+
+         // Update content status and emit event when SEO optimization starts
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "Optimizing SEO for your tutorial...",
+            layout: request.layout,
+         });
+
+         const inputPrompt = `
+I need you to perform SEO optimization for this ${request.layout} content.
+
+Content:
+${editor}
+
+Generate SEO-optimized keywords and meta description for this tutorial content.
+
+Requirements:
+- Keywords should be relevant to the tutorial topic and learning objectives
+- Meta description should be compelling and include primary keywords
+- Follow SEO best practices for character limits and optimization
+`;
+
+         const result = await seoOptimizationAgent.generate(
+            [
+               {
+                  role: "user",
+                  content: inputPrompt,
+               },
+            ],
+            {
+               runtimeContext,
+               output: SeoOptimizationStepOutputSchema.pick({
+                  keywords: true,
+                  metaDescription: true,
+               }),
+            },
+         );
+
+         if (!result?.object.keywords) {
+            throw AppError.validation(
+               'Agent output is missing "keywords" field',
+            );
+         }
+         if (!result?.object.metaDescription) {
+            throw AppError.validation(
+               'Agent output is missing "metaDescription" field',
+            );
+         }
+
+         // Ingest LLM usage for billing
+         if (result.usage) {
+            await ingestUsage(result.usage as LLMUsage, userId);
+         }
+
+         // Update content status and emit event when SEO optimization completes
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "SEO optimization completed",
+            layout: request.layout,
+         });
+
+         return {
+            keywords: result.object.keywords,
+            metaDescription: result.object.metaDescription,
+            userId,
+            contentId,
+            request,
+            agentId,
+         };
+      } catch (error) {
+         await updateContentStatus({
+            contentId: inputData.contentId,
+            status: "failed",
+            message: "Failed to optimize SEO for tutorial",
+            layout: inputData.request.layout,
+         });
+         console.error(error);
+         propagateError(error);
+         throw APIError.internal("Failed to optimize SEO for tutorial");
+      }
+   },
+});
+
+const FinalResultStepOutputSchema = CreateNewContentWorkflowInputSchema.extend({
+   rating: z.number().min(0).max(100),
+   reasonOfTheRating: z
+      .string()
+      .describe("The reason for the rating, written in markdown"),
+   keywords: z
+      .array(z.string())
+      .describe("The associated keywords of the content"),
+   sources: z.array(z.string()).describe("The sources found on the search"),
+   metaDescription: z
+      .string()
+      .describe(
+         "The meta description, being a SEO optimized description of the article",
+      ),
+   editor: editorType,
+}).omit({
+   competitorIds: true,
+   organizationId: true,
+});
+
+export const tutorialFinalResultStep = createStep({
+   id: "tutorial-final-result-step",
+   description: "Combine reader and SEO results into final output",
+   inputSchema: z.object({
+      "tutorial-read-and-review-step": ContentReviewerStepOutputSchema,
+      "tutorial-seo-optimization-step": SeoOptimizationStepOutputSchema,
+   }),
+   outputSchema: FinalResultStepOutputSchema,
+   execute: async ({ inputData }) => {
+      const readerResult = inputData["tutorial-read-and-review-step"];
+      const seoResult = inputData["tutorial-seo-optimization-step"];
+      const { contentId, request } = readerResult;
+      try {
+         // Update content status and emit event when final result compilation starts
+         await updateContentStatus({
+            contentId,
+            status: "pending",
+            message: "Compiling final results...",
+            layout: request.layout,
+         });
+
+         // Combine results - prioritize SEO keywords and meta description
+         const finalResult = {
+            rating: readerResult.rating,
+            reasonOfTheRating: readerResult.reasonOfTheRating,
+            keywords: seoResult.keywords,
+            sources: readerResult.sources,
+            metaDescription: seoResult.metaDescription,
+            editor: readerResult.editor,
+            userId: readerResult.userId,
+            agentId: readerResult.agentId,
+            contentId: readerResult.contentId,
+            request: readerResult.request,
+         };
+
+         // Update content status and emit event when final result compilation completes
+
+         return finalResult;
+      } catch (error) {
+         await updateContentStatus({
+            contentId: contentId,
+            status: "failed",
+            message: "Failed to compile final results",
+            layout: request.layout,
+         });
+         console.error(error);
+         propagateError(error);
+         throw APIError.internal("Failed to compile final results");
       }
    },
 });
@@ -406,10 +676,11 @@ export const createNewTutorialWorkflow = createWorkflow({
    id: "create-new-tutorial-workflow",
    description: "Create a new tutorial",
    inputSchema: CreateNewContentWorkflowInputSchema,
-   outputSchema: ContentReviewerStepOutputSchema,
+   outputSchema: FinalResultStepOutputSchema,
 })
    .then(researchStep)
    .then(tutorialWritingStep)
    .then(tutorialEditorStep)
-   .then(tutorialReadAndReviewStep)
+   .parallel([tutorialReadAndReviewStep, tutorialSeoOptimizationStep])
+   .then(tutorialFinalResultStep)
    .commit();

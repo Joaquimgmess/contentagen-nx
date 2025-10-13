@@ -30,11 +30,6 @@ export function useAgentForm({
                name: z.string().min(1, "This field is required"),
                description: z.string().min(1, "This field is required"),
             }),
-            instructions: z.object({
-               audienceProfile: z.string().min(1, "This field is required"),
-               writingGuidelines: z.string().min(1, "This field is required"),
-               ragIntegration: z.string().min(1, "This field is required"),
-            }),
             purpose: z.enum(["blog_post"]),
          }),
       },

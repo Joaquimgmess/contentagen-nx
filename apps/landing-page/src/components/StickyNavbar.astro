@@ -4,6 +4,13 @@ import Logo from "./Logo.astro";
 import { NavMenu } from "./nav-menu";
 import { MobileMenu } from "./mobile-menu";
 import ThemeToggler from "./ThemeToggler.astro";
+import { LanguageToggler } from "./LanguageToggler";
+
+interface Props {
+   lang?: "en" | "pt";
+}
+
+const { lang = "en" } = Astro.props;
 ---
 
 <nav 
@@ -27,9 +34,13 @@ import ThemeToggler from "./ThemeToggler.astro";
     <!-- Action buttons with hover animations -->
     <div class="flex items-center gap-3 navbar-actions">
       <div class="transition-transform duration-300 hover:scale-110">
+        <LanguageToggler currentLang={lang} client:load />
+      </div>
+
+      <div class="transition-transform duration-300 hover:scale-110">
         <ThemeToggler />
       </div>
-      
+
       <Button className="hidden md:block">
         <a href="https://app.contentagen.com/auth/sign-in" target="_blank" rel="noopener noreferrer" class="no-underline text-white">
           Get Started

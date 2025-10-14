@@ -1,0 +1,30 @@
+{
+   "footer": {
+      "description": "The open-source platform for autonomous, brand-aligned content creation.",
+      "product": {
+         "title": "Product",
+         "brandIntelligence": "Brand Intelligence",
+         "competitorAnalysis": "Competitor Analysis",
+         "contentWorkflow": "Content Workflow",
+         "developerSDK": "Developer SDK",
+         "pricing": "Pricing"
+      },
+      "resources": {
+         "title": "Resources",
+         "blog": "Blog",
+         "documentation": "Documentation",
+         "changelog": "Changelog",
+         "contributing": "Contributing"
+      },
+      "legal": {
+         "title": "Legal",
+         "privacyPolicy": "Privacy Policy",
+         "termsOfService": "Terms of Service"
+      },
+      "socialLinks": {
+         "github": "GitHub",
+         "discord": "Discord"
+      },
+      "copyright": "All rights reserved."
+   }
+}

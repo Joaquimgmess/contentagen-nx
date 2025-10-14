@@ -1,0 +1,30 @@
+{
+   "footer": {
+      "description": "A plataforma open-source para criação de conteúdo autônomo e alinhado à marca.",
+      "product": {
+         "title": "Produto",
+         "brandIntelligence": "Inteligência de Marca",
+         "competitorAnalysis": "Análise de Concorrentes",
+         "contentWorkflow": "Fluxo de Conteúdo",
+         "developerSDK": "SDK para Desenvolvedores",
+         "pricing": "Preços"
+      },
+      "resources": {
+         "title": "Recursos",
+         "blog": "Blog",
+         "documentation": "Documentação",
+         "changelog": "Changelog",
+         "contributing": "Contribuindo"
+      },
+      "legal": {
+         "title": "Legal",
+         "privacyPolicy": "Política de Privacidade",
+         "termsOfService": "Termos de Serviço"
+      },
+      "socialLinks": {
+         "github": "GitHub",
+         "discord": "Discord"
+      },
+      "copyright": "Todos os direitos reservados."
+   }
+}

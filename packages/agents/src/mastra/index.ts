@@ -1,7 +1,6 @@
 import { Mastra } from "@mastra/core/mastra";
 import { appAssistantAgent } from "./agents/app-assistant-agent";
 import { createCompleteKnowledgeWorkflow } from "./workflows/create-complete-knowledge-workflow";
-import { seoOptimizationAgent } from "./agents/seo-agent";
 import { researcherAgent } from "./agents/researcher-agent";
 import { PinoLogger } from "@mastra/loggers";
 import { documentSynthesizerAgent } from "./agents/document-syntethizer-agent";
@@ -14,6 +13,8 @@ import { contentStrategistAgent } from "./agents/strategist-agent";
 import { createFeaturesKnowledgeWorkflow } from "./workflows/knowledge/create-features-knowledge-workflow";
 import { createKnowledgeAndIndexDocumentsWorkflow } from "./workflows/knowledge/create-knowledge-and-index-documents-workflow";
 import { createOverviewWorkflow } from "./workflows/knowledge/create-overview-workflow";
+import { competitorIntelligenceAgent } from "./agents/competitor-intelligence-agent";
+import { createCompetitorSummaryWorkflow } from "./workflows/create-competitor-summary-workflow";
 
 import type { SupportedLng } from "@packages/localization";
 export type CustomRuntimeContext = {
@@ -41,9 +42,9 @@ export const mastra = new Mastra({
       createFeaturesKnowledgeWorkflow,
       createKnowledgeAndIndexDocumentsWorkflow,
       createOverviewWorkflow,
+      createCompetitorSummaryWorkflow,
    },
    agents: {
-      seoOptimizationAgent,
       appAssistantAgent,
       contentStrategistAgent,
       documentSynthesizerAgent,
@@ -51,6 +52,7 @@ export const mastra = new Mastra({
       featureExtractionAgent,
       companyInfoExtractorAgent,
       researcherAgent,
+      competitorIntelligenceAgent,
    },
    logger: new PinoLogger({
       name: "Mastra",

@@ -1,6 +1,6 @@
 # apps/dashboard/Dockerfile
 # Stage 1: Install all dependencies and build the application
-FROM oven/bun:latest AS builder
+FROM oven/bun:1.2.23 AS builder
 
 
 
@@ -47,7 +47,7 @@ RUN bun run --filter=dashboard build
 # ---
 
 # Stage 2: Create a clean, production-only node_modules folder
-FROM oven/bun:latest AS deps
+FROM oven/bun:1.2.23 AS deps
 
 WORKDIR /app
 

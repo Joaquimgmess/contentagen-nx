@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@packages/utils": "workspace:*",
+    "sonner": "catalog:ui",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -66,5 +67,5 @@
     "typecheck": "bunx --bun tsc  "
   },
   "type": "module",
-  "version": "0.6.0"
+  "version": "0.4.0"
 }

@@ -1,4 +1,4 @@
-FROM oven/bun:latest AS builder
+FROM oven/bun:1.2.23 AS builder
 
 ARG DATABASE_URL
 ARG BETTER_AUTH_GOOGLE_CLIENT_ID
@@ -61,7 +61,7 @@ RUN bun build \
 # ---
 
 # Stage 2: Create a clean, production-only node_modules folder and install ONNX Runtime
-FROM oven/bun:latest AS deps
+FROM oven/bun:1.2.23 AS deps
 WORKDIR /app
 
 # Copy all package manifests and lockfile again
@@ -91,7 +91,7 @@ RUN bun install
 # ---
 
 # Stage 3: Create the final, small production image
-FROM oven/bun:latest AS runner
+FROM oven/bun:1.2.23 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

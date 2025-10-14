@@ -12,6 +12,7 @@
       "@packages/ui": "workspace:*",
       "@tailwindcss/vite": "catalog:ui",
       "astro": "catalog:astro",
+      "lucide-react": "^0.475.0",
       "react": "catalog:react",
       "react-dom": "catalog:react",
       "sonner": "catalog:ui",

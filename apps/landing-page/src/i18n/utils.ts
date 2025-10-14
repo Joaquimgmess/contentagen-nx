@@ -24,20 +24,32 @@ export function useTranslations(lang: SupportedLanguage) {
       key: string,
       replacements?: Record<string, string>,
    ): string {
-      const keys = key.split(".");
+      const firstDotIndex = key.indexOf(".");
+      if (firstDotIndex === -1) {
+         return key;
+      }
+
+      const parts = key.split(".");
       let value: any = translations[lang];
 
-      for (const k of keys) {
-         if (value && typeof value === "object" && k in value) {
-            value = value[k];
+      if (parts.length >= 2) {
+         const potentialNamespace = `${parts[0]}.${parts[1]}`;
+         if (potentialNamespace in value) {
+            value = value[potentialNamespace];
+            for (let i = 2; i < parts.length; i++) {
+               const k = parts[i];
+               if (value && typeof value === "object" && k in value) {
+                  value = value[k];
+               } else {
+                  return key;
+               }
+            }
          } else {
-            console.warn(`Translation key not found: ${key}`);
             return key;
          }
       }
 
       if (typeof value !== "string") {
-         console.warn(`Translation value is not a string: ${key}`);
          return key;
       }
 

@@ -16,5 +16,8 @@ export default defineConfig({
    },
    vite: {
       plugins: [tailwindcss()],
+      ssr: {
+         noExternal: ["lucide-react", "@packages/localization"],
+      },
    },
 });

@@ -161,5 +161,122 @@
             "answer": "Sim, ContentaGen é 100% open source sob a licença Apache-2.0. Você pode visualizar o código, contribuir para seu desenvolvimento ou auto-hospedar toda a plataforma gratuitamente, para sempre. Acreditamos em transparência e colaboração comunitária."
          }
       }
+   },
+   "pricing": {
+      "title": "Preços Simples e Transparentes",
+      "subtitle": "Escolha o plano que se encaixa em você. Sem taxas ocultas, cancele a qualquer momento.",
+      "plans": {
+         "free": {
+            "name": "Gratuito",
+            "price": "$0",
+            "period": "/ mês",
+            "description": "Comece com nossa plataforma open-source. Sem necessidade de cartão de crédito.",
+            "features": {
+               "credit": "$1 Crédito de Uso de IA",
+               "organization": "Suporte a Organização",
+               "api": "Chaves de API e Acesso ao SDK",
+               "support": "Suporte da Comunidade",
+               "noCard": "Sem Necessidade de Cartão de Crédito",
+               "coreFeatures": "Todas as Funcionalidades Principais Incluídas"
+            }
+         },
+         "basic": {
+            "name": "Básico",
+            "price": "$5",
+            "period": "/ mês",
+            "description": "Perfeito para criadores e equipes que precisam de mais uso de IA.",
+            "popular": "Mais Popular",
+            "features": {
+               "credit": "$5 Crédito de Uso de IA",
+               "payAsGo": "Pagamento por uso para mais uso",
+               "organization": "Suporte a Organização",
+               "api": "Chaves de API e Acesso ao SDK",
+               "support": "Suporte Prioritário",
+               "coreFeatures": "Todas as Funcionalidades Principais Incluídas"
+            }
+         },
+         "supporter": {
+            "name": "Apoiador",
+            "price": "$25",
+            "period": "/ mês",
+            "description": "Apoie nossa missão open-source com benefícios exclusivos.",
+            "features": {
+               "credit": "$25 Crédito de Uso de IA",
+               "featureRequest": "Prioridade em Solicitação de Funcionalidades",
+               "organization": "Suporte a Organização",
+               "api": "Chaves de API e Acesso ao SDK",
+               "support": "Suporte Dedicado",
+               "coreFeatures": "Todas as Funcionalidades Principais Incluídas"
+            }
+         }
+      },
+      "button": "Começar"
+   },
+   "sdk": {
+      "title": "Integre Conteúdo, Automatize Tudo.",
+      "description": "Nosso SDK TypeScript é mais do que apenas um cliente de API. É um kit completo de ferramentas de conteúdo projetado para desenvolvedores que precisam de acesso confiável e type-safe ao conteúdo gerado por IA.",
+      "benefits": {
+         "typeSafety": {
+            "title": "Type Safety de Ponta a Ponta",
+            "description": "Suporte completo a TypeScript com validação Zod garante que seus dados sejam sempre o que você espera, da API à renderização."
+         },
+         "modern": {
+            "title": "Construído para Frameworks Modernos",
+            "description": "Projetado para geradores de sites estáticos como Astro e Next.js para construir sites de alta performance gerados estaticamente."
+         },
+         "secure": {
+            "title": "Seguro e Confiável",
+            "description": "Autenticação robusta por chave de API e tratamento de erros consistente para construir aplicações de nível de produção."
+         }
+      },
+      "button": "Ler a Documentação"
+   },
+   "openSource": {
+      "title": "Construído Abertamente, Para Todos",
+      "description": "ContentaGen é 100% open-source sob a licença Apache-2.0. Acreditamos em transparência, colaboração comunitária e liberdade para construir sem limites.",
+      "benefits": {
+         "community": {
+            "title": "Impulsionado pela Comunidade",
+            "description": "Junte-se a uma comunidade crescente de desenvolvedores e criadores de conteúdo. Seu feedback molda o futuro do ContentaGen."
+         },
+         "transparency": {
+            "title": "Transparência Total",
+            "description": "Cada linha de código é pública. Veja exatamente como o ContentaGen funciona, desde prompts de IA até schemas de banco de dados."
+         },
+         "free": {
+            "title": "Gratuito Para Sempre",
+            "description": "Auto-hospede o ContentaGen gratuitamente, para sempre. Sem aprisionamento de fornecedor, sem custos ocultos, apenas liberdade open source pura."
+         }
+      },
+      "button": "Favoritar no GitHub"
+   },
+   "navigation": {
+      "product": "Produto",
+      "pricing": "Preços",
+      "docs": "Documentação",
+      "blog": "Blog",
+      "productItems": {
+         "brandLearning": {
+            "name": "Aprendizado de Marca",
+            "description": "IA aprende a voz e estilo únicos da sua marca"
+         },
+         "competitorIntelligence": {
+            "name": "Inteligência de Concorrentes",
+            "description": "Analise e fique à frente da sua concorrência"
+         },
+         "contentWorkflow": {
+            "name": "Fluxo de Conteúdo",
+            "description": "Processo simplificado da ideia à publicação"
+         },
+         "developerSDK": {
+            "name": "SDK para Desenvolvedores",
+            "description": "Construa integrações personalizadas com nossa API"
+         }
+      }
+   },
+   "socialProof": {
+      "quote": "Usar o ContentaGen foi como desbloquear um superpoder secreto de criação de conteúdo. É a fusão perfeita de inteligência de IA e criatividade humana, permitindo-nos criar conteúdo que é tão envolvente quanto eficaz.",
+      "author": "Equipe Licitei",
+      "role": "Equipe de Conteúdo, Licitei"
    }
 }

@@ -161,5 +161,122 @@
             "answer": "Yes, ContentaGen is 100% open source under the Apache-2.0 license. You can view the code, contribute to its development, or self-host the entire platform for free, forever. We believe in transparency and community collaboration."
          }
       }
+   },
+   "pricing": {
+      "title": "Simple, Transparent Pricing",
+      "subtitle": "Choose the plan that fits you. No hidden fees, cancel anytime.",
+      "plans": {
+         "free": {
+            "name": "Free",
+            "price": "$0",
+            "period": "/ mo",
+            "description": "Get started with our open-source platform. No credit card required.",
+            "features": {
+               "credit": "$1 AI Usage Credit",
+               "organization": "Organization Support",
+               "api": "API Keys & SDK Access",
+               "support": "Community Support",
+               "noCard": "No Credit Card Required",
+               "coreFeatures": "All Core Features Included"
+            }
+         },
+         "basic": {
+            "name": "Basic",
+            "price": "$5",
+            "period": "/ mo",
+            "description": "Perfect for creators and teams who need more AI usage.",
+            "popular": "Most Popular",
+            "features": {
+               "credit": "$5 AI Usage Credit",
+               "payAsGo": "Pay-as-you-go for more usage",
+               "organization": "Organization Support",
+               "api": "API Keys & SDK Access",
+               "support": "Priority Support",
+               "coreFeatures": "All Core Features Included"
+            }
+         },
+         "supporter": {
+            "name": "Supporter",
+            "price": "$25",
+            "period": "/ mo",
+            "description": "Support our open-source mission with exclusive benefits.",
+            "features": {
+               "credit": "$25 AI Usage Credit",
+               "featureRequest": "Feature Request Priority",
+               "organization": "Organization Support",
+               "api": "API Keys & SDK Access",
+               "support": "Dedicated Support",
+               "coreFeatures": "All Core Features Included"
+            }
+         }
+      },
+      "button": "Get Started"
+   },
+   "sdk": {
+      "title": "Integrate Content, Automate Everything.",
+      "description": "Our TypeScript SDK is more than just an API client. It's a complete content toolkit designed for developers who need reliable, type-safe access to AI-generated content.",
+      "benefits": {
+         "typeSafety": {
+            "title": "End-to-End Type Safety",
+            "description": "Full TypeScript support with Zod validation ensures your data is always what you expect, from API to render."
+         },
+         "modern": {
+            "title": "Built for Modern Frameworks",
+            "description": "Designed for static site generators like Astro and Next.js to build high-performance, statically-generated sites."
+         },
+         "secure": {
+            "title": "Secure & Reliable",
+            "description": "Robust API key authentication and consistent error handling for building production-grade applications."
+         }
+      },
+      "button": "Read the Docs"
+   },
+   "openSource": {
+      "title": "Built in the Open, For Everyone",
+      "description": "ContentaGen is 100% open-source under the Apache-2.0 license. We believe in transparency, community collaboration, and the freedom to build without limits.",
+      "benefits": {
+         "community": {
+            "title": "Community Driven",
+            "description": "Join a growing community of developers and content creators. Your feedback shapes the future of ContentaGen."
+         },
+         "transparency": {
+            "title": "Full Transparency",
+            "description": "Every line of code is public. See exactly how ContentaGen works, from AI prompts to database schemas."
+         },
+         "free": {
+            "title": "Free Forever",
+            "description": "Self-host ContentaGen for free, forever. No vendor lock-in, no hidden costs, just pure open source freedom."
+         }
+      },
+      "button": "Star on GitHub"
+   },
+   "navigation": {
+      "product": "Product",
+      "pricing": "Pricing",
+      "docs": "Docs",
+      "blog": "Blog",
+      "productItems": {
+         "brandLearning": {
+            "name": "Brand Learning",
+            "description": "AI learns your unique brand voice and style"
+         },
+         "competitorIntelligence": {
+            "name": "Competitor Intelligence",
+            "description": "Analyze and stay ahead of your competition"
+         },
+         "contentWorkflow": {
+            "name": "Content Workflow",
+            "description": "Streamlined process from idea to publication"
+         },
+         "developerSDK": {
+            "name": "Developer SDK",
+            "description": "Build custom integrations with our API"
+         }
+      }
+   },
+   "socialProof": {
+      "quote": "Using ContentaGen has been like unlocking a secret content creation superpower. It's the perfect fusion of AI intelligence and human creativity, enabling us to create content that is as engaging as it is effective.",
+      "author": "Licitei Team",
+      "role": "Content Team, Licitei"
    }
 }

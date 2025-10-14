@@ -28,7 +28,7 @@ const { lang = "en" } = Astro.props;
 
     <!-- Desktop Menu with stagger animation -->
     <div class="hidden md:block ">
-      <NavMenu client:load />
+      <NavMenu lang={lang} client:load />
     </div>
 
     <!-- Action buttons with hover animations -->
@@ -49,7 +49,7 @@ const { lang = "en" } = Astro.props;
 
       <!-- Mobile Menu with bounce animation -->
       <div class="md:hidden transition-transform duration-300 hover:scale-110">
-        <MobileMenu client:load />
+        <MobileMenu lang={lang} client:load />
       </div>
     </div>
   </div>

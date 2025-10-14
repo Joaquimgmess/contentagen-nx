@@ -8,10 +8,34 @@ import {
 } from "@packages/ui/components/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { menuItems } from "../data/menu-items";
+import { translate } from "@packages/localization";
+import type { SupportedLanguage } from "../i18n/config";
 
-export function MobileMenu() {
+const getMenuItems = (lang: SupportedLanguage) => {
+   const locale = lang === "en" ? "en-US" : "pt-BR";
+   return [
+      {
+         href: "#pricing",
+         name: translate("pages.landing.navigation.pricing", { lng: locale }),
+      },
+      {
+         href: "https://docs.contentagen.com/",
+         name: translate("pages.landing.navigation.docs", { lng: locale }),
+      },
+      {
+         href: "https://blog.contentagen.com/",
+         name: translate("pages.landing.navigation.blog", { lng: locale }),
+      },
+   ];
+};
+
+interface MobileMenuProps {
+   lang?: SupportedLanguage;
+}
+
+export function MobileMenu({ lang = "en" }: MobileMenuProps) {
    const [open, setOpen] = useState(false);
+   const menuItems = getMenuItems(lang);
 
    return (
       <div className="md:hidden">

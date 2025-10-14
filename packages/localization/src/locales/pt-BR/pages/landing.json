@@ -1,4 +1,31 @@
 {
+   "hero": {
+      "badge": "Geração de Conteúdo Autônoma",
+      "title": "Pare de Escrever. Comece a Crescer.",
+      "subtitle": "A plataforma de IA open-source que aprende sua marca, analisa concorrentes e publica conteúdo de alta qualidade—automaticamente.",
+      "cta": {
+         "primary": "Comece Grátis",
+         "secondary": "Ver Documentação"
+      }
+   },
+   "howItWorks": {
+      "title": "Como Funciona",
+      "subtitle": "Configure seu agente de IA uma vez, gere conteúdo ilimitado para sempre.",
+      "steps": {
+         "create": {
+            "title": "1. Crie Seu Agente de IA",
+            "description": "Defina sua voz de marca, público-alvo e objetivos de conteúdo em minutos."
+         },
+         "train": {
+            "title": "2. Treine em Sua Marca",
+            "description": "Nossa IA analisa seu site e documentos para aprender seu estilo único."
+         },
+         "generate": {
+            "title": "3. Gere Conteúdo",
+            "description": "Publique posts de blog, tutoriais e mais com um único clique."
+         }
+      }
+   },
    "footer": {
       "description": "A plataforma open-source para criação de conteúdo autônomo e alinhado à marca.",
       "product": {

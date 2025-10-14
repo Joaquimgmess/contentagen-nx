@@ -1,4 +1,31 @@
 {
+   "hero": {
+      "badge": "Autonomous Content Generation",
+      "title": "Stop Writing. Start Growing.",
+      "subtitle": "The open-source AI platform that learns your brand, analyzes competitors, and publishes high-quality content—automatically.",
+      "cta": {
+         "primary": "Get Started Free",
+         "secondary": "View Documentation"
+      }
+   },
+   "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Set up your AI agent once, generate unlimited content forever.",
+      "steps": {
+         "create": {
+            "title": "1. Create Your AI Agent",
+            "description": "Define your brand voice, target audience, and content goals in minutes."
+         },
+         "train": {
+            "title": "2. Train on Your Brand",
+            "description": "Our AI analyzes your website and documents to learn your unique style."
+         },
+         "generate": {
+            "title": "3. Generate Content",
+            "description": "Publish blog posts, tutorials, and more with a single click."
+         }
+      }
+   },
    "footer": {
       "description": "The open-source platform for autonomous, brand-aligned content creation.",
       "product": {

@@ -19,10 +19,10 @@ interface NavMenuProps extends ComponentProps<"nav"> {
 }
 
 const productIcons = {
-   "Brand Learning": Zap,
-   "Competitor Intelligence": Users,
-   "Content Workflow": Workflow,
-   "Developer SDK": Code,
+   "#brand-learning": Zap,
+   "#competitor-intelligence": Users,
+   "#content-workflow": Workflow,
+   "#sdk": Code,
 };
 
 const getMenuItems = (lang: SupportedLanguage) => {
@@ -124,9 +124,9 @@ export const NavMenu = ({
                   <div className="grid gap-2 p-2 grid-cols-2 w-96">
                      {productItems.map((item) => {
                         const Icon =
-                           productIcons[item.name as keyof typeof productIcons];
+                           productIcons[item.href as keyof typeof productIcons];
                         return (
-                           <NavigationMenuLink key={item.name} asChild>
+                           <NavigationMenuLink key={item.href} asChild>
                               <a
                                  href={item.href}
                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"

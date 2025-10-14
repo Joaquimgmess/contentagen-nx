@@ -10,7 +10,7 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "@packages/ui/components/dialog";
-import { languages, type SupportedLanguage } from "../i18n/config";
+import type { SupportedLanguage } from "../i18n/config";
 import { getLocalizedPath } from "../i18n/utils";
 
 interface LanguageTogglerProps {

@@ -1,12 +1,12 @@
+import type { SupportedLng } from "@packages/localization";
+
 export const languages = {
    en: "English",
    pt: "Português",
 };
 
-export const defaultLang = "en";
+export const defaultLang: SupportedLng = "en";
 
-export const supportedLanguages = Object.keys(
-   languages,
-) as (keyof typeof languages)[];
+export const supportedLanguages: SupportedLng[] = ["en", "pt"];
 
-export type SupportedLanguage = keyof typeof languages;
+export type SupportedLanguage = SupportedLng;

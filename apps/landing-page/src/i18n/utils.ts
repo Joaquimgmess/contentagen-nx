@@ -38,7 +38,7 @@ export function useTranslations(lang: SupportedLanguage) {
             value = value[potentialNamespace];
             for (let i = 2; i < parts.length; i++) {
                const k = parts[i];
-               if (value && typeof value === "object" && k in value) {
+               if (k && value && typeof value === "object" && k in value) {
                   value = value[k];
                } else {
                   return key;

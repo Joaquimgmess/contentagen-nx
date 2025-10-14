@@ -45,5 +45,10 @@
             "description": "All your brand knowledge is indexed into a central repository, giving your AI agents instant, accurate recall for perfectly consistent content."
          }
       }
+   },
+   "community": {
+      "title": "Build the Future of Content, Together.",
+      "description": "Join our Discord community to connect with the core team, get priority support, share what you're building, and help shape the future of ContentaGen.",
+      "button": "Join our Discord"
    }
 }

@@ -45,5 +45,10 @@
             "description": "Todo o conhecimento da sua marca é indexado em um repositório central, dando aos seus agentes de IA recuperação instantânea e precisa para conteúdo perfeitamente consistente."
          }
       }
+   },
+   "community": {
+      "title": "Construa o Futuro do Conteúdo, Juntos.",
+      "description": "Junte-se à nossa comunidade Discord para conectar com a equipe principal, obter suporte prioritário, compartilhar o que está construindo e ajudar a moldar o futuro do ContentaGen.",
+      "button": "Junte-se ao nosso Discord"
    }
 }

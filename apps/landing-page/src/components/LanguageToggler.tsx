@@ -10,11 +10,11 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "@packages/ui/components/dialog";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 import { getLocalizedPath } from "../i18n/utils";
 
 interface LanguageTogglerProps {
-   currentLang: SupportedLanguage;
+   currentLang: SupportedLng;
    currentPath?: string;
 }
 
@@ -39,7 +39,7 @@ export function LanguageToggler({
       );
    }, [currentLang, languageOptions]);
 
-   const handleLanguageChange = (lang: SupportedLanguage) => {
+   const handleLanguageChange = (lang: SupportedLng) => {
       if (currentLang === lang) {
          setOpen(false);
          return;

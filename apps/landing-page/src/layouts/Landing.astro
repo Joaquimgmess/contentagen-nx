@@ -2,9 +2,10 @@
 import "@packages/ui/globals.css";
 import brandConfig from "@packages/brand/index.json";
 import { getAstroPosthogConfig } from "@packages/posthog/client";
+import type { SupportedLng } from "@packages/localization";
 
 interface Props {
-   lang?: "en" | "pt";
+   lang?: SupportedLng;
 }
 
 const { lang = "en" } = Astro.props;

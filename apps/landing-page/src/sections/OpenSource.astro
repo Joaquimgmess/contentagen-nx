@@ -3,10 +3,10 @@ import { Button } from "@packages/ui/components/button";
 import { Github, Heart, Users, Code, Star, GitFork } from "@lucide/astro";
 import { fetchGitHubRepoStats } from "@/services/github";
 import { useTranslations } from "../i18n/utils";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
 interface Props {
-   lang?: SupportedLanguage;
+   lang?: SupportedLng;
 }
 
 const { lang = "en" } = Astro.props;

@@ -5,10 +5,10 @@ import { ChevronRight } from "@lucide/astro";
 import { Button } from "@packages/ui/components/button";
 import { Image } from "astro:assets";
 import { useTranslations } from "../i18n/utils";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
 interface _Props {
-   lang?: SupportedLanguage;
+   lang?: SupportedLng;
 }
 
 const { lang = "en" } = Astro.props;

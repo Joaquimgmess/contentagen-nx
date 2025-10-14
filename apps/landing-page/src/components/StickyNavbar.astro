@@ -5,9 +5,10 @@ import { NavMenu } from "./nav-menu";
 import { MobileMenu } from "./mobile-menu";
 import ThemeToggler from "./ThemeToggler.astro";
 import { LanguageToggler } from "./LanguageToggler";
+import type { SupportedLng } from "@packages/localization";
 
 interface Props {
-   lang?: "en" | "pt";
+   lang?: SupportedLng;
 }
 
 const { lang = "en" } = Astro.props;

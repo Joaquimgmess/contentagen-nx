@@ -11,11 +11,11 @@ import { cn } from "@packages/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { Zap, Users, Workflow, Code } from "lucide-react";
 import { translate } from "@packages/localization";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
 interface NavMenuProps extends ComponentProps<"nav"> {
    orientation?: "horizontal" | "vertical";
-   lang?: SupportedLanguage;
+   lang?: SupportedLng;
 }
 
 const productIcons = {
@@ -25,7 +25,7 @@ const productIcons = {
    "#sdk": Code,
 };
 
-const getMenuItems = (lang: SupportedLanguage) => {
+const getMenuItems = (lang: SupportedLng) => {
    const locale = lang === "en" ? "en-US" : "pt-BR";
    return [
       {
@@ -43,7 +43,7 @@ const getMenuItems = (lang: SupportedLanguage) => {
    ];
 };
 
-const getProductItems = (lang: SupportedLanguage) => {
+const getProductItems = (lang: SupportedLng) => {
    const locale = lang === "en" ? "en-US" : "pt-BR";
    return [
       {

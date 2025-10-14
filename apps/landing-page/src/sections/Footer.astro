@@ -2,10 +2,10 @@
 import brandConfig from "@packages/brand/index.json";
 import Logo from "../components/Logo.astro";
 import { useTranslations } from "../i18n/utils";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
 interface Props {
-   lang?: SupportedLanguage;
+   lang?: SupportedLng;
 }
 
 const { lang = "en" } = Astro.props;

@@ -4,10 +4,10 @@ import { Image } from "astro:assets";
 import lightImage from "../assets/light/competitor-light.webp";
 import darkImage from "../assets/dark/competitor-dark.webp";
 import { useTranslations } from "../i18n/utils";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
 interface _Props {
-   lang?: SupportedLanguage;
+   lang?: SupportedLng;
 }
 
 const { lang = "en" } = Astro.props;

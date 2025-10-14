@@ -1,8 +1,5 @@
-import {
-   defaultLang,
-   supportedLanguages,
-   type SupportedLanguage,
-} from "./config";
+import type { SupportedLng } from "@packages/localization";
+import { defaultLang, supportedLanguages } from "./config";
 import enUS from "@packages/localization/locales/en-US";
 import ptBR from "@packages/localization/locales/pt-BR";
 
@@ -11,15 +8,15 @@ const translations = {
    pt: ptBR.translation,
 };
 
-export function getLangFromUrl(url: URL): SupportedLanguage {
+export function getLangFromUrl(url: URL): SupportedLng {
    const [, lang] = url.pathname.split("/");
-   if (supportedLanguages.includes(lang as SupportedLanguage)) {
-      return lang as SupportedLanguage;
+   if (supportedLanguages.includes(lang as SupportedLng)) {
+      return lang as SupportedLng;
    }
    return defaultLang;
 }
 
-export function useTranslations(lang: SupportedLanguage) {
+export function useTranslations(lang: SupportedLng) {
    return function t(
       key: string,
       replacements?: Record<string, string>,
@@ -65,10 +62,7 @@ export function useTranslations(lang: SupportedLanguage) {
    };
 }
 
-export function getLocalizedPath(
-   path: string,
-   lang: SupportedLanguage,
-): string {
+export function getLocalizedPath(path: string, lang: SupportedLng): string {
    if (lang === defaultLang) {
       return path === "/" ? "/" : path;
    }
@@ -77,7 +71,7 @@ export function getLocalizedPath(
 
 export function removeLocalePath(pathname: string): string {
    const [, lang, ...rest] = pathname.split("/");
-   if (supportedLanguages.includes(lang as SupportedLanguage)) {
+   if (supportedLanguages.includes(lang as SupportedLng)) {
       return `/${rest.join("/")}`;
    }
    return pathname;

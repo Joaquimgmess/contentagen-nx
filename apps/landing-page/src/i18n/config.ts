@@ -8,5 +8,3 @@ export const languages = {
 export const defaultLang: SupportedLng = "en";
 
 export const supportedLanguages: SupportedLng[] = ["en", "pt"];
-
-export type SupportedLanguage = SupportedLng;

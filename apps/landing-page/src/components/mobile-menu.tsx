@@ -9,9 +9,9 @@ import {
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { translate } from "@packages/localization";
-import type { SupportedLanguage } from "../i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
-const getMenuItems = (lang: SupportedLanguage) => {
+const getMenuItems = (lang: SupportedLng) => {
    const locale = lang === "en" ? "en-US" : "pt-BR";
    return [
       {
@@ -30,7 +30,7 @@ const getMenuItems = (lang: SupportedLanguage) => {
 };
 
 interface MobileMenuProps {
-   lang?: SupportedLanguage;
+   lang?: SupportedLng;
 }
 
 export function MobileMenu({ lang = "en" }: MobileMenuProps) {

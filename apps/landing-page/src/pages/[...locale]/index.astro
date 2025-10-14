@@ -16,7 +16,8 @@ import CTA from "../../sections/CTA.astro";
 import StickyNavbar from "../../components/StickyNavbar.astro";
 import Community from "../../sections/Community.astro";
 import HowItWorks from "../../sections/HowItWorks.astro";
-import { supportedLanguages, type SupportedLanguage } from "@/i18n/config";
+import { supportedLanguages } from "@/i18n/config";
+import type { SupportedLng } from "@packages/localization";
 
 export function getStaticPaths() {
    return supportedLanguages.map((locale) => ({
@@ -25,7 +26,7 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.params;
-const lang = (locale || "en") as SupportedLanguage;
+const lang = (locale || "en") as SupportedLng;
 ---
 <Layout lang={lang}>
   <div class="flex flex-col">

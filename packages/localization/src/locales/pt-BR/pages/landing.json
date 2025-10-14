@@ -26,5 +26,24 @@
          "discord": "Discord"
       },
       "copyright": "Todos os direitos reservados."
+   },
+   "brandLearning": {
+      "badge": "Inteligência de Marca",
+      "title": "Uma IA que Conhece Sua Marca Melhor que um Estagiário",
+      "description": "ContentaGen realiza uma análise profunda do seu site e documentos da marca para construir um \"Cérebro de Marca\" único. Isso garante que cada conteúdo capture perfeitamente sua voz, estilo e objetivos de negócio—eliminando revisões infinitas.",
+      "benefits": {
+         "website": {
+            "title": "Aprende com Seu Site",
+            "description": "Nosso sistema rastreia todo o seu site para entender seu negócio, produtos e mensagens, formando a base do seu conhecimento."
+         },
+         "voice": {
+            "title": "Captura Sua Voz e Estilo",
+            "description": "Agentes de IA identificam seu tom único, terminologia e padrões estilísticos para criar um perfil de voz da marca que guia toda a criação de conteúdo."
+         },
+         "knowledge": {
+            "title": "Cria um Hub de Conhecimento",
+            "description": "Todo o conhecimento da sua marca é indexado em um repositório central, dando aos seus agentes de IA recuperação instantânea e precisa para conteúdo perfeitamente consistente."
+         }
+      }
    }
 }

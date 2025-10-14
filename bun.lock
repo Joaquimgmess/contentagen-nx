@@ -19,7 +19,7 @@
     },
     "apps/blog": {
       "name": "blog",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "dependencies": {
         "@astrojs/check": "catalog:astro",
         "@astrojs/mdx": "catalog:astro",
@@ -48,7 +48,7 @@
     },
     "apps/dashboard": {
       "name": "dashboard",
-      "version": "0.9.0",
+      "version": "0.9.1",
       "dependencies": {
         "@packages/api": "workspace:*",
         "@packages/authentication": "workspace:*",
@@ -93,7 +93,7 @@
     },
     "apps/docs": {
       "name": "docs",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "dependencies": {
         "@astrojs/check": "catalog:astro",
         "@astrojs/mdx": "catalog:astro",
@@ -113,7 +113,7 @@
     },
     "apps/landing-page": {
       "name": "landing-page",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "dependencies": {
         "@astrojs/check": "catalog:astro",
         "@astrojs/node": "catalog:astro",
@@ -142,10 +142,10 @@
     },
     "apps/server": {
       "name": "server",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "dependencies": {
-        "@bull-board/api": "6.12.0",
-        "@bull-board/elysia": "^6.12.0",
+        "@bull-board/api": "6.13.0",
+        "@bull-board/elysia": "6.13.0",
         "@elysiajs/cors": "catalog:server",
         "@packages/api": "workspace:*",
         "@packages/authentication": "workspace:*",
@@ -169,7 +169,7 @@
     },
     "packages/agents": {
       "name": "@packages/agents",
-      "version": "0.23.0",
+      "version": "0.24.0",
       "dependencies": {
         "@mastra/core": "^0.20.2",
         "@mastra/libsql": "^0.15.1",
@@ -196,7 +196,7 @@
     },
     "packages/api": {
       "name": "@packages/api",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "dependencies": {
         "@packages/authentication": "workspace:*",
         "@packages/database": "workspace:*",
@@ -428,10 +428,11 @@
     },
     "packages/utils": {
       "name": "@packages/utils",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "dependencies": {
         "@trpc/server": "catalog:trpc",
         "slugify": "^1.6.6",
+        "zod": "catalog:validation",
       },
       "devDependencies": {
         "@tooling/typescript": "workspace:*",
@@ -863,11 +864,11 @@
 
     "@borewit/text-codec": ["@borewit/text-codec@0.1.1", "", {}, "sha512-5L/uBxmjaCIX5h8Z+uu+kA9BQLkc/Wl06UGR5ajNRxu+/XjonB5i8JpgFMrPj3LXTCPA0pv8yxUvbUi+QthGGA=="],
 
-    "@bull-board/api": ["@bull-board/api@6.12.0", "", { "dependencies": { "redis-info": "^3.1.0" }, "peerDependencies": { "@bull-board/ui": "6.12.0" } }, "sha512-tlMQTc0EAiYbv8gjR0lCYAXDL1Uc8/dPD9tKjxvG+m9lUUpPAoRUXUHNtzwVQo+AHiF6WHEK9iA3+8KHJamc/w=="],
+    "@bull-board/api": ["@bull-board/api@6.13.0", "", { "dependencies": { "redis-info": "^3.1.0" }, "peerDependencies": { "@bull-board/ui": "6.13.0" } }, "sha512-GZ0On0VeL5uZVS1x7UdU90F9GV1kdmHa1955hW3Ow1PmslCY/2YwmvnapVdbvCUSVBqluTfbVZsE9X3h79r1kw=="],
 
-    "@bull-board/elysia": ["@bull-board/elysia@6.12.0", "", { "dependencies": { "@bull-board/api": "6.12.0", "@bull-board/ui": "6.12.0", "ejs": "^3.1.10", "mimeV4": "npm:mime@^4.0.7" }, "peerDependencies": { "elysia": "^1.1.0" } }, "sha512-FuVTxFC0R0vkthC027KpPymciB3BbTl+hxPzYWx7SmY7XqCzjlF6G5EL66UM8TLtaBAa0+XKzVZyE0uskC0kqw=="],
+    "@bull-board/elysia": ["@bull-board/elysia@6.13.0", "", { "dependencies": { "@bull-board/api": "6.13.0", "@bull-board/ui": "6.13.0", "ejs": "^3.1.10", "mimeV4": "npm:mime@^4.0.7" }, "peerDependencies": { "elysia": "^1.1.0" } }, "sha512-Pcm4FMY35j6PG7TtrIF02Nx5EpZSz9B2GjNcCcTke1ooPzDFJJn19v3NKYlMxhBREqCyB4hVlKBwEcBQYmeGYA=="],
 
-    "@bull-board/ui": ["@bull-board/ui@6.12.0", "", { "dependencies": { "@bull-board/api": "6.12.0" } }, "sha512-a1+9bUlNViXIQcO9KPOd1EP66Ts4caYHgsc5OuunDMZ9Q6Y7sfrQXMhfnv3JWahSNo3hiX6Fc8wIL4p/bcTwsw=="],
+    "@bull-board/ui": ["@bull-board/ui@6.13.0", "", { "dependencies": { "@bull-board/api": "6.13.0" } }, "sha512-63I6b3nZnKWI5ok6mw/Tk2rIObuzMTY/tLGyO51p0GW4rAImdXxrK6mT7j4SgEuP2B+tt/8L1jU7sLu8MMcCNw=="],
 
     "@capsizecss/unpack": ["@capsizecss/unpack@2.4.0", "", { "dependencies": { "blob-to-buffer": "^1.2.8", "cross-fetch": "^3.0.4", "fontkit": "^2.0.2" } }, "sha512-GrSU71meACqcmIUxPYOJvGKF0yryjN/L1aCuE9DViCTJI7bfkjgYDPD1zbNDcINJwSSP6UaBZY9GAbYDO7re0Q=="],
 

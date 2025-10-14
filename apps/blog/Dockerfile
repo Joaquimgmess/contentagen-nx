@@ -1,5 +1,5 @@
 # apps/blog/Dockerfile
-FROM oven/bun:latest AS builder
+FROM oven/bun:1.2.23 AS builder
 
 WORKDIR /app
 

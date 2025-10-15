@@ -1,6 +1,6 @@
 import {
    createTRPCClient,
-   httpBatchLink,
+   httpBatchStreamLink,
    httpSubscriptionLink,
    loggerLink,
    splitLink,
@@ -37,7 +37,7 @@ export const createTrpcClient = ({
                   };
                },
             }),
-            false: httpBatchLink({
+            false: httpBatchStreamLink({
                url: urlJoin(serverUrl, "/trpc"),
                transformer: SuperJSON,
                fetch(url, options) {
@@ -51,7 +51,7 @@ export const createTrpcClient = ({
                         : "en");
                   if (clientLanguage) {
                      requestHeaders.set("Accept-Language", clientLanguage);
-                     requestHeaders.set("X-Locale", clientLanguage);
+                     requestHeaders.set("x-locale", clientLanguage);
                   }
 
                   if (headers) {

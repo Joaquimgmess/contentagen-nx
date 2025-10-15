@@ -1,3 +1,18 @@
+## 0.25.0 (2025-10-15)
+
+### 🚀 Features
+
+- **agents:** add optional organizationId ([7e720d3b](https://github.com/F-O-T/contentagen-nx/commit/7e720d3b))
+
+### 🩹 Fixes
+
+- **agents:** optimize document chunking strategy and parameters for b… ([#474](https://github.com/F-O-T/contentagen-nx/pull/474))
+
+### ❤️ Thank You
+
+- Manoel
+- Manoel Neto @Yorizel
+
 ## 0.24.1 (2025-10-14)
 
 ### 🩹 Fixes

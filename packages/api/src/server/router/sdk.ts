@@ -89,11 +89,11 @@ export const sdkRouter = router({
    streamAssisantResponse: sdkProcedure
       .input(
          z.object({
-            agentId: z.string(),
             message: z.string(),
+            language: z.enum(["en", "pt"]).optional().default("en"),
          }),
       )
-      .query(async ({ ctx, input }) => {
+      .query(async function* ({ ctx, input }) {
          const resolvedCtx = await ctx;
          const userId = resolvedCtx?.session?.session.userId;
          const organizationId =
@@ -108,18 +108,17 @@ export const sdkRouter = router({
             userId,
             language: resolvedCtx.language,
             organizationId,
-            agentId: input.agentId,
          });
-         const agent = mastra.getAgent("appAssistantAgent");
-
-         const stream = await agent.stream(
-            [{ role: "user", content: input.message }],
-            { runtimeContext },
-         );
-
          try {
+            const agent = mastra.getAgent("appAssistantAgent");
+
+            const stream = await agent.stream(
+               [{ role: "user", content: input.message }],
+               { runtimeContext },
+            );
+
             for await (const chunk of stream.textStream) {
-               return chunk;
+               yield chunk;
             }
          } catch (error) {
             console.error("Error processing agent stream:", error);

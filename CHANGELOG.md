@@ -1,3 +1,24 @@
+## 0.25.1 (2025-10-15)
+
+### 🩹 Fixes
+
+- **agents:** update runtime context to use brandId ([13b4749f](https://github.com/F-O-T/contentagen-nx/commit/13b4749f))
+
+### 🧱 Updated Dependencies
+
+- Updated @packages/server-events to 0.6.0
+- Updated @packages/localization to 0.6.0
+- Updated @packages/environment to 0.6.0
+- Updated @packages/database to 0.10.0
+- Updated @packages/payment to 0.6.0
+- Updated @packages/files to 0.6.0
+- Updated @packages/utils to 0.22.0
+- Updated @packages/rag to 0.6.0
+
+### ❤️ Thank You
+
+- Manoel
+
 ## 0.25.0 (2025-10-15)
 
 ### 🚀 Features

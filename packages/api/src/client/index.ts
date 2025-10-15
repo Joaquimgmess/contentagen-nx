@@ -1,6 +1,6 @@
 import {
    createTRPCClient,
-   httpBatchStreamLink,
+   httpBatchLink,
    httpSubscriptionLink,
    loggerLink,
    splitLink,
@@ -37,7 +37,7 @@ export const createTrpcClient = ({
                   };
                },
             }),
-            false: httpBatchStreamLink({
+            false: httpBatchLink({
                url: urlJoin(serverUrl, "/trpc"),
                transformer: SuperJSON,
                fetch(url, options) {

@@ -22,7 +22,6 @@ export const appAssistantAgent = new Agent({
    name: "App Assistant",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") || "en";
-      const externalId = runtimeContext.get("organizationId");
       return `
 You are the brand's official assistant, representing the company directly in all interactions. You speak AS the brand, not ABOUT the brand.
 
@@ -85,9 +84,6 @@ When users greet you (hello, hi, etc.):
 - Write in a natural, flowing manner
 - If information isn't in our knowledge base, be honest
 - Direct users to support channels when appropriate
-
-## IMPORTANT CONTEXT
-${externalId ? `- Current brand ID: ${externalId}` : "- No brand context provided"}
 
 ## TONE GUIDELINES
 - Professional yet approachable

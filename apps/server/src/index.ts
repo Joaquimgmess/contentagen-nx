@@ -7,6 +7,7 @@ import { createApi } from "@packages/api/server";
 import { auth, polarClient } from "./integrations/auth";
 import { db, ragClient } from "./integrations/database";
 import { minioClient } from "./integrations/minio";
+import { sdkRoutes } from "./routes/sdk";
 import { bullAuth } from "./integrations/bull-auth-guard";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { ElysiaAdapter } from "@bull-board/elysia";
@@ -43,7 +44,19 @@ const trpcApi = createApi({
    db,
    ragClient,
 });
-const app = new Elysia()
+const app = new Elysia({
+   serve: {
+      idleTimeout: 0,
+   },
+})
+   .derive(() => ({
+      db,
+      ragClient,
+      minioClient,
+      minioBucket: env.MINIO_BUCKET,
+      auth,
+      polarClient,
+   }))
    .use(
       cors({
          allowedHeaders: [
@@ -59,7 +72,7 @@ const app = new Elysia()
             const url = new URL(request.url);
 
             // Allow all origins for SDK endpoints
-            if (url.pathname.startsWith("/trpc/sdk")) {
+            if (url.pathname.startsWith("/sdk")) {
                return true;
             }
 
@@ -71,6 +84,7 @@ const app = new Elysia()
       }),
    )
    .use(posthogPlugin)
+   .use(sdkRoutes)
    .mount(auth.handler)
    .all(
       "/trpc/*",

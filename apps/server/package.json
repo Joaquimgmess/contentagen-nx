@@ -9,6 +9,7 @@
     "@packages/environment": "workspace:*",
     "@packages/files": "workspace:*",
     "@packages/payment": "workspace:*",
+    "@packages/agents": "workspace:*",
     "@packages/posthog": "workspace:*",
     "@packages/rag": "workspace:*",
     "@packages/transactional": "workspace:*",

@@ -18,6 +18,7 @@ import { createCompetitorSummaryWorkflow } from "./workflows/create-competitor-s
 
 import type { SupportedLng } from "@packages/localization";
 export type CustomRuntimeContext = {
+   organizationId?: string;
    language: SupportedLng;
    userId: string;
    agentId?: string;
@@ -64,6 +65,10 @@ export function setRuntimeContext(context: CustomRuntimeContext) {
    const runtimeContext = new RuntimeContext<CustomRuntimeContext>();
    runtimeContext.set("language", context.language);
    runtimeContext.set("userId", context.userId);
+
+   if (context.organizationId) {
+      runtimeContext.set("organizationId", context.organizationId);
+   }
    if (context.agentId) {
       runtimeContext.set("agentId", context.agentId);
    }

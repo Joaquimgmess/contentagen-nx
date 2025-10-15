@@ -1,4 +1,6 @@
 import { sdkProcedure, router } from "../trpc";
+import { APIError, propagateError } from "@packages/utils/errors";
+import { mastra, setRuntimeContext } from "@packages/agents";
 import {
    ListContentByAgentInputSchema,
    GetContentBySlugInputSchema,
@@ -83,6 +85,47 @@ export const sdkRouter = router({
             },
          );
          return slugs;
+      }),
+   streamAssisantResponse: sdkProcedure
+      .input(
+         z.object({
+            agentId: z.string(),
+            message: z.string(),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         const userId = resolvedCtx?.session?.session.userId;
+         const organizationId =
+            resolvedCtx?.session?.session.activeOrganizationId;
+         if (!userId) {
+            throw APIError.validation("User not authenticated");
+         }
+         if (!organizationId) {
+            throw APIError.validation("Organization not selected");
+         }
+         const runtimeContext = setRuntimeContext({
+            userId,
+            language: resolvedCtx.language,
+            organizationId,
+            agentId: input.agentId,
+         });
+         const agent = mastra.getAgent("appAssistantAgent");
+
+         const stream = await agent.stream(
+            [{ role: "user", content: input.message }],
+            { runtimeContext },
+         );
+
+         try {
+            for await (const chunk of stream.textStream) {
+               return chunk;
+            }
+         } catch (error) {
+            console.error("Error processing agent stream:", error);
+            propagateError(error);
+            throw APIError.internal("Error processing agent stream");
+         }
       }),
    listContentByAgent: sdkProcedure
       .input(ListContentByAgentInputSchema)

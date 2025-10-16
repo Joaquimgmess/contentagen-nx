@@ -1,29 +1,25 @@
 {
-  "extends": "@tooling/typescript/internal-package.json",
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "references": [
-    {
-      "path": "../server-events"
-    },
-    {
-      "path": "../database"
-    },
-    {
-      "path": "../files"
-    },
-    {
-      "path": "../rag"
-    },
-    {
-      "path": "../payment"
-    },
-    {
-      "path": "../environment"
-    }
-  ]
+   "extends": "@tooling/typescript/internal-package.json",
+   "include": ["src"],
+   "exclude": ["node_modules"],
+   "references": [
+      {
+         "path": "../server-events"
+      },
+      {
+         "path": "../database"
+      },
+      {
+         "path": "../files"
+      },
+      {
+         "path": "../rag"
+      },
+      {
+         "path": "../payment"
+      },
+      {
+         "path": "../environment"
+      }
+   ]
 }

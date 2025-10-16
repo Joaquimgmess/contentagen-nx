@@ -8,29 +8,29 @@
       "jsx": "react-jsx"
    },
    "references": [
-    {
-      "path": "../agents"
-    },
-    {
-      "path": "../payment"
-    },
-    {
-      "path": "../posthog"
-    },
-    {
-      "path": "../rag"
-    },
-    {
-      "path": "../files"
-    },
-    {
-      "path": "../database"
-    },
-    {
-      "path": "../workers"
-    },
-    {
-      "path": "../server-events"
-    }
-  ]
+      {
+         "path": "../agents"
+      },
+      {
+         "path": "../payment"
+      },
+      {
+         "path": "../posthog"
+      },
+      {
+         "path": "../rag"
+      },
+      {
+         "path": "../files"
+      },
+      {
+         "path": "../database"
+      },
+      {
+         "path": "../workers"
+      },
+      {
+         "path": "../server-events"
+      }
+   ]
 }

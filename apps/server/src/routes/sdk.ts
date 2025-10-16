@@ -14,7 +14,7 @@ import { db, ragClient } from "@api/integrations/database";
 import { serverEnv as env } from "@packages/environment/server";
 
 import { minioClient } from "@api/integrations/minio";
-import { listBrands } from "@packages/database/repositories/brand-repository";
+import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
 import type { SupportedLng } from "@packages/localization";
 const minioBucket = env.MINIO_BUCKET;
 
@@ -138,9 +138,10 @@ export const sdkRoutes = new Elysia({
          if (!agent) {
             throw new Error("Agent not found.");
          }
-         const brand = await listBrands(db, {
-            organizationId: agent.organizationId ?? "",
-         }).then((brands) => brands[0]);
+         const brand = await getBrandByOrgId(
+            db,
+            agent.organizationId ?? "",
+         ).catch(() => null);
          const runtimeContext = setRuntimeContext({
             userId: agent.userId,
             language: language as SupportedLng,

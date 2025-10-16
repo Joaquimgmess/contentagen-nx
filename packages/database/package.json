@@ -46,7 +46,7 @@
     "drizzle-zod": "catalog:database",
     "zod": "catalog:validation",
     "pg": "catalog:database",
-    "@packages/utils": "workspace:*",
+    "@packages/utils": "workspace:*"
   },
   "devDependencies": {
     "@tooling/typescript": "workspace:*",

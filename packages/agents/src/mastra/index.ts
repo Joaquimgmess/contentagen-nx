@@ -32,6 +32,7 @@ export const mastra = new Mastra({
          "@packages/environment/helpers",
          "@packages/environment/server",
          "@packages/database/client",
+         "@packages/database/schema",
          "@packages/rag/client",
          "@packages/utils/errors",
          "@packages/utils/text",

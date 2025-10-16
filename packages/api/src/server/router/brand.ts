@@ -51,19 +51,10 @@ export const brandRouter = router({
                throw APIError.unauthorized("Organization must be specified.");
             }
 
-            let brand: Awaited<ReturnType<typeof getBrandByOrgId>> | null =
-               null;
-            try {
-               brand = await getBrandByOrgId(resolvedCtx.db, organizationId);
-            } catch (err) {
-               if (
-                  !(
-                     err instanceof Error &&
-                     err.message.includes("Brand not found")
-                  )
-               ) {
-                  throw err;
-               }
+            const brand = await getBrandByOrgId(resolvedCtx.db, organizationId);
+
+            if (!brand) {
+               throw APIError.notFound("Brand not found.");
             }
 
             const total = brand ? 1 : 0;

@@ -51,10 +51,20 @@ export const brandRouter = router({
                throw APIError.unauthorized("Organization must be specified.");
             }
 
-            const brand = await getBrandByOrgId(
-               resolvedCtx.db,
-               organizationId,
-            ).catch(() => null);
+            let brand: Awaited<ReturnType<typeof getBrandByOrgId>> | null =
+               null;
+            try {
+               brand = await getBrandByOrgId(resolvedCtx.db, organizationId);
+            } catch (err) {
+               if (
+                  !(
+                     err instanceof Error &&
+                     err.message.includes("Brand not found")
+                  )
+               ) {
+                  throw err;
+               }
+            }
 
             const total = brand ? 1 : 0;
 
@@ -285,8 +295,19 @@ export const brandRouter = router({
             );
          }
 
-         const brand = await getBrandByOrgId(resolvedCtx.db, organizationId);
-
+         let brand: Awaited<ReturnType<typeof getBrandByOrgId>> | null = null;
+         try {
+            brand = await getBrandByOrgId(resolvedCtx.db, organizationId);
+         } catch (err) {
+            if (
+               !(
+                  err instanceof Error &&
+                  err.message.includes("Brand not found")
+               )
+            ) {
+               throw err;
+            }
+         }
          return brand;
       } catch (err) {
          console.error("Error getting organization brand:", err);

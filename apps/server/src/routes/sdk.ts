@@ -125,7 +125,7 @@ export const sdkRoutes = new Elysia({
 
    .get(
       "/assistant",
-      async function* ({ query, request }) {
+      async ({ query, request }) => {
          const language = request.headers.get("x-locale");
          if (!language) {
             throw new Error("Language header is required.");

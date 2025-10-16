@@ -138,10 +138,23 @@ export const sdkRoutes = new Elysia({
          if (!agent) {
             throw new Error("Agent not found.");
          }
-         const brand = await getBrandByOrgId(
-            db,
-            agent.organizationId ?? "",
-         ).catch(() => null);
+
+         let brand: Awaited<ReturnType<typeof getBrandByOrgId>> | null = null;
+         if (agent.organizationId) {
+            try {
+               brand = await getBrandByOrgId(db, agent.organizationId);
+            } catch (err) {
+               if (
+                  !(
+                     err instanceof Error &&
+                     err.message.includes("Brand not found")
+                  )
+               ) {
+                  throw err;
+               }
+            }
+         }
+
          const runtimeContext = setRuntimeContext({
             userId: agent.userId,
             language: language as SupportedLng,

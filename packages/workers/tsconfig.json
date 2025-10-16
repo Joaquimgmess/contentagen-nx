@@ -2,23 +2,23 @@
    "extends": "@tooling/typescript/internal-package.json",
    "include": ["src/**/*.ts"],
    "references": [
-    {
-      "path": "../server-events"
-    },
-    {
-      "path": "../database"
-    },
-    {
-      "path": "../environment"
-    },
-    {
-      "path": "../files"
-    },
-    {
-      "path": "../payment"
-    },
-    {
-      "path": "../agents"
-    }
-  ]
+      {
+         "path": "../server-events"
+      },
+      {
+         "path": "../database"
+      },
+      {
+         "path": "../environment"
+      },
+      {
+         "path": "../files"
+      },
+      {
+         "path": "../payment"
+      },
+      {
+         "path": "../agents"
+      }
+   ]
 }

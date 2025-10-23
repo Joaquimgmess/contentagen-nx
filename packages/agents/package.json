@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "dotenv -e .env -- bunx mastra dev",
-    "build": "tsc",
+    "build": "tsc --build",
     "check": "biome check --write ./src",
     "typecheck": "tsc "
   },

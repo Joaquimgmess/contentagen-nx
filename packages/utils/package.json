@@ -6,14 +6,16 @@
   },
   "devDependencies": {
     "@tooling/typescript": "workspace:*",
-    "typescript": "catalog:development"
+    "typescript": "catalog:development",
+    "vitest": "catalog:testing"
   },
   "license": "Apache-2.0",
   "name": "@packages/utils",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "check": "biome check --write ./src",
-    "typecheck": "bunx --bun tsc  "
+    "typecheck": "bunx --bun tsc  ",
+    "test": "bun test"
   },
   "private": true,
   "type": "module",
@@ -38,10 +40,18 @@
       "types": "./dist/src/text.d.ts",
       "default": "./src/text.ts"
     },
+    "./array": {
+      "types": "./dist/src/array.d.ts",
+      "default": "./src/array.ts"
+    },
+    "./markdown": {
+      "types": "./dist/src/markdown.d.ts",
+      "default": "./src/markdown.ts"
+    },
     "./number": {
       "types": "./dist/src/numbers.d.ts",
       "default": "./src/numbers.ts"
     }
   },
-  "version": "0.23.0"
+  "version": "0.26.0"
 }

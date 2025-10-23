@@ -103,9 +103,10 @@ export const competitorRouter = router({
             resolvedCtx.session?.session?.activeOrganizationId;
 
          if (!organizationId) {
-            throw APIError.unauthorized(
-               "User must belong to an organization to view competitor findings.",
-            );
+            return {
+               findings: [],
+               insights: [],
+            };
          }
 
          const findings = await getRandomFindingsFromCompetitors(

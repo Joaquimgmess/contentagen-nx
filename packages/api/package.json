@@ -1,6 +1,6 @@
 {
   "name": "@packages/api",
-  "version": "0.10.0",
+  "version": "0.9.1",
   "license": "Apache-2.0",
   "private": true,
   "type": "module",
@@ -15,13 +15,14 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "check": "biome check --write ./src",
     "typecheck": "tsc "
   },
   "dependencies": {
     "@polar-sh/sdk": "catalog:payment",
     "@packages/localization": "workspace:*",
+    "@packages/contenta-sdk": "workspace:*",
     "@packages/server-events": "workspace:*",
     "@packages/workers": "workspace:*",
     "@packages/authentication": "workspace:*",

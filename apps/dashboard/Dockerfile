@@ -11,6 +11,7 @@ COPY package.json ./
 COPY apps/dashboard/package.json ./apps/dashboard/
 COPY packages/localization/package.json ./packages/localization/
 
+COPY packages/contenta-sdk/package.json ./packages/contenta-sdk/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/brand/package.json ./packages/brand/
 COPY packages/server-events/package.json ./packages/server-events/
@@ -55,6 +56,7 @@ COPY package.json ./
 COPY apps/dashboard/package.json ./apps/dashboard/
 COPY packages/localization/package.json ./packages/localization/
 
+COPY packages/contenta-sdk/package.json ./packages/contenta-sdk/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/brand/package.json ./packages/brand/
 COPY packages/server-events/package.json ./packages/server-events/

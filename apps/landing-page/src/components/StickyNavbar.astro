@@ -11,7 +11,7 @@
       lang?: SupportedLng;
    }
 
-   const { lang = "en" } = Astro.props;
+   const { lang = "en-US" } = Astro.props;
 ---
 <nav
    id="sticky-navbar"
@@ -43,7 +43,7 @@
             <ThemeToggler/>
          </div>
 
-         <button className="hidden md:block">
+         <button class="hidden md:block">
             <a
                href="https://app.contentagen.com/auth/sign-in"
                target="_blank"

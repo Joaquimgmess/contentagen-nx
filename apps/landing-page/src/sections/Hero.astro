@@ -11,7 +11,7 @@
       lang?: SupportedLng;
    }
 
-   const { lang = "en" } = Astro.props;
+   const { lang = "en-US" } = Astro.props;
    const t = useTranslations(lang);
 ---
 <main class="overflow-hidden min-h-screen  grid grid-cols-1">

@@ -13,7 +13,7 @@
       answer: string;
    }
 
-   const { lang = "en" } = Astro.props;
+   const { lang = "en-US" } = Astro.props;
    const t = useTranslations(lang);
 
    const faqItems: FAQItem[] = [

@@ -1,3 +1,5 @@
+import type { SupportedLng } from "@packages/localization";
+import { translate } from "@packages/localization";
 import {
    NavigationMenu,
    NavigationMenuContent,
@@ -8,10 +10,8 @@ import {
    navigationMenuTriggerStyle,
 } from "@packages/ui/components/navigation-menu";
 import { cn } from "@packages/ui/lib/utils";
+import { Code, Users, Workflow, Zap } from "lucide-react";
 import type { ComponentProps } from "react";
-import { Zap, Users, Workflow, Code } from "lucide-react";
-import { translate } from "@packages/localization";
-import type { SupportedLng } from "@packages/localization";
 
 interface NavMenuProps extends ComponentProps<"nav"> {
    orientation?: "horizontal" | "vertical";
@@ -47,46 +47,46 @@ const getProductItems = (lang: SupportedLng) => {
    const locale = lang === "en" ? "en-US" : "pt-BR";
    return [
       {
+         description: translate(
+            "pages.landing.navigation.productItems.brandLearning.description",
+            { lng: locale },
+         ),
          href: "#brand-learning",
          name: translate(
             "pages.landing.navigation.productItems.brandLearning.name",
             { lng: locale },
          ),
-         description: translate(
-            "pages.landing.navigation.productItems.brandLearning.description",
-            { lng: locale },
-         ),
       },
       {
+         description: translate(
+            "pages.landing.navigation.productItems.competitorIntelligence.description",
+            { lng: locale },
+         ),
          href: "#competitor-intelligence",
          name: translate(
             "pages.landing.navigation.productItems.competitorIntelligence.name",
             { lng: locale },
          ),
-         description: translate(
-            "pages.landing.navigation.productItems.competitorIntelligence.description",
-            { lng: locale },
-         ),
       },
       {
+         description: translate(
+            "pages.landing.navigation.productItems.contentWorkflow.description",
+            { lng: locale },
+         ),
          href: "#content-workflow",
          name: translate(
             "pages.landing.navigation.productItems.contentWorkflow.name",
             { lng: locale },
          ),
-         description: translate(
-            "pages.landing.navigation.productItems.contentWorkflow.description",
-            { lng: locale },
-         ),
       },
       {
+         description: translate(
+            "pages.landing.navigation.productItems.developerSDK.description",
+            { lng: locale },
+         ),
          href: "#sdk",
          name: translate(
             "pages.landing.navigation.productItems.developerSDK.name",
-            { lng: locale },
-         ),
-         description: translate(
-            "pages.landing.navigation.productItems.developerSDK.description",
             { lng: locale },
          ),
       },
@@ -95,9 +95,7 @@ const getProductItems = (lang: SupportedLng) => {
 
 export const NavMenu = ({
    orientation = "horizontal",
-   className = "",
    lang = "en",
-   ...props
 }: NavMenuProps) => {
    const locale = lang === "en" ? "en-US" : "pt-BR";
    const menuItems = getMenuItems(lang);
@@ -126,10 +124,10 @@ export const NavMenu = ({
                         const Icon =
                            productIcons[item.href as keyof typeof productIcons];
                         return (
-                           <NavigationMenuLink key={item.href} asChild>
+                           <NavigationMenuLink asChild key={item.href}>
                               <a
-                                 href={item.href}
                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                 href={item.href}
                               >
                                  <div className="flex items-center gap-2">
                                     {Icon && <Icon className="size-4" />}
@@ -151,12 +149,12 @@ export const NavMenu = ({
             {menuItems.map((item) => (
                <NavigationMenuItem key={item.href}>
                   <NavigationMenuLink
+                     asChild
                      className={cn(
                         navigationMenuTriggerStyle(),
                         "bg-transparent",
                         orientation === "vertical" && "justify-start w-full",
                      )}
-                     asChild
                   >
                      <a href={item.href}>{item.name}</a>
                   </NavigationMenuLink>

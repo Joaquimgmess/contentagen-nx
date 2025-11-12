@@ -14,12 +14,12 @@ export function BulkApproveConfirmationCredenza({
 }: BulkApproveConfirmationCredenzaProps) {
    return (
       <DeleteConfirmationCredenza
-         open={open}
-         onOpenChange={onOpenChange}
-         onDelete={onConfirm}
          icon={CheckCircle}
-         variant="default"
          message={`This will approve the selected content items that are in draft or pending status. Only draft and pending items will be approved. This action will make the content publicly available.`}
+         onDelete={onConfirm}
+         onOpenChange={onOpenChange}
+         open={open}
+         variant="default"
       />
    );
 }

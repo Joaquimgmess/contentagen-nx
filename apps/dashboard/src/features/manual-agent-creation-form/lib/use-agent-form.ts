@@ -1,8 +1,8 @@
+import type { PersonaConfig } from "@packages/database/schemas/agent";
 import { useAppForm } from "@packages/ui/components/form";
 import { type FormEvent, useCallback } from "react";
-import type { PersonaConfig } from "@packages/database/schemas/agent";
-import type { AgentCreationManualForm } from "../ui/agent-creation-manual-form";
 import z from "zod";
+import type { AgentCreationManualForm } from "../ui/agent-creation-manual-form";
 
 export function useAgentForm({
    defaultValues,
@@ -10,12 +10,12 @@ export function useAgentForm({
 }: AgentCreationManualForm) {
    const form = useAppForm({
       defaultValues: {
-         metadata: { name: "", description: "" },
          instructions: {
             audienceProfile: "",
-            writingGuidelines: "",
             ragIntegration: "",
+            writingGuidelines: "",
          },
+         metadata: { description: "", name: "" },
          purpose: "blog_post",
          ...defaultValues,
       } as PersonaConfig,
@@ -27,8 +27,8 @@ export function useAgentForm({
          //TODO: Onblur is not working when using the schema from the database
          onBlur: z.object({
             metadata: z.object({
-               name: z.string().min(1, "This field is required"),
                description: z.string().min(1, "This field is required"),
+               name: z.string().min(1, "This field is required"),
             }),
             purpose: z.enum(["blog_post"]),
          }),

@@ -14,7 +14,7 @@
     "debug": "node --inspect-brk server"
   },
   "dependencies": {
-    "@contentagen/assistant-widget": "^0.0.15",
+    "@contentagen/assistant-widget": "^0.0.16",
     "@packages/api": "workspace:*",
     "@packages/authentication": "workspace:*",
     "@packages/brand": "workspace:*",
@@ -25,6 +25,7 @@
     "@packages/ui": "workspace:*",
     "@packages/utils": "workspace:*",
     "@tailwindcss/vite": "catalog:vite",
+    "@tanstack/react-form": "catalog:tanstack",
     "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-query-devtools": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
@@ -40,6 +41,7 @@
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "react-error-boundary": "catalog:react",
+    "react-i18next": "^16.2.3",
     "sonner": "catalog:ui",
     "tailwindcss": "catalog:ui",
     "vite-tsconfig-paths": "catalog:vite",
@@ -55,5 +57,5 @@
     "typescript": "catalog:development",
     "vite": "catalog:vite"
   },
-  "version": "0.14.1"
+  "version": "0.15.0"
 }

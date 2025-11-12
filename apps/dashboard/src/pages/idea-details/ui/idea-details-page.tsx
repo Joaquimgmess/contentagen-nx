@@ -1,14 +1,14 @@
-import { useParams } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { translate } from "@packages/localization";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 
 import { useTRPC } from "@/integrations/clients";
-import { IdeaDetailsQuickActions } from "./idea-details-quick-actions";
-import { IdeaStatsCard } from "./idea-stats-card";
-import { IdeaContentCard } from "./idea-content-card";
-import { IdeaRationaleCard } from "./idea-rationale-card";
-import { IdeaMetaCard } from "./idea-meta-card";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { IdeaContentCard } from "./idea-content-card";
+import { IdeaDetailsQuickActions } from "./idea-details-quick-actions";
+import { IdeaMetaCard } from "./idea-meta-card";
+import { IdeaRationaleCard } from "./idea-rationale-card";
+import { IdeaStatsCard } from "./idea-stats-card";
 
 export function IdeaDetailsPage() {
    const { id } = useParams({ from: "/_dashboard/ideas/$id" });

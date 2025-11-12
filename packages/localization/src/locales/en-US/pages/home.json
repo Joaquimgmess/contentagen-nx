@@ -1,20 +1,20 @@
 {
-   "stats-cards": {
-      "agent-stats": {
-         "title": "Total Agents",
-         "description": "Active agents registered"
-      },
-      "words-written": {
-         "title": "Words Written (30d)",
-         "description": "Words written in the last 30 days"
-      },
-      "content-generated": {
-         "title": "Content Generated (30d)",
-         "description": "Pieces of content generated"
-      }
-   },
    "navigation": {
       "agents": "Agents",
       "content": "Content"
+   },
+   "stats-cards": {
+      "agent-stats": {
+         "description": "Active agents registered",
+         "title": "Total Agents"
+      },
+      "content-generated": {
+         "description": "Pieces of content generated",
+         "title": "Content Generated (30d)"
+      },
+      "words-written": {
+         "description": "Words written in the last 30 days",
+         "title": "Words Written (30d)"
+      }
    }
 }

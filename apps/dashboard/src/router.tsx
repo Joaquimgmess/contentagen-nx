@@ -1,8 +1,7 @@
+import type { QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-
-import type { QueryClient } from "@tanstack/react-query";
-import type { TrpcClient, InternalTrpcClient } from "@/integrations/clients";
+import type { InternalTrpcClient, TrpcClient } from "@/integrations/clients";
 import { routeTree } from "./routeTree.gen";
 
 export type RouterContext = {
@@ -19,12 +18,12 @@ export const createRouter = (context: Omit<RouterContext, "head">) => {
             ...context,
             head: "",
          },
+         defaultPendingMs: 0,
+         defaultPreload: "intent",
+         defaultPreloadDelay: 0,
          defaultPreloadStaleTime: 0,
          routeTree,
          scrollRestoration: true,
-         defaultPreload: "intent",
-         defaultPreloadDelay: 0,
-         defaultPendingMs: 0,
       }),
       context.queryClient,
    );

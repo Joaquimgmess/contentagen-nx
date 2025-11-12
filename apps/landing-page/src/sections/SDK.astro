@@ -1,8 +1,11 @@
 ---
-import { Cpu, Lock, Zap, BookOpen, Copy, Check } from "@lucide/astro";
+
+
+
+import { BookOpen, Check, Copy, Cpu, Lock, Zap } from "@lucide/astro";
+import type { SupportedLng } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import { useTranslations } from "../i18n/utils";
-import type { SupportedLng } from "@packages/localization";
 
 interface Props {
    lang?: SupportedLng;
@@ -13,19 +16,19 @@ const t = useTranslations(lang);
 
 const benefits = [
    {
+      description: t("pages.landing.sdk.benefits.typeSafety.description"),
       icon: Zap,
       title: t("pages.landing.sdk.benefits.typeSafety.title"),
-      description: t("pages.landing.sdk.benefits.typeSafety.description"),
    },
    {
+      description: t("pages.landing.sdk.benefits.modern.description"),
       icon: Cpu,
       title: t("pages.landing.sdk.benefits.modern.title"),
-      description: t("pages.landing.sdk.benefits.modern.description"),
    },
    {
+      description: t("pages.landing.sdk.benefits.secure.description"),
       icon: Lock,
       title: t("pages.landing.sdk.benefits.secure.title"),
-      description: t("pages.landing.sdk.benefits.secure.description"),
    },
 ];
 
@@ -120,22 +123,22 @@ posts.forEach(post => {
   /* Enhanced Dracla-like theme for the code block */
   code[class*="language-"],
   pre[class*="language-"] {
-    color: #f8f8f2;
-    background: none;
     font-family: 'Geist Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    line-height: 1.5;
+    color: #f8f8f2;
     text-align: left;
-    white-space: pre;
     word-spacing: normal;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    -webkit-hyphens: none;
+    hyphens: none;
     word-break: normal;
     word-wrap: normal;
-    line-height: 1.5;
     -moz-tab-size: 4;
     -o-tab-size: 4;
     tab-size: 4;
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
-    hyphens: none;
+    white-space: pre;
+    background: none;
   }
 
   .token.comment,

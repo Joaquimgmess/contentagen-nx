@@ -1,3 +1,6 @@
+import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
    CardAction,
@@ -7,13 +10,10 @@ import {
    CardHeader,
    CardTitle,
 } from "@packages/ui/components/card";
-import { Badge } from "@packages/ui/components/badge";
-import { Button } from "@packages/ui/components/button";
-import { useTRPC } from "@/integrations/clients";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { translate } from "@packages/localization";
+import { useTRPC } from "@/integrations/clients";
 
 interface CompetitorFeaturesCardProps {
    competitorId: string;
@@ -29,8 +29,8 @@ export function CompetitorFeaturesCard({
    const { data } = useSuspenseQuery(
       trpc.competitor.getFeatures.queryOptions({
          competitorId,
-         page: currentPage,
          limit: itemsPerPage,
+         page: currentPage,
       }),
    );
 
@@ -90,7 +90,7 @@ export function CompetitorFeaturesCard({
          <CardContent>
             <div className="space-y-3">
                {features.map((feature) => (
-                  <Card key={feature.id} className="">
+                  <Card className="" key={feature.id}>
                      <CardHeader>
                         <CardTitle>{feature.featureName}</CardTitle>
                         <CardDescription>{feature.summary}</CardDescription>
@@ -119,10 +119,10 @@ export function CompetitorFeaturesCard({
          {totalPages > 1 && (
             <CardFooter className="flex items-center justify-center gap-4">
                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePreviousPage}
                   disabled={currentPage === 1}
+                  onClick={handlePreviousPage}
+                  size="sm"
+                  variant="outline"
                >
                   <ChevronLeft className="h-4 w-4" />
                   {translate(
@@ -136,10 +136,10 @@ export function CompetitorFeaturesCard({
                   )}
                </span>
                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNextPage}
                   disabled={currentPage === totalPages}
+                  onClick={handleNextPage}
+                  size="sm"
+                  variant="outline"
                >
                   {translate(
                      "pages.competitor-details.features.pagination.next",

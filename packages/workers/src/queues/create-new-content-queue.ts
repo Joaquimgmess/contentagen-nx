@@ -1,13 +1,13 @@
-import { Worker, Queue, type Job } from "bullmq";
-import { serverEnv } from "@packages/environment/server";
-import { registerGracefulShutdown, createRedisClient } from "../helpers";
 import {
+   type CustomRuntimeContext,
    mastra,
    setRuntimeContext,
-   type CustomRuntimeContext,
 } from "@packages/agents";
 import type { ContentRequest } from "@packages/database/schemas/content";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { type Job, Queue, Worker } from "bullmq";
+import { createRedisClient, registerGracefulShutdown } from "../helpers";
 
 export type CreateNewContentWorkflowJobData = {
    userId: string;
@@ -37,32 +37,32 @@ export async function runCreateNewContentWorkflow(
          .createRunAsync();
 
       const result = await run.start({
-         runtimeContext: setRuntimeContext({
-            language: runtimeContext?.language ?? "en",
-            userId,
-            agentId,
-         }),
          inputData: {
-            contentId,
+            agentId,
             competitorIds,
+            contentId,
             organizationId,
             request,
             userId,
-            agentId,
          },
+         runtimeContext: setRuntimeContext({
+            agentId,
+            language: runtimeContext?.language,
+            userId,
+         }),
       });
 
       return {
-         userId,
          result,
+         userId,
       };
    } catch (error) {
       console.error("[CreateNewContentWorkflow] WORKFLOW ERROR", {
-         userId,
          contentId,
-         request,
          error: error instanceof Error ? error.message : error,
+         request,
          stack: error instanceof Error && error.stack ? error.stack : undefined,
+         userId,
       });
       propagateError(error);
       throw AppError.internal(

@@ -1,6 +1,6 @@
 import {
-   pgTable,
    index,
+   pgTable,
    text,
    timestamp,
    uuid,
@@ -10,13 +10,13 @@ import {
 export const relatedSlugs = pgTable(
    "related_slugs",
    {
-      id: uuid("id").primaryKey().defaultRandom(),
-      externalId: uuid("external_id").notNull(),
-      slug: text("slug").notNull(),
-      embedding: vector("embedding", { dimensions: 1536 }).notNull(),
       createdAt: timestamp("created_at")
          .$defaultFn(() => new Date())
          .notNull(),
+      embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+      externalId: uuid("external_id").notNull(),
+      id: uuid("id").primaryKey().defaultRandom(),
+      slug: text("slug").notNull(),
       updatedAt: timestamp("updated_at")
          .$defaultFn(() => new Date())
          .notNull(),

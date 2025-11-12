@@ -1,7 +1,7 @@
+import { translate } from "@packages/localization";
+import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
 import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { translate } from "@packages/localization";
 
 export const CreateNewAgentButton = () => (
    <Link to="/agents/manual">

@@ -1,226 +1,33 @@
+import { on } from "node:events";
+import { eq } from "@packages/database";
+import { listAgents } from "@packages/database/repositories/agent-repository";
+import { createContent } from "@packages/database/repositories/content-repository";
 import {
    createIdea,
-   getIdeaById,
-   updateIdea,
    deleteIdea,
    getAgentIdeasCount,
+   getIdeaById,
+   listAllIdeasPaginated,
+   updateIdea,
 } from "@packages/database/repositories/ideas-repository";
 import {
    IdeaInsertSchema,
    IdeaUpdateSchema,
+   ideas,
 } from "@packages/database/schemas/ideas";
+import type { IdeaStatusChangedPayload } from "@packages/server-events";
+import { EVENTS, eventEmitter } from "@packages/server-events";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import {
    hasGenerationCredits,
+   organizationProcedure,
    protectedProcedure,
    publicProcedure,
    router,
-   organizationProcedure,
 } from "../trpc";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { eq } from "@packages/database";
-import { ideas } from "@packages/database/schemas/ideas";
-import { eventEmitter, EVENTS } from "@packages/server-events";
-import { on } from "node:events";
-import type { IdeaStatusChangedPayload } from "@packages/server-events";
-
-import { listAllIdeasPaginated } from "@packages/database/repositories/ideas-repository";
-import { listAgents } from "@packages/database/repositories/agent-repository";
-
-import { createContent } from "@packages/database/repositories/content-repository";
 
 export const ideasRouter = router({
-   listAllIdeas: protectedProcedure
-      .input(
-         z.object({
-            page: z.number().min(1).default(1),
-            limit: z.number().min(1).max(100).default(10),
-            agentId: z.string().optional(),
-         }),
-      )
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         try {
-            const userId = resolvedCtx.session?.user.id;
-            const organizationId =
-               resolvedCtx.session?.session?.activeOrganizationId;
-            if (!userId) {
-               throw new TRPCError({
-                  code: "UNAUTHORIZED",
-                  message: "User must be authenticated to list ideas.",
-               });
-            }
-            const agents = await listAgents(resolvedCtx.db, {
-               userId,
-               organizationId: organizationId ?? "",
-            });
-            const getAgentIds = () => {
-               if (input.agentId) {
-                  return [input.agentId];
-               }
-               return agents.map((agent) => agent.id);
-            };
-            const agentIds = getAgentIds();
-            const all = await listAllIdeasPaginated(
-               resolvedCtx.db,
-               input.page,
-               input.limit,
-               agentIds,
-            );
-            return all;
-         } catch (err) {
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: (err as Error).message,
-            });
-         }
-      }),
-   create: protectedProcedure
-      .input(
-         IdeaInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }),
-      )
-      .mutation(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         try {
-            return await createIdea(resolvedCtx.db, input);
-         } catch (err) {
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: (err as Error).message,
-            });
-         }
-      }),
-
-   get: protectedProcedure
-      .input(z.object({ id: z.string() }))
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         try {
-            // getIdeaById now throws if not found, so we simply return
-            return await getIdeaById(resolvedCtx.db, input.id);
-         } catch (err) {
-            throw new TRPCError({
-               code: "NOT_FOUND",
-               message: (err as Error).message,
-            });
-         }
-      }),
-   getIdeaById: protectedProcedure
-      .input(z.object({ id: z.string() }))
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         try {
-            return await getIdeaById(resolvedCtx.db, input.id);
-         } catch (err) {
-            throw new TRPCError({
-               code: "NOT_FOUND",
-               message: (err as Error).message,
-            });
-         }
-      }),
-
-   update: protectedProcedure
-      .input(
-         IdeaUpdateSchema.pick({
-            id: true,
-            content: true,
-            status: true,
-            meta: true,
-         }),
-      )
-      .mutation(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         if (!input.id) {
-            throw new TRPCError({
-               code: "BAD_REQUEST",
-               message: "ID is required for update",
-            });
-         }
-         try {
-            return await updateIdea(resolvedCtx.db, input.id, input);
-         } catch (err) {
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: (err as Error).message,
-            });
-         }
-      }),
-
-   delete: protectedProcedure
-      .input(z.object({ id: z.string() }))
-      .mutation(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         try {
-            await deleteIdea(resolvedCtx.db, input.id);
-            return { success: true };
-         } catch (err) {
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: (err as Error).message,
-            });
-         }
-      }),
-
-   listByAgent: protectedProcedure
-      .input(z.object({ agentId: z.string().min(1) }))
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         // listIdeasByAgent now returns an array directly
-         const ideasList = await resolvedCtx.db.query.ideas.findMany({
-            where: eq(ideas.agentId, input.agentId),
-            with: {
-               agent: true,
-            },
-         });
-         return ideasList;
-      }),
-
-   getAgentIdeasCount: protectedProcedure
-      .input(z.object({ agentId: z.string().min(1) }))
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         return await getAgentIdeasCount(resolvedCtx.db, input.agentId);
-      }),
-
-   listByAgentPaginated: protectedProcedure
-      .input(
-         z.object({
-            agentId: z.string().min(1),
-            page: z.number().min(1).default(1),
-            limit: z.number().min(1).max(50).default(10),
-         }),
-      )
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         try {
-            const offset = (input.page - 1) * input.limit;
-            const ideasList = await resolvedCtx.db.query.ideas.findMany({
-               where: eq(ideas.agentId, input.agentId),
-               limit: input.limit,
-               offset,
-               orderBy: (ideas, { desc }) => [desc(ideas.createdAt)],
-               with: {
-                  agent: true,
-               },
-            });
-            const total = await getAgentIdeasCount(
-               resolvedCtx.db,
-               input.agentId,
-            );
-            return {
-               items: ideasList,
-               total,
-               page: input.page,
-               limit: input.limit,
-            };
-         } catch (err) {
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: (err as Error).message,
-            });
-         }
-      }),
-
    approve: organizationProcedure
       .use(hasGenerationCredits)
 
@@ -253,7 +60,7 @@ export const ideasRouter = router({
             },
          });
          //TODO 4. Enqueue job
-         return { success: true, content };
+         return { content, success: true };
       }),
 
    bulkApprove: organizationProcedure
@@ -285,8 +92,8 @@ export const ideasRouter = router({
 
          // Get all agents belonging to the user to verify ownership
          const agents = await listAgents(resolvedCtx.db, {
-            userId,
             organizationId: organizationId ?? "",
+            userId,
          });
          const allUserAgentIds = agents.map((agent) => agent.id);
 
@@ -345,11 +152,174 @@ export const ideasRouter = router({
          }
 
          return {
-            success: true,
-            approvedCount,
-            totalSelected: ids.length,
             approvableCount: approvableIdeas.length,
+            approvedCount,
+            success: true,
+            totalSelected: ids.length,
          };
+      }),
+   create: protectedProcedure
+      .input(
+         IdeaInsertSchema.omit({ createdAt: true, id: true, updatedAt: true }),
+      )
+      .mutation(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         try {
+            return await createIdea(resolvedCtx.db, input);
+         } catch (err) {
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: (err as Error).message,
+            });
+         }
+      }),
+
+   delete: protectedProcedure
+      .input(z.object({ id: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         try {
+            await deleteIdea(resolvedCtx.db, input.id);
+            return { success: true };
+         } catch (err) {
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: (err as Error).message,
+            });
+         }
+      }),
+
+   get: protectedProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         try {
+            // getIdeaById now throws if not found, so we simply return
+            return await getIdeaById(resolvedCtx.db, input.id);
+         } catch (err) {
+            throw new TRPCError({
+               code: "NOT_FOUND",
+               message: (err as Error).message,
+            });
+         }
+      }),
+
+   getAgentIdeasCount: protectedProcedure
+      .input(z.object({ agentId: z.string().min(1) }))
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         return await getAgentIdeasCount(resolvedCtx.db, input.agentId);
+      }),
+   getIdeaById: protectedProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         try {
+            return await getIdeaById(resolvedCtx.db, input.id);
+         } catch (err) {
+            throw new TRPCError({
+               code: "NOT_FOUND",
+               message: (err as Error).message,
+            });
+         }
+      }),
+   listAllIdeas: protectedProcedure
+      .input(
+         z.object({
+            agentId: z.string().optional(),
+            limit: z.number().min(1).max(100).default(10),
+            page: z.number().min(1).default(1),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         try {
+            const userId = resolvedCtx.session?.user.id;
+            const organizationId =
+               resolvedCtx.session?.session?.activeOrganizationId;
+            if (!userId) {
+               throw new TRPCError({
+                  code: "UNAUTHORIZED",
+                  message: "User must be authenticated to list ideas.",
+               });
+            }
+            const agents = await listAgents(resolvedCtx.db, {
+               organizationId: organizationId ?? "",
+               userId,
+            });
+            const getAgentIds = () => {
+               if (input.agentId) {
+                  return [input.agentId];
+               }
+               return agents.map((agent) => agent.id);
+            };
+            const agentIds = getAgentIds();
+            const all = await listAllIdeasPaginated(
+               resolvedCtx.db,
+               input.page,
+               input.limit,
+               agentIds,
+            );
+            return all;
+         } catch (err) {
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: (err as Error).message,
+            });
+         }
+      }),
+
+   listByAgent: protectedProcedure
+      .input(z.object({ agentId: z.string().min(1) }))
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         // listIdeasByAgent now returns an array directly
+         const ideasList = await resolvedCtx.db.query.ideas.findMany({
+            where: eq(ideas.agentId, input.agentId),
+            with: {
+               agent: true,
+            },
+         });
+         return ideasList;
+      }),
+
+   listByAgentPaginated: protectedProcedure
+      .input(
+         z.object({
+            agentId: z.string().min(1),
+            limit: z.number().min(1).max(50).default(10),
+            page: z.number().min(1).default(1),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         try {
+            const offset = (input.page - 1) * input.limit;
+            const ideasList = await resolvedCtx.db.query.ideas.findMany({
+               limit: input.limit,
+               offset,
+               orderBy: (ideas, { desc }) => [desc(ideas.createdAt)],
+               where: eq(ideas.agentId, input.agentId),
+               with: {
+                  agent: true,
+               },
+            });
+            const total = await getAgentIdeasCount(
+               resolvedCtx.db,
+               input.agentId,
+            );
+            return {
+               items: ideasList,
+               limit: input.limit,
+               page: input.page,
+               total,
+            };
+         } catch (err) {
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: (err as Error).message,
+            });
+         }
       }),
 
    onStatusChanged: publicProcedure
@@ -362,6 +332,33 @@ export const ideasRouter = router({
             if (!opts.input?.ideaId || opts.input.ideaId === event.ideaId) {
                yield event;
             }
+         }
+      }),
+
+   update: protectedProcedure
+      .input(
+         IdeaUpdateSchema.pick({
+            content: true,
+            id: true,
+            meta: true,
+            status: true,
+         }),
+      )
+      .mutation(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         if (!input.id) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "ID is required for update",
+            });
+         }
+         try {
+            return await updateIdea(resolvedCtx.db, input.id, input);
+         } catch (err) {
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: (err as Error).message,
+            });
          }
       }),
 });

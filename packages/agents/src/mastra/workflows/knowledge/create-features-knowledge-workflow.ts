@@ -1,22 +1,22 @@
-import { createWorkflow, createStep } from "@mastra/core/workflows";
-import { createCompetitorKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/competitor-knowledge-repository";
-import { createBrandKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/brand-knowledge-repository";
-import { createPgVector } from "@packages/rag/client";
-import { bulkCreateFeatures } from "@packages/database/repositories/competitor-feature-repository";
+import { createStep, createWorkflow } from "@mastra/core/workflows";
+import { createDb } from "@packages/database/client";
 import { bulkCreateFeatures as bulkCreateBrandFeatures } from "@packages/database/repositories/brand-feature-repository";
 import { updateBrand } from "@packages/database/repositories/brand-repository";
-import { featureExtractionAgent } from "../../agents/feature-extractor-agent";
+import { bulkCreateFeatures } from "@packages/database/repositories/competitor-feature-repository";
 import { serverEnv } from "@packages/environment/server";
-import { createDb } from "@packages/database/client";
-import { z } from "zod";
+import { createPgVector } from "@packages/rag/client";
+import { createBrandKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/brand-knowledge-repository";
+import { createCompetitorKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/competitor-knowledge-repository";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { z } from "zod";
+import { featureExtractionAgent } from "../../agents/feature-extractor-agent";
 import { ingestUsage, type MastraLLMUsage } from "../../helpers";
 
 export const CreateFeaturesKnowledgeInput = z.object({
-   websiteUrl: z.url(),
-   userId: z.string(),
    id: z.string(),
    target: z.enum(["brand", "competitor"]),
+   userId: z.string(),
+   websiteUrl: z.url(),
 });
 
 // Output schema for the workflow
@@ -29,16 +29,6 @@ const extractFeaturesKnowledgeOutputSchema =
       extractedFeatures: z
          .array(
             z.object({
-               name: z
-                  .string()
-                  .describe(
-                     "Clear, concise name for the feature (e.g., 'Real-time Collaboration', 'API Webhooks', 'Custom Reports')",
-                  ),
-               summary: z
-                  .string()
-                  .describe(
-                     "1-3 sentence description explaining what users can do with this feature and its primary benefit",
-                  ),
                category: z
                   .string()
                   .describe(
@@ -51,10 +41,10 @@ const extractFeaturesKnowledgeOutputSchema =
                   .describe(
                      "Confidence score between 0 and 1 indicating certainty this is a legitimate product feature (0.8+ for clearly documented features, 0.5-0.8 for implied features, below 0.5 for uncertain)",
                   ),
-               tags: z
-                  .array(z.string())
+               name: z
+                  .string()
                   .describe(
-                     "3-5 relevant keywords or technology terms associated with this feature for searchability",
+                     "Clear, concise name for the feature (e.g., 'Real-time Collaboration', 'API Webhooks', 'Custom Reports')",
                   ),
                rawContent: z
                   .string()
@@ -66,6 +56,16 @@ const extractFeaturesKnowledgeOutputSchema =
                   .describe(
                      "The specific URL where this feature was documented or mentioned",
                   ),
+               summary: z
+                  .string()
+                  .describe(
+                     "1-3 sentence description explaining what users can do with this feature and its primary benefit",
+                  ),
+               tags: z
+                  .array(z.string())
+                  .describe(
+                     "3-5 relevant keywords or technology terms associated with this feature for searchability",
+                  ),
             }),
          )
          .min(10)
@@ -74,10 +74,7 @@ const extractFeaturesKnowledgeOutputSchema =
          ),
    });
 const extractFeaturesKnowledge = createStep({
-   id: "extract-features-knowledge-step",
    description: "Extract features knowledge from website",
-   inputSchema: CreateFeaturesKnowledgeInput,
-   outputSchema: extractFeaturesKnowledgeOutputSchema,
 
    execute: async ({ inputData, runtimeContext }) => {
       const { userId, websiteUrl, id, target } = inputData;
@@ -90,15 +87,15 @@ Focus on user-facing capabilities and actions. Target 15+ features (minimum 10).
          const result = await featureExtractionAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: extractFeaturesKnowledgeOutputSchema.pick({
                   extractedFeatures: true,
                }),
+               runtimeContext,
             },
          );
 
@@ -111,10 +108,10 @@ Focus on user-facing capabilities and actions. Target 15+ features (minimum 10).
 
          return {
             extractedFeatures,
-            userId,
-            websiteUrl,
             id,
             target,
+            userId,
+            websiteUrl,
          };
       } catch (err) {
          console.error("failed to extract features knowledge for url", err);
@@ -124,14 +121,14 @@ Focus on user-facing capabilities and actions. Target 15+ features (minimum 10).
          );
       }
    },
+   id: "extract-features-knowledge-step",
+   inputSchema: CreateFeaturesKnowledgeInput,
+   outputSchema: extractFeaturesKnowledgeOutputSchema,
 });
 
 const saveCompetitorFeaturesKnowledge = createStep({
-   id: "save-competitor-features-knowledge-step",
    description:
       "Save competitor features knowledge to database and create embeddings",
-   inputSchema: extractFeaturesKnowledgeOutputSchema,
-   outputSchema: CreateFeaturesKnowledgeOutput,
    execute: async ({ inputData }) => {
       const { extractedFeatures, id } = inputData;
 
@@ -148,14 +145,14 @@ const saveCompetitorFeaturesKnowledge = createStep({
          const featuresForDb = extractedFeatures.map((feature) => ({
             competitorId: id,
             featureName: feature.name,
-            summary: feature.summary,
-            rawContent: feature.rawContent,
-            sourceUrl: feature.sourceUrl,
             meta: {
-               confidence: feature.confidence,
                category: feature.category,
+               confidence: feature.confidence,
                tags: feature.tags,
             },
+            rawContent: feature.rawContent,
+            sourceUrl: feature.sourceUrl,
+            summary: feature.summary,
          }));
 
          const features = await bulkCreateFeatures(db, featuresForDb);
@@ -187,14 +184,14 @@ const saveCompetitorFeaturesKnowledge = createStep({
          );
       }
    },
+   id: "save-competitor-features-knowledge-step",
+   inputSchema: extractFeaturesKnowledgeOutputSchema,
+   outputSchema: CreateFeaturesKnowledgeOutput,
 });
 
 const saveBrandFeaturesKnowledge = createStep({
-   id: "save-brand-features-knowledge-step",
    description:
       "Save brand features knowledge to database and create embeddings",
-   inputSchema: extractFeaturesKnowledgeOutputSchema,
-   outputSchema: CreateFeaturesKnowledgeOutput,
    execute: async ({ inputData }) => {
       const { extractedFeatures, id } = inputData;
       try {
@@ -210,14 +207,14 @@ const saveBrandFeaturesKnowledge = createStep({
          const featuresForDb = extractedFeatures.map((feature) => ({
             brandId: id,
             featureName: feature.name,
-            summary: feature.summary,
-            rawContent: feature.rawContent,
-            sourceUrl: feature.sourceUrl,
             meta: {
-               confidence: feature.confidence,
                category: feature.category,
+               confidence: feature.confidence,
                tags: feature.tags,
             },
+            rawContent: feature.rawContent,
+            sourceUrl: feature.sourceUrl,
+            summary: feature.summary,
          }));
 
          const features = await bulkCreateBrandFeatures(db, featuresForDb);
@@ -250,11 +247,14 @@ const saveBrandFeaturesKnowledge = createStep({
          );
       }
    },
+   id: "save-brand-features-knowledge-step",
+   inputSchema: extractFeaturesKnowledgeOutputSchema,
+   outputSchema: CreateFeaturesKnowledgeOutput,
 });
 
 export const createFeaturesKnowledgeWorkflow = createWorkflow({
-   id: "create-features-knowledge",
    description: "Create features knowledge from analysis",
+   id: "create-features-knowledge",
    inputSchema: CreateFeaturesKnowledgeInput,
    outputSchema: CreateFeaturesKnowledgeOutput,
 })

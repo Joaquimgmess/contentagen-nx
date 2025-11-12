@@ -1,23 +1,23 @@
 import { createStep, createWorkflow } from "@mastra/core";
-import { z } from "zod";
-import { ContentRequestSchema } from "@packages/database/schema";
-import { APIError, AppError, propagateError } from "@packages/utils/errors";
-import { changelogWriterAgent } from "../../agents/changelog/changelog-writer-agent";
-import { changelogEditorAgent } from "../../agents/changelog/changelog-editor-agent";
-import { changelogReaderAgent } from "../../agents/changelog/changelog-reader-agent";
-import { emitContentStatusChanged } from "@packages/server-events";
 import { createDb } from "@packages/database/client";
 import { updateContent } from "@packages/database/repositories/content-repository";
+import { ContentRequestSchema } from "@packages/database/schema";
 import { serverEnv } from "@packages/environment/server";
 import { getPaymentClient } from "@packages/payment/client";
 import {
    createAiUsageMetadata,
    ingestBilling,
 } from "@packages/payment/ingestion";
+import { emitContentStatusChanged } from "@packages/server-events";
+import { APIError, AppError, propagateError } from "@packages/utils/errors";
 import {
-   getKeywordsFromText,
    createDescriptionFromText,
+   getKeywordsFromText,
 } from "@packages/utils/text";
+import { z } from "zod";
+import { changelogEditorAgent } from "../../agents/changelog/changelog-editor-agent";
+import { changelogReaderAgent } from "../../agents/changelog/changelog-reader-agent";
+import { changelogWriterAgent } from "../../agents/changelog/changelog-writer-agent";
 
 // Internal helper function to update content status and emit events
 async function updateContentStatus(
@@ -35,9 +35,9 @@ async function updateContentStatus(
 
       emitContentStatusChanged({
          contentId,
-         status,
-         message,
          layout,
+         message,
+         status,
       });
    } catch (error) {
       console.error("Failed to update content status:", error);
@@ -69,13 +69,13 @@ async function ingestUsage(usage: LLMUsage, userId: string) {
 }
 
 const CreateNewContentWorkflowInputSchema = z.object({
-   userId: z.string(),
    agentId: z.string(),
-   contentId: z.string(),
 
    competitorIds: z.array(z.string()),
+   contentId: z.string(),
    organizationId: z.string(),
    request: ContentRequestSchema,
+   userId: z.string(),
 });
 const writingType = z
    .string()
@@ -93,20 +93,17 @@ const ContentWritingStepOutputSchema =
       organizationId: true,
    });
 const changelogWritingStep = createStep({
-   id: "changelog-writing-step",
    description:
       "Write the changelog based on the content strategy and research",
-   inputSchema: CreateNewContentWorkflowInputSchema,
-   outputSchema: ContentWritingStepOutputSchema,
    execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, agentId, contentId, request } = inputData;
 
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Writing your changelog...",
             layout: request.layout,
+            message: "Writing your changelog...",
+            status: "pending",
          });
 
          const inputPrompt = `
@@ -118,15 +115,15 @@ request: ${request.description}
          const result = await changelogWriterAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: ContentWritingStepOutputSchema.pick({
                   writing: true,
                }),
+               runtimeContext,
             },
          );
 
@@ -144,24 +141,24 @@ request: ${request.description}
          // Update content status and emit event when writing completes
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Changelog draft completed",
             layout: request.layout,
+            message: "Changelog draft completed",
+            status: "pending",
          });
 
          return {
-            writing: result.object.writing,
             agentId,
             contentId,
-            userId,
             request,
+            userId,
+            writing: result.object.writing,
          };
       } catch (error) {
          await updateContentStatus({
             contentId: inputData.contentId,
-            status: "failed",
-            message: "Failed to write changelog",
             layout: inputData.request.layout,
+            message: "Failed to write changelog",
+            status: "failed",
          });
          propagateError(error);
          throw AppError.internal(
@@ -169,6 +166,9 @@ request: ${request.description}
          );
       }
    },
+   id: "changelog-writing-step",
+   inputSchema: CreateNewContentWorkflowInputSchema,
+   outputSchema: ContentWritingStepOutputSchema,
 });
 const ContentEditorStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
@@ -178,12 +178,7 @@ const ContentEditorStepOutputSchema =
       organizationId: true,
    });
 const changelogEditorStep = createStep({
-   id: "changelog-editor-step",
    description: "Edit the changelog based on the content research",
-   inputSchema: CreateNewContentWorkflowInputSchema.extend({
-      writing: writingType,
-   }),
-   outputSchema: ContentEditorStepOutputSchema,
    execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, request, agentId, contentId, writing } = inputData;
@@ -191,9 +186,9 @@ const changelogEditorStep = createStep({
          // Update content status and emit event when editing starts
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Editing your changelog...",
             layout: request.layout,
+            message: "Editing your changelog...",
+            status: "pending",
          });
 
          const inputPrompt = `
@@ -206,15 +201,15 @@ output the edited content in markdown format.
          const result = await changelogEditorAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: ContentEditorStepOutputSchema.pick({
                   editor: true,
                }),
+               runtimeContext,
             },
          );
 
@@ -230,24 +225,24 @@ output the edited content in markdown format.
          // Update content status and emit event when editing completes
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Changelog editing completed",
             layout: request.layout,
+            message: "Changelog editing completed",
+            status: "pending",
          });
 
          return {
             agentId,
             contentId,
             editor: result.object.editor,
-            userId,
             request,
+            userId,
          };
       } catch (error) {
          await updateContentStatus({
             contentId: inputData.contentId,
-            status: "failed",
-            message: "Failed to edit changelog",
             layout: inputData.request.layout,
+            message: "Failed to edit changelog",
+            status: "failed",
          });
          propagateError(error);
          throw AppError.internal(
@@ -255,25 +250,27 @@ output the edited content in markdown format.
          );
       }
    },
+   id: "changelog-editor-step",
+   inputSchema: CreateNewContentWorkflowInputSchema.extend({
+      writing: writingType,
+   }),
+   outputSchema: ContentEditorStepOutputSchema,
 });
 
 const ContentReviewerStepOutputSchema =
    CreateNewContentWorkflowInputSchema.extend({
+      editor: editorType,
       rating: z.number().min(0).max(100),
       reasonOfTheRating: z
          .string()
          .describe("The reason for the rating, written in markdown"),
       sources: z.array(z.string()).describe("The sources found on the search"),
-      editor: editorType,
    }).omit({
       competitorIds: true,
       organizationId: true,
    });
 export const changelogReadAndReviewStep = createStep({
-   id: "changelog-read-and-review-step",
    description: "Read and review the changelog",
-   inputSchema: ContentEditorStepOutputSchema,
-   outputSchema: ContentReviewerStepOutputSchema,
    execute: async ({ inputData, runtimeContext }) => {
       try {
          const { userId, agentId, contentId, request, editor } = inputData;
@@ -281,9 +278,9 @@ export const changelogReadAndReviewStep = createStep({
          // Update content status and emit event when review starts
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Reviewing your changelog...",
             layout: request.layout,
+            message: "Reviewing your changelog...",
+            status: "pending",
          });
 
          const inputPrompt = `
@@ -300,16 +297,16 @@ final:${editor}
          const result = await changelogReaderAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: ContentReviewerStepOutputSchema.pick({
                   rating: true,
                   reasonOfTheRating: true,
                }),
+               runtimeContext,
             },
          );
          if (!result?.object.rating) {
@@ -329,33 +326,36 @@ final:${editor}
          // Update content status and emit event when review completes
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Changelog review completed",
             layout: request.layout,
+            message: "Changelog review completed",
+            status: "pending",
          });
 
          return {
-            rating: result.object.rating,
-            reasonOfTheRating: result.object.reasonOfTheRating,
-            userId,
             agentId,
             contentId,
-            request,
             editor,
+            rating: result.object.rating,
+            reasonOfTheRating: result.object.reasonOfTheRating,
+            request,
             sources: ["Your changelog"],
+            userId,
          };
       } catch (error) {
          await updateContentStatus({
             contentId: inputData.contentId,
-            status: "failed",
-            message: "Failed to review changelog",
             layout: inputData.request.layout,
+            message: "Failed to review changelog",
+            status: "failed",
          });
          console.error(error);
          propagateError(error);
          throw APIError.internal("Failed to review changelog");
       }
    },
+   id: "changelog-read-and-review-step",
+   inputSchema: ContentEditorStepOutputSchema,
+   outputSchema: ContentReviewerStepOutputSchema,
 });
 
 const SeoOptimizationStepOutputSchema =
@@ -374,10 +374,7 @@ const SeoOptimizationStepOutputSchema =
    });
 
 export const changelogSeoOptimizationStep = createStep({
-   id: "changelog-seo-optimization-step",
    description: "Generate SEO keywords and meta description for the changelog",
-   inputSchema: ContentEditorStepOutputSchema,
-   outputSchema: SeoOptimizationStepOutputSchema,
    execute: async ({ inputData }) => {
       try {
          const { userId, agentId, contentId, request, editor } = inputData;
@@ -385,77 +382,74 @@ export const changelogSeoOptimizationStep = createStep({
          // Update content status and emit event when SEO optimization starts
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Optimizing SEO for your changelog...",
             layout: request.layout,
+            message: "Optimizing SEO for your changelog...",
+            status: "pending",
          });
 
          const keywords = getKeywordsFromText({
-            text: editor,
             minLength: 8,
+            text: editor,
          });
          const metaDescription = createDescriptionFromText({
-            text: editor,
             maxLength: 180,
+            text: editor,
          });
          // Update content status and emit event when SEO optimization completes
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "SEO optimization completed",
             layout: request.layout,
+            message: "SEO optimization completed",
+            status: "pending",
          });
 
          return {
-            keywords,
-            metaDescription,
-            userId,
             agentId,
             contentId,
+            keywords,
+            metaDescription,
             request,
+            userId,
          };
       } catch (error) {
          await updateContentStatus({
             contentId: inputData.contentId,
-            status: "failed",
-            message: "Failed to optimize SEO for changelog",
             layout: inputData.request.layout,
+            message: "Failed to optimize SEO for changelog",
+            status: "failed",
          });
          console.error(error);
          propagateError(error);
          throw APIError.internal("Failed to optimize SEO for changelog");
       }
    },
+   id: "changelog-seo-optimization-step",
+   inputSchema: ContentEditorStepOutputSchema,
+   outputSchema: SeoOptimizationStepOutputSchema,
 });
 
 const FinalResultStepOutputSchema = CreateNewContentWorkflowInputSchema.extend({
-   rating: z.number().min(0).max(100),
-   reasonOfTheRating: z
-      .string()
-      .describe("The reason for the rating, written in markdown"),
+   editor: editorType,
    keywords: z
       .array(z.string())
       .describe("The associated keywords of the content"),
-   sources: z.array(z.string()).describe("The sources found on the search"),
    metaDescription: z
       .string()
       .describe(
          "The meta description, being a SEO optimized description of the article",
       ),
-   editor: editorType,
+   rating: z.number().min(0).max(100),
+   reasonOfTheRating: z
+      .string()
+      .describe("The reason for the rating, written in markdown"),
+   sources: z.array(z.string()).describe("The sources found on the search"),
 }).omit({
    competitorIds: true,
    organizationId: true,
 });
 
 export const changelogFinalResultStep = createStep({
-   id: "changelog-final-result-step",
    description: "Combine reader and SEO results into final output",
-   inputSchema: z.object({
-      "changelog-read-and-review-step": ContentReviewerStepOutputSchema,
-      "changelog-seo-optimization-step": SeoOptimizationStepOutputSchema,
-   }),
-   outputSchema: FinalResultStepOutputSchema,
    execute: async ({ inputData }) => {
       const readerResult = inputData["changelog-read-and-review-step"];
       const seoResult = inputData["changelog-seo-optimization-step"];
@@ -464,23 +458,23 @@ export const changelogFinalResultStep = createStep({
          // Update content status and emit event when final result compilation starts
          await updateContentStatus({
             contentId,
-            status: "pending",
-            message: "Compiling final results...",
             layout: request.layout,
+            message: "Compiling final results...",
+            status: "pending",
          });
 
          // Combine results - prioritize SEO keywords and meta description
          const finalResult = {
-            rating: readerResult.rating,
-            reasonOfTheRating: readerResult.reasonOfTheRating,
-            keywords: seoResult.keywords,
-            sources: readerResult.sources,
-            metaDescription: seoResult.metaDescription,
-            editor: readerResult.editor,
-            userId: readerResult.userId,
             agentId: readerResult.agentId,
             contentId: readerResult.contentId,
+            editor: readerResult.editor,
+            keywords: seoResult.keywords,
+            metaDescription: seoResult.metaDescription,
+            rating: readerResult.rating,
+            reasonOfTheRating: readerResult.reasonOfTheRating,
             request: readerResult.request,
+            sources: readerResult.sources,
+            userId: readerResult.userId,
          };
 
          // Update content status and emit event when final result compilation completes
@@ -489,20 +483,26 @@ export const changelogFinalResultStep = createStep({
       } catch (error) {
          await updateContentStatus({
             contentId: contentId,
-            status: "failed",
-            message: "Failed to compile final results",
             layout: request.layout,
+            message: "Failed to compile final results",
+            status: "failed",
          });
          console.error(error);
          propagateError(error);
          throw APIError.internal("Failed to compile final results");
       }
    },
+   id: "changelog-final-result-step",
+   inputSchema: z.object({
+      "changelog-read-and-review-step": ContentReviewerStepOutputSchema,
+      "changelog-seo-optimization-step": SeoOptimizationStepOutputSchema,
+   }),
+   outputSchema: FinalResultStepOutputSchema,
 });
 
 export const createNewChangelogWorkflow = createWorkflow({
-   id: "create-new-changelog-workflow",
    description: "Create a new changelog",
+   id: "create-new-changelog-workflow",
    inputSchema: CreateNewContentWorkflowInputSchema,
    outputSchema: FinalResultStepOutputSchema,
    retryConfig: {

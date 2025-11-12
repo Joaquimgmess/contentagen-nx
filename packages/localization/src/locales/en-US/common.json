@@ -1,48 +1,64 @@
 {
    "actions": {
       "cancel": "Cancel",
-      "delete": "Delete",
-      "update": "Update",
-      "view": "View",
-      "updating": "Updating...",
       "creating": "Creating...",
-      "deleting": "Deleting..."
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "retry": "Retry",
+      "update": "Update",
+      "updating": "Updating...",
+      "view": "View"
+   },
+   "bugReport": {
+      "validation": {
+         "authRequired": "User must be authenticated",
+         "userReportRequired": "Bug description is required"
+      }
+   },
+   "delete-confirmation": {
+      "description": "Are you sure you want to do this? This action cannot be undone.",
+      "title": "Confirmation Required"
+   },
+   "errorModal": {
+      "backButton": "Back",
+      "errorMessage": "Unable to submit the report. Please try again later.",
+      "errorTitle": "Error submitting report",
+      "placeholder": "Please describe what you were trying to do when the error occurred...",
+      "reportButton": "Report this error",
+      "submitButton": "Submit",
+      "submittingButton": "Submitting...",
+      "successMessage": "Thank you for your feedback! We have received your report and will investigate the issue.",
+      "successTitle": "Report submitted",
+      "title": "Oops! An error occurred",
+      "validationError": "Please describe what happened before submitting"
+   },
+   "form": {
+      "current-email": "Current Email",
+      "email": "Email",
+      "field-required": "This field is required"
+   },
+   "languages": {
+      "en": "English",
+      "pt": "Portuguese"
+   },
+   "messages": {
+      "loading": "Loading..."
+   },
+   "navigation": {
+      "close": "Close"
    },
    "status": {
       "active": "Active",
       "inactive": "Inactive",
       "loading": "Loading..."
    },
-   "messages": {
-      "loading": "Loading..."
-   },
-   "form": {
-      "field-required": "This field is required"
-   },
-   "navigation": {
-      "close": "Close"
+   "themes": {
+      "dark": "Dark theme",
+      "light": "Light theme",
+      "system": "Follow system"
    },
    "time": {
       "last-modified": "Last Modified",
       "time": "Time"
-   },
-   "errorModal": {
-      "title": "Oops! An error occurred",
-      "reportButton": "Report this error",
-      "backButton": "Back",
-      "submitButton": "Submit",
-      "submittingButton": "Submitting...",
-      "placeholder": "Please describe what you were trying to do when the error occurred...",
-      "successTitle": "Report submitted",
-      "successMessage": "Thank you for your feedback! We have received your report and will investigate the issue.",
-      "errorTitle": "Error submitting report",
-      "errorMessage": "Unable to submit the report. Please try again later.",
-      "validationError": "Please describe what happened before submitting"
-   },
-   "bugReport": {
-      "validation": {
-         "userReportRequired": "Bug description is required",
-         "authRequired": "User must be authenticated"
-      }
    }
 }

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
@@ -7,14 +6,15 @@ import {
    DropdownMenuItem,
    DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
+import { Link } from "@tanstack/react-router";
 import {
+   CheckSquare,
    ChevronLeft,
    ChevronRight,
    MoreVertical,
-   CheckSquare,
    PlusIcon,
 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { useAgentList } from "../lib/agent-list-context";
 
 export function AgentListToolbar() {
@@ -24,19 +24,19 @@ export function AgentListToolbar() {
    const actions = useMemo(
       () => [
          {
+            icon: CheckSquare,
             label: allSelected
                ? translate("pages.agent-list.toolbar.unselect-all")
                : translate("pages.agent-list.toolbar.select-all"),
-            icon: CheckSquare,
             onClick: handleSelectAll,
          },
          {
-            label: translate("pages.agent-list.toolbar.create-new-agent"),
+            href: "/agents/manual",
             icon: PlusIcon,
+            label: translate("pages.agent-list.toolbar.create-new-agent"),
             onClick: () => {
                // This will be handled by the Link component
             },
-            href: "/agents/manual",
          },
       ],
       [handleSelectAll, allSelected],
@@ -46,10 +46,10 @@ export function AgentListToolbar() {
       <div className="flex items-center justify-between gap-4 p-4 bg-background border rounded-lg shadow-sm">
          <div className="flex items-center gap-2">
             <Button
-               variant="outline"
-               size="icon"
-               onClick={() => handlePageChange(page - 1)}
                disabled={page === 1}
+               onClick={() => handlePageChange(page - 1)}
+               size="icon"
+               variant="outline"
             >
                <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -60,27 +60,27 @@ export function AgentListToolbar() {
             </span>
 
             <Button
-               variant="outline"
-               size="icon"
-               onClick={() => handlePageChange(page + 1)}
                disabled={page === totalPages}
+               onClick={() => handlePageChange(page + 1)}
+               size="icon"
+               variant="outline"
             >
                <ChevronRight className="h-4 w-4" />
             </Button>
          </div>
          <DropdownMenu>
             <DropdownMenuTrigger asChild>
-               <Button variant="outline" size="icon">
+               <Button size="icon" variant="outline">
                   <MoreVertical className="h-4 w-4" />
                </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
                {actions.map((action) => (
                   <DropdownMenuItem
+                     asChild={!!action.href}
+                     className="flex gap-2"
                      key={action.label}
                      onClick={action.onClick}
-                     className="flex gap-2"
-                     asChild={!!action.href}
                   >
                      {action.href ? (
                         <Link to={action.href}>

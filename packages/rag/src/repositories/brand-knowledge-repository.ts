@@ -1,13 +1,13 @@
+import { AppError, propagateError } from "@packages/utils/errors";
+import { and, cosineDistance, desc, eq, gt, sql } from "drizzle-orm";
+import type { PgVectorDatabaseInstance } from "../client";
+import { createEmbedding, createEmbeddings } from "../helpers";
 import {
-   brandKnowledge,
    type BrandKnowledge,
    type BrandKnowledgeInsert,
    type BrandKnowledgeType,
+   brandKnowledge,
 } from "../schemas/brand-knowledge-schema";
-import { eq, and, desc, sql, gt, cosineDistance } from "drizzle-orm";
-import type { PgVectorDatabaseInstance } from "../client";
-import { AppError, propagateError } from "@packages/utils/errors";
-import { createEmbedding, createEmbeddings } from "../helpers";
 
 async function createBrandKnowledge(
    dbClient: PgVectorDatabaseInstance,
@@ -124,9 +124,9 @@ async function searchBrandKnowledgeByCosineSimilarityAndExternalId(
       const result = await dbClient
          .select({
             chunk: brandKnowledge.chunk,
-            type: brandKnowledge.type,
             externalId: brandKnowledge.externalId,
             similarity,
+            type: brandKnowledge.type,
          })
          .from(brandKnowledge)
          .where(whereConditions)

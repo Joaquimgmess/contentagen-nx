@@ -1,14 +1,17 @@
 ---
+
+
+
+import { Check } from "@lucide/astro";
+import type { SupportedLng } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
+   CardDescription,
    CardHeader,
    CardTitle,
-   CardDescription,
 } from "@packages/ui/components/card";
-import { Button } from "@packages/ui/components/button";
-import { Check } from "@lucide/astro";
 import { useTranslations } from "../i18n/utils";
-import type { SupportedLng } from "@packages/localization";
 
 interface Props {
    lang?: SupportedLng;
@@ -37,11 +40,7 @@ interface PricingPlan {
 
 const pricingPlans: PricingPlan[] = [
    {
-      name: t("pages.landing.pricing.plans.free.name"),
-      price: t("pages.landing.pricing.plans.free.price"),
-      period: t("pages.landing.pricing.plans.free.period"),
       description: t("pages.landing.pricing.plans.free.description"),
-      variant: "outline",
       features: [
          t("pages.landing.pricing.plans.free.features.credit"),
          t("pages.landing.pricing.plans.free.features.organization"),
@@ -50,14 +49,13 @@ const pricingPlans: PricingPlan[] = [
          t("pages.landing.pricing.plans.free.features.noCard"),
          t("pages.landing.pricing.plans.free.features.coreFeatures"),
       ],
+      name: t("pages.landing.pricing.plans.free.name"),
+      period: t("pages.landing.pricing.plans.free.period"),
+      price: t("pages.landing.pricing.plans.free.price"),
+      variant: "outline",
    },
    {
-      name: t("pages.landing.pricing.plans.basic.name"),
-      price: t("pages.landing.pricing.plans.basic.price"),
-      period: t("pages.landing.pricing.plans.basic.period"),
       description: t("pages.landing.pricing.plans.basic.description"),
-      variant: "default",
-      popular: true,
       features: [
          t("pages.landing.pricing.plans.basic.features.credit"),
          t("pages.landing.pricing.plans.basic.features.payAsGo"),
@@ -66,13 +64,14 @@ const pricingPlans: PricingPlan[] = [
          t("pages.landing.pricing.plans.basic.features.support"),
          t("pages.landing.pricing.plans.basic.features.coreFeatures"),
       ],
+      name: t("pages.landing.pricing.plans.basic.name"),
+      period: t("pages.landing.pricing.plans.basic.period"),
+      popular: true,
+      price: t("pages.landing.pricing.plans.basic.price"),
+      variant: "default",
    },
    {
-      name: t("pages.landing.pricing.plans.supporter.name"),
-      price: t("pages.landing.pricing.plans.supporter.price"),
-      period: t("pages.landing.pricing.plans.supporter.period"),
       description: t("pages.landing.pricing.plans.supporter.description"),
-      variant: "outline",
       features: [
          t("pages.landing.pricing.plans.supporter.features.credit"),
          t("pages.landing.pricing.plans.supporter.features.featureRequest"),
@@ -81,6 +80,10 @@ const pricingPlans: PricingPlan[] = [
          t("pages.landing.pricing.plans.supporter.features.support"),
          t("pages.landing.pricing.plans.supporter.features.coreFeatures"),
       ],
+      name: t("pages.landing.pricing.plans.supporter.name"),
+      period: t("pages.landing.pricing.plans.supporter.period"),
+      price: t("pages.landing.pricing.plans.supporter.price"),
+      variant: "outline",
    },
 ];
 ---

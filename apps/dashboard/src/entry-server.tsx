@@ -1,20 +1,20 @@
 import { pipeline } from "node:stream/promises";
 import {
-   RouterServer,
    createRequestHandler,
+   RouterServer,
    renderRouterToStream,
 } from "@tanstack/react-router/ssr/server";
-import { createRouter } from "./router";
 import type express from "express";
+import { createRouter } from "./router";
 import "./fetch-polyfill";
+import type { AppRouter } from "@packages/api/server";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import {
-   TRPCProvider,
    makeQueryClient,
    makeTrpcClient,
+   TRPCProvider,
 } from "./integrations/clients";
-import type { AppRouter } from "@packages/api/server";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { QueryClientProvider } from "@tanstack/react-query";
 
 export async function render({
    req,
@@ -28,12 +28,11 @@ export async function render({
    const url = new URL(req.originalUrl || req.url, "https://localhost:3000")
       .href;
    const request = new Request(url, {
-      method: req.method,
       headers: new Headers(req.headers as HeadersInit),
+      method: req.method,
    });
 
    const handler = createRequestHandler({
-      request,
       createRouter: () => {
          // Create request-scoped instances
          const queryClient = makeQueryClient();
@@ -43,7 +42,7 @@ export async function render({
             queryClient,
          });
 
-         const router = createRouter({ trpc, queryClient, trpcClient });
+         const router = createRouter({ queryClient, trpc, trpcClient });
 
          router.update({
             context: {
@@ -53,6 +52,7 @@ export async function render({
          });
          return router;
       },
+      request,
    });
 
    const response = await handler(({ request, responseHeaders, router }) => {
@@ -60,17 +60,17 @@ export async function render({
       const { queryClient, trpcClient } = router.options.context;
 
       return renderRouterToStream({
-         request,
-         responseHeaders,
-         router,
          // Wrap the app in the request-scoped providers
          children: (
             <QueryClientProvider client={queryClient}>
-               <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+               <TRPCProvider queryClient={queryClient} trpcClient={trpcClient}>
                   <RouterServer router={router} />
                </TRPCProvider>
             </QueryClientProvider>
          ),
+         request,
+         responseHeaders,
+         router,
       });
    });
 

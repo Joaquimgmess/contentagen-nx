@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef } from "react";
-import { useTRPC } from "@/integrations/clients";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createToast } from "@/features/error-modal/lib/create-toast";
 import { translate } from "@packages/localization";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef } from "react";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
 
 export function useMissingImagesNotification() {
    const trpc = useTRPC();
@@ -33,11 +33,11 @@ export function useMissingImagesNotification() {
             Date.now() - lastNotificationTime.current > 1000 * 60 * 60) // 1 hour
       ) {
          createToast({
-            type: "warning",
+            duration: 10000,
             message: translate("pages.content-list.messages.missing-images", {
                count: missingImagesData.total,
             }),
-            duration: 10000,
+            type: "warning",
          });
          lastNotificationTime.current = Date.now();
          lastMissingCount.current = missingImagesData.total;
@@ -45,8 +45,8 @@ export function useMissingImagesNotification() {
    }, [missingImagesData, shouldNotify]);
 
    return {
-      missingImagesCount: missingImagesData?.total ?? 0,
-      missingImages: missingImagesData?.missingImages ?? [],
       isEnabled: workflowPrefs?.notifyMissingImages ?? false,
+      missingImages: missingImagesData?.missingImages ?? [],
+      missingImagesCount: missingImagesData?.total ?? 0,
    };
 }

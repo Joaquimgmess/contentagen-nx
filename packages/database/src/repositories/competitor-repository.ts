@@ -1,12 +1,12 @@
-import { competitor } from "../schemas/competitor";
-import { eq, and, or, sql } from "drizzle-orm";
+import { AppError, propagateError } from "@packages/utils/errors";
+import { and, eq, or, sql } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
 import type {
-   CompetitorSelect,
    CompetitorInsert,
+   CompetitorSelect,
    CompetitorWithFeatures,
 } from "../schemas/competitor";
-import type { DatabaseInstance } from "../client";
-import { AppError, propagateError } from "@packages/utils/errors";
+import { competitor } from "../schemas/competitor";
 
 export async function createCompetitor(
    dbClient: DatabaseInstance,
@@ -106,13 +106,13 @@ export async function listCompetitors(
 
       if (userId && organizationId) {
          return await dbClient.query.competitor.findMany({
+            limit,
+            offset,
+            orderBy: (competitor, { desc }) => [desc(competitor.createdAt)],
             where: or(
                eq(competitor.userId, userId),
                eq(competitor.organizationId, organizationId),
             ),
-            limit,
-            offset,
-            orderBy: (competitor, { desc }) => [desc(competitor.createdAt)],
             with: {
                features: {
                   orderBy: (competitorFeature, { desc }) => [
@@ -124,10 +124,10 @@ export async function listCompetitors(
       }
       if (userId) {
          return await dbClient.query.competitor.findMany({
-            where: eq(competitor.userId, userId),
             limit,
             offset,
             orderBy: (competitor, { desc }) => [desc(competitor.createdAt)],
+            where: eq(competitor.userId, userId),
             with: {
                features: {
                   limit: 5,
@@ -140,10 +140,10 @@ export async function listCompetitors(
       }
       if (organizationId) {
          return await dbClient.query.competitor.findMany({
-            where: eq(competitor.organizationId, organizationId),
             limit,
             offset,
             orderBy: (competitor, { desc }) => [desc(competitor.createdAt)],
+            where: eq(competitor.organizationId, organizationId),
             with: {
                features: {
                   limit: 5,
@@ -257,10 +257,10 @@ export async function searchCompetitors(
       );
 
       return await dbClient.query.competitor.findMany({
-         where: whereCondition,
          limit,
          offset,
          orderBy: (competitor, { desc }) => [desc(competitor.createdAt)],
+         where: whereCondition,
          with: {
             features: {
                limit: 3,
@@ -284,13 +284,13 @@ export async function getRandomFindingsFromCompetitors(
 ): Promise<{ insights: string[]; priorities: string[] }> {
    try {
       const competitorsWithFindings = await dbClient.query.competitor.findMany({
+         columns: {
+            findings: true,
+         },
          where: and(
             eq(competitor.organizationId, organizationId),
             sql`${competitor.findings} IS NOT NULL AND ${competitor.findings} != '{}'`,
          ),
-         columns: {
-            findings: true,
-         },
       });
 
       if (competitorsWithFindings.length === 0) {

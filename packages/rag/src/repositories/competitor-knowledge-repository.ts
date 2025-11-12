@@ -1,13 +1,13 @@
-import {
-   competitorKnowledge,
-   type CompetitorKnowledgeSelect,
-   type CompetitorKnowledgeInsert,
-   type CompetitorKnowledgeType,
-} from "../schemas/competitor-knowledge-schema";
-import { eq, and, desc, sql, gt, cosineDistance, inArray } from "drizzle-orm";
-import type { PgVectorDatabaseInstance } from "../client";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { and, cosineDistance, desc, eq, gt, inArray, sql } from "drizzle-orm";
+import type { PgVectorDatabaseInstance } from "../client";
 import { createEmbedding, createEmbeddings } from "../helpers";
+import {
+   type CompetitorKnowledgeInsert,
+   type CompetitorKnowledgeSelect,
+   type CompetitorKnowledgeType,
+   competitorKnowledge,
+} from "../schemas/competitor-knowledge-schema";
 
 export async function createCompetitorKnowledgeWithEmbedding(
    dbClient: PgVectorDatabaseInstance,
@@ -119,9 +119,9 @@ async function searchCompetitorKnowledgeByCosineSimilarityAndExternalId(
       const result = await dbClient
          .select({
             chunk: competitorKnowledge.chunk,
-            type: competitorKnowledge.type,
             externalId: competitorKnowledge.externalId,
             similarity,
+            type: competitorKnowledge.type,
          })
          .from(competitorKnowledge)
          .where(whereConditions)

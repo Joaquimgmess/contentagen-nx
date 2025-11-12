@@ -1,6 +1,6 @@
-import OpenAI from "openai";
 import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
+import OpenAI from "openai";
 
 const openai = new OpenAI({
    apiKey: serverEnv.OPENAI_API_KEY,
@@ -9,9 +9,9 @@ const openai = new OpenAI({
 export const createEmbedding = async (text: string) => {
    try {
       const response = await openai.embeddings.create({
-         model: "text-embedding-3-small",
-         input: text,
          dimensions: 1536,
+         input: text,
+         model: "text-embedding-3-small",
       });
 
       const embedding = response.data[0]?.embedding;

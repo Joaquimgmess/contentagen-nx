@@ -1,6 +1,8 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
+import { createToolSystemPrompt } from "../helpers";
+import { dateTool, getDateToolInstructions } from "../tools/date-tool";
 import {
    getTavilyCrawlInstructions,
    tavilyCrawlTool,
@@ -9,8 +11,6 @@ import {
    getTavilySearchInstructions,
    tavilySearchTool,
 } from "../tools/tavily-search-tool";
-import { dateTool, getDateToolInstructions } from "../tools/date-tool";
-import { createToolSystemPrompt } from "../helpers";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -31,7 +31,6 @@ This includes all document titles, sections, descriptions, and any other text co
 };
 
 export const documentSynthesizerAgent = new Agent({
-   name: "Document Synthesizer Agent",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -153,5 +152,6 @@ Focus on creating a complete, well-structured brand analysis document from minim
    `;
    },
    model: openrouter("x-ai/grok-4-fast"),
-   tools: { tavilyCrawlTool, tavilySearchTool, dateTool },
+   name: "Document Synthesizer Agent",
+   tools: { dateTool, tavilyCrawlTool, tavilySearchTool },
 });

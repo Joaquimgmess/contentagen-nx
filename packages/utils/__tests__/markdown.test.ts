@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-   removeTitleFromMarkdown,
-   extractTitleFromMarkdown,
    analyzeContentStructure,
+   extractTitleFromMarkdown,
+   removeTitleFromMarkdown,
 } from "../src/markdown";
 
 describe("markdown utilities", () => {

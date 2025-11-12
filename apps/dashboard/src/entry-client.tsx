@@ -1,17 +1,17 @@
-import { hydrateRoot } from "react-dom/client";
 import { RouterClient } from "@tanstack/react-router/ssr/client";
-import { createRouter } from "./router";
+import { hydrateRoot } from "react-dom/client";
 import {
-   QueryProvider,
-   trpc,
    getQueryClient,
    makeTrpcClient,
+   QueryProvider,
+   trpc,
 } from "./integrations/clients";
+import { createRouter } from "./router";
 
 const queryClient = getQueryClient();
 const trpcClient = makeTrpcClient();
 
-const router = createRouter({ trpc, queryClient, trpcClient });
+const router = createRouter({ queryClient, trpc, trpcClient });
 
 hydrateRoot(
    document,

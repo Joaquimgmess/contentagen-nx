@@ -1,12 +1,12 @@
+import type { ReactNode } from "react";
 import {
    createContext,
-   useContext,
-   useState,
    useCallback,
-   useMemo,
+   useContext,
    useEffect,
+   useMemo,
+   useState,
 } from "react";
-import type { ReactNode } from "react";
 import { registerErrorModalOpener } from "./create-toast";
 
 type ModalState = {
@@ -52,11 +52,11 @@ export const ErrorModalProvider = ({ children }: { children: ReactNode }) => {
 
    const value = useMemo(
       () => ({
-         state,
          actions: {
-            openModal,
             closeModal,
+            openModal,
          },
+         state,
       }),
       [state, openModal, closeModal],
    );

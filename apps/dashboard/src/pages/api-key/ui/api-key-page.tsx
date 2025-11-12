@@ -1,29 +1,28 @@
-import { useTRPC } from "@/integrations/clients";
+import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
+   CardAction,
+   CardContent,
+   CardDescription,
    CardHeader,
    CardTitle,
-   CardDescription,
-   CardContent,
-   CardAction,
 } from "@packages/ui/components/card";
-import { translate } from "@packages/localization";
 import {
    DropdownMenu,
-   DropdownMenuTrigger,
    DropdownMenuContent,
    DropdownMenuItem,
+   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
-
-import { Button } from "@packages/ui/components/button";
-import { Badge } from "@packages/ui/components/badge";
-import { Key, MoreVertical } from "lucide-react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
-import { CreateApiKeyCredenza } from "../features/create-api-key-credenza";
-import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { DeleteApiKeyCredenza } from "../features/delete-api-key-credenza";
 import { formatWindow } from "@packages/utils/number";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Key, MoreVertical } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { useTRPC } from "@/integrations/clients";
+import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { CreateApiKeyCredenza } from "../features/create-api-key-credenza";
+import { DeleteApiKeyCredenza } from "../features/delete-api-key-credenza";
 import { UpdateApiKeyCredenza } from "../features/update-api-key-credenza";
 
 interface ModalState {
@@ -43,12 +42,12 @@ export function ApiKeyPage() {
    // Modal open/close handlers
    const openCreate = useCallback(() => setModalState({ type: "create" }), []);
    const openDelete = useCallback(
-      (keyId: string) => setModalState({ type: "delete", keyId }),
+      (keyId: string) => setModalState({ keyId, type: "delete" }),
       [],
    );
    const openUpdate = useCallback(
       (keyId: string, keyName: string) =>
-         setModalState({ type: "update", keyId, keyName }),
+         setModalState({ keyId, keyName, type: "update" }),
       [],
    );
    const closeModal = useCallback(() => setModalState({ type: "none" }), []);
@@ -94,11 +93,11 @@ export function ApiKeyPage() {
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                            <Button
-                              variant="ghost"
-                              size="icon"
                               aria-label={translate(
                                  "pages.api-key.aria-labels.more-actions",
                               )}
+                              size="icon"
+                              variant="ghost"
                            >
                               <MoreVertical className="w-5 h-5" />
                            </Button>
@@ -115,8 +114,8 @@ export function ApiKeyPage() {
                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {stats.map((stat) => (
                      <div
-                        key={stat.label}
                         className="flex flex-col items-center justify-center"
+                        key={stat.label}
                      >
                         <span className="font-semibold text-lg">
                            {stat.value}
@@ -141,8 +140,8 @@ export function ApiKeyPage() {
                <CardContent className=" flex flex-col gap-4">
                   {data.map((key) => (
                      <div
-                        key={key.id}
                         className="flex items-center justify-between border-1 p-2 rounded-lg "
+                        key={key.id}
                      >
                         <div className="flex flex-col min-w-0">
                            <span className="font-medium text-base truncate">
@@ -157,17 +156,17 @@ export function ApiKeyPage() {
                            </span>
                         </div>
                         <div className="flex items-center gap-4 min-w-0">
-                           <Badge variant={"outline"} title={key.start ?? ""}>
+                           <Badge title={key.start ?? ""} variant={"outline"}>
                               {formatKeyStart(key.start)}
                            </Badge>
                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                  <Button
-                                    variant="ghost"
-                                    size="icon"
                                     aria-label={translate(
                                        "pages.api-key.aria-labels.api-key-actions",
                                     )}
+                                    size="icon"
+                                    variant="ghost"
                                  >
                                     <MoreVertical className="w-5 h-5" />
                                  </Button>
@@ -198,19 +197,19 @@ export function ApiKeyPage() {
          </div>
          {/* API Keys Card */}
          <DeleteApiKeyCredenza
-            open={modalState.type === "delete"}
-            onOpenChange={closeModal}
             keyId={modalState.keyId ?? ""}
+            onOpenChange={closeModal}
+            open={modalState.type === "delete"}
          />
          <UpdateApiKeyCredenza
             initialName={modalState.keyName ?? ""}
-            open={modalState.type === "update"}
-            onOpenChange={closeModal}
             keyId={modalState.keyId ?? ""}
+            onOpenChange={closeModal}
+            open={modalState.type === "update"}
          />
          <CreateApiKeyCredenza
-            open={modalState.type === "create"}
             onOpenChange={closeModal}
+            open={modalState.type === "create"}
          />
       </div>
    );

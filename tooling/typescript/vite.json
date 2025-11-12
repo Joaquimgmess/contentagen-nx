@@ -1,5 +1,4 @@
 {
-   "extends": "./base.json",
    "compilerOptions": {
       "allowImportingTsExtensions": true,
       "declaration": true,
@@ -13,5 +12,6 @@
       "noUnusedParameters": true,
       "preserveWatchOutput": true
    },
-   "exclude": ["node_modules"]
+   "exclude": ["node_modules"],
+   "extends": "./base.json"
 }

@@ -5,6 +5,7 @@ import type { DropEvent, DropzoneOptions, FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { cn } from "../lib/utils";
 import { Button } from "./button";
+
 type DropzoneContextType = {
    src?: File[];
    accept?: DropzoneOptions["accept"];
@@ -50,11 +51,10 @@ export const Dropzone = ({
 }: DropzoneProps) => {
    const { getRootProps, getInputProps, isDragActive } = useDropzone({
       accept,
+      disabled,
       maxFiles,
       maxSize,
       minSize,
-      onError,
-      disabled,
       onDrop: (acceptedFiles, fileRejections, event) => {
          if (fileRejections.length > 0) {
             const message = fileRejections.at(0)?.errors.at(0)?.message;
@@ -63,12 +63,13 @@ export const Dropzone = ({
          }
          onDrop?.(acceptedFiles, fileRejections, event);
       },
+      onError,
       ...props,
    });
    return (
       <DropzoneContext.Provider
          key={JSON.stringify(src)}
-         value={{ src, accept, maxSize, minSize, maxFiles }}
+         value={{ accept, maxFiles, maxSize, minSize, src }}
       >
          {" "}
          <Button

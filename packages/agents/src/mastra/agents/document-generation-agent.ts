@@ -21,7 +21,6 @@ This includes all document titles, sections, descriptions, and any other text co
 };
 
 export const documentGenerationAgent = new Agent({
-   name: "Brand Documentation Agent",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") as "en" | "pt";
       const languageOutputInstruction = getLanguageOutputInstruction(locale);
@@ -319,4 +318,5 @@ ${languageOutputInstruction}
    `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Brand Documentation Agent",
 });

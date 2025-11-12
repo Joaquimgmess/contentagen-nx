@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
 import type { RouterOutput } from "@packages/api/client";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 interface CompetitorListContextType {
    // Data
@@ -81,16 +81,16 @@ export function CompetitorListProvider({
    return (
       <CompetitorListContext.Provider
          value={{
+            allSelectableSelected,
+            clearSelection,
+            handlePageChange,
+            handleSelectAll,
+            handleSelectionChange,
             items: data.items,
             page,
-            totalPages,
-            handlePageChange,
             selectedItems,
             selectedItemsCount,
-            allSelectableSelected,
-            handleSelectionChange,
-            handleSelectAll,
-            clearSelection,
+            totalPages,
          }}
       >
          {children}

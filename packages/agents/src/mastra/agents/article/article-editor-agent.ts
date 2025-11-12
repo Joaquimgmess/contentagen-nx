@@ -1,8 +1,8 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
-import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 import { createToolSystemPrompt } from "../../helpers";
+import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -17,7 +17,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const articleEditorAgent = new Agent({
-   name: "Article Editor",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -51,5 +50,6 @@ Return clean, properly formatted markdown that:
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Article Editor",
    tools: { dateTool },
 });

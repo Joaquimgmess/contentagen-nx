@@ -1,7 +1,5 @@
 {
   "dependencies": {
-    "@packages/localization": "workspace:*",
-    "@packages/posthog": "workspace:*",
     "@astrojs/check": "catalog:astro",
     "@astrojs/node": "catalog:astro",
     "@astrojs/react": "catalog:astro",
@@ -9,6 +7,8 @@
     "@astrojs/ts-plugin": "catalog:astro",
     "@lucide/astro": "catalog:astro",
     "@packages/brand": "workspace:*",
+    "@packages/localization": "workspace:*",
+    "@packages/posthog": "workspace:*",
     "@packages/ui": "workspace:*",
     "@tailwindcss/vite": "catalog:ui",
     "astro": "catalog:astro",
@@ -23,8 +23,8 @@
     "@types/react-dom": "catalog:react",
     "typescript": "catalog:development"
   },
-  "name": "landing-page",
   "license": "Apache-2.0",
+  "name": "landing-page",
   "scripts": {
     "astro": "bunx --bun astro",
     "build": "bunx --bun astro build",
@@ -34,5 +34,5 @@
     "typecheck": "bunx --bun astro check"
   },
   "type": "module",
-  "version": "0.8.0"
+  "version": "0.8.1"
 }

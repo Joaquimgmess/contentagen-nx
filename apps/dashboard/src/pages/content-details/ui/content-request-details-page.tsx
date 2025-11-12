@@ -1,25 +1,23 @@
-import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { PendingComponent } from "@/default/pending";
+import type { RouterOutput } from "@packages/api/client";
 import { translate } from "@packages/localization";
-import { GeneratedContentDisplay } from "./generated-content-display";
-import { useTRPC } from "@/integrations/clients";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useMemo, useState } from "react";
+import { PendingComponent } from "@/default/pending";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
+import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { useMissingImagesNotification } from "../../content-list/lib/use-missing-images-notification";
+import { ContentDetailsQuickActions } from "./content-details-quick-actions";
+import { ContentStatsCard } from "./content-stats-card";
+import { ContentVersionsCard } from "./content-versions-card";
+import { GeneratedContentDisplay } from "./generated-content-display";
 import {
    ContentBasicDetailsCard,
    ContentMetaDetailsCard,
 } from "./request-details-cards";
-
-import { ContentDetailsQuickActions } from "./content-details-quick-actions";
-import { ContentStatsCard } from "./content-stats-card";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { createToast } from "@/features/error-modal/lib/create-toast";
-import { useMemo } from "react";
-import { useMissingImagesNotification } from "../../content-list/lib/use-missing-images-notification";
-import { useState } from "react";
-import { ContentVersionsCard } from "./content-versions-card";
 import { VersionDetailsCredenza } from "./version-details-credenza";
-import type { RouterOutput } from "@packages/api/client";
 
 export function ContentRequestDetailsPage() {
    const { id } = useParams({
@@ -51,8 +49,8 @@ export function ContentRequestDetailsPage() {
    // Fetch related slugs if slug and agentId are available
    const { data: relatedSlugs } = useSuspenseQuery(
       trpc.content.getRelatedSlugs.queryOptions({
-         slug: data?.meta?.slug ?? "",
          agentId: data.agentId ?? "",
+         slug: data?.meta?.slug ?? "",
       }),
    );
 
@@ -68,9 +66,9 @@ export function ContentRequestDetailsPage() {
             contentId: id,
          },
          {
+            enabled: Boolean(isGenerating),
             onData(data) {
                createToast({
-                  type: "success",
                   message:
                      data.message ||
                      translate(
@@ -79,6 +77,7 @@ export function ContentRequestDetailsPage() {
                            status: data.status,
                         },
                      ),
+                  type: "success",
                });
                queryClient.invalidateQueries({
                   queryKey: trpc.content.get.queryKey({
@@ -86,7 +85,6 @@ export function ContentRequestDetailsPage() {
                   }),
                });
             },
-            enabled: Boolean(isGenerating),
          },
       ),
    );
@@ -131,9 +129,9 @@ export function ContentRequestDetailsPage() {
          )}
          {selectedVersion && (
             <VersionDetailsCredenza
-               version={selectedVersion}
                isOpen={versionDetailsOpen}
                onClose={() => setVersionDetailsOpen(false)}
+               version={selectedVersion}
             />
          )}
       </main>

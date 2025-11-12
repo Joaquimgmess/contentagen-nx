@@ -1,8 +1,8 @@
 import { Agent } from "@mastra/core/agent";
-import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
 import { createToolSystemPrompt } from "../../helpers";
+import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -17,7 +17,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const changelogWriterAgent = new Agent({
-   name: "Changelog Writer",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -66,5 +65,6 @@ DO NOT include meta-commentary, distribution suggestions, or any content outside
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Changelog Writer",
    tools: { dateTool },
 });

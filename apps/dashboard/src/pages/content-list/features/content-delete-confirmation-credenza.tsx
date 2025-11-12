@@ -15,10 +15,10 @@ export function ContentDeleteConfirmationCredenza({
 }: ContentDeleteConfirmationCredenzaProps) {
    return (
       <DeleteConfirmationCredenza
-         open={open}
-         onOpenChange={onOpenChange}
-         onDelete={onConfirm}
          message={`This will permanently delete "${contentTitle}" and all associated data. This action cannot be undone.`}
+         onDelete={onConfirm}
+         onOpenChange={onOpenChange}
+         open={open}
       />
    );
 }

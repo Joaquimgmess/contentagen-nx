@@ -1,3 +1,6 @@
+import type { RouterOutput } from "@packages/api/client";
+import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
 import {
    Card,
    CardAction,
@@ -6,12 +9,9 @@ import {
    CardHeader,
    CardTitle,
 } from "@packages/ui/components/card";
-import { Badge } from "@packages/ui/components/badge";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { FileText } from "lucide-react";
 import { useTRPC } from "@/integrations/clients";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import type { RouterOutput } from "@packages/api/client";
-import { translate } from "@packages/localization";
 
 interface ContentVersionsCardProps {
    contentId: string;
@@ -66,8 +66,8 @@ export function ContentVersionsCard({
          <CardContent className="space-y-2">
             {versions.slice(0, 5).map((version) => (
                <Card
-                  key={version.id}
                   className="cursor-pointer"
+                  key={version.id}
                   onClick={() => onVersionClick(version)}
                >
                   <CardHeader>

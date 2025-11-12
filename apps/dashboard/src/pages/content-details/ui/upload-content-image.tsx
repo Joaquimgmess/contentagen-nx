@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
+import type { ContentSelect } from "@packages/database/schemas/content";
+import { translate } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
+   CredenzaBody,
+   CredenzaClose,
    CredenzaContent,
+   CredenzaDescription,
+   CredenzaFooter,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaDescription,
-   CredenzaBody,
-   CredenzaFooter,
-   CredenzaClose,
 } from "@packages/ui/components/credenza";
 import {
    Dropzone,
    DropzoneContent,
    DropzoneEmptyState,
 } from "@packages/ui/components/dropzone";
-import { Button } from "@packages/ui/components/button";
-import type { ContentSelect } from "@packages/database/schemas/content";
-import { translate } from "@packages/localization";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
 
 interface UploadContentImageProps {
    content: ContentSelect;
@@ -54,6 +54,10 @@ export function UploadContentImage({
 
    const uploadImageMutation = useMutation(
       trpc.content.images.uploadImage.mutationOptions({
+         onError: (error) => {
+            console.error("Upload error:", error);
+            toast.error(translate("pages.content-details.upload.error"));
+         },
          onSuccess: async () => {
             toast.success(translate("pages.content-details.upload.success"));
             await queryClient.invalidateQueries({
@@ -67,10 +71,6 @@ export function UploadContentImage({
             setIsOpen(false);
             setSelectedFile(null);
             setFilePreview(undefined);
-         },
-         onError: (error) => {
-            console.error("Upload error:", error);
-            toast.error(translate("pages.content-details.upload.error"));
          },
       }),
    );
@@ -129,10 +129,10 @@ export function UploadContentImage({
          });
 
          await uploadImageMutation.mutateAsync({
-            id: content.id,
-            fileName: selectedFile.name,
-            fileBuffer: base64,
             contentType: selectedFile.type,
+            fileBuffer: base64,
+            fileName: selectedFile.name,
+            id: content.id,
          });
       } catch (error) {
          console.error("Upload failed:", error);
@@ -141,7 +141,7 @@ export function UploadContentImage({
    };
 
    return (
-      <Credenza open={isOpen} onOpenChange={setIsOpen}>
+      <Credenza onOpenChange={setIsOpen} open={isOpen}>
          <CredenzaContent className="sm:max-w-md">
             <CredenzaHeader>
                <CredenzaTitle>
@@ -157,10 +157,10 @@ export function UploadContentImage({
                   accept={{
                      "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp"],
                   }}
-                  maxSize={10 * 1024 * 1024} // 10MB
+                  disabled={uploadImageMutation.isPending} // 10MB
                   maxFiles={1}
+                  maxSize={10 * 1024 * 1024}
                   onDrop={handleFileSelect}
-                  disabled={uploadImageMutation.isPending}
                   src={selectedFile ? [selectedFile] : undefined}
                >
                   <DropzoneEmptyState>
@@ -190,8 +190,8 @@ export function UploadContentImage({
                   </Button>
                </CredenzaClose>
                <Button
-                  onClick={handleUpload}
                   disabled={!selectedFile || uploadImageMutation.isPending}
+                  onClick={handleUpload}
                >
                   {uploadImageMutation.isPending
                      ? translate("pages.content-details.upload.uploading")

@@ -1,15 +1,15 @@
+import { relations } from "drizzle-orm";
 import {
+   index,
+   jsonb,
+   pgEnum,
    pgTable,
-   uuid,
    text,
    timestamp,
-   index,
-   pgEnum,
-   jsonb,
+   uuid,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { organization } from "./auth";
-import { relations } from "drizzle-orm";
 import { brandFeature } from "./brand-features";
 
 export const brandKnowledgeStatusEnum = pgEnum("brand_knowledge_status", [
@@ -21,23 +21,20 @@ export const brandKnowledgeStatusEnum = pgEnum("brand_knowledge_status", [
 export const brand = pgTable(
    "brand",
    {
+      createdAt: timestamp("created_at").defaultNow().notNull(),
       id: uuid("id").primaryKey().defaultRandom(),
-      name: text("name"),
-      websiteUrl: text("website_url"),
-      summary: text("summary"),
-      logoUrl: text("logo_url"),
-      status: brandKnowledgeStatusEnum("status").default("analyzing"),
       organizationId: text("organization_id")
          .references(() => organization.id, { onDelete: "cascade" })
          .notNull(),
-      uploadedFiles: jsonb("uploaded_files")
-         .$type<{ fileName: string; fileUrl: string; uploadedAt: string }[]>()
-         .default([]),
-      createdAt: timestamp("created_at").defaultNow().notNull(),
+      status: brandKnowledgeStatusEnum("status").default("analyzing"),
       updatedAt: timestamp("updated_at")
          .defaultNow()
          .$onUpdate(() => new Date())
          .notNull(),
+      uploadedFiles: jsonb("uploaded_files")
+         .$type<{ fileName: string; fileUrl: string; uploadedAt: string }[]>()
+         .default([]),
+      websiteUrl: text("website_url"),
    },
    (table) => [index("brand_organization_id_idx").on(table.organizationId)],
 );

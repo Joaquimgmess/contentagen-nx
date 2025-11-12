@@ -1,7 +1,7 @@
 import { createTool } from "@mastra/core/tools";
-import { serverEnv } from "@packages/environment/server";
 import { createDb } from "@packages/database/client";
 import { getAgentById } from "@packages/database/repositories/agent-repository";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
 export function getAudienceProfileGuidelinesInstructions(): string {
    return `
@@ -15,7 +15,6 @@ Retrieves the target audience profile for content personalization.
 `;
 }
 export const getAudienceProfileGuidelinesTool = createTool({
-   id: "get-audience-persona",
    description:
       "Retrieve the audience profile persona from the database for the reader agent to impersonate",
    execute: async ({ runtimeContext }) => {
@@ -42,4 +41,5 @@ export const getAudienceProfileGuidelinesTool = createTool({
          );
       }
    },
+   id: "get-audience-persona",
 });

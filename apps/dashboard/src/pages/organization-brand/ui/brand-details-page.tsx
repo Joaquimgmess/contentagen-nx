@@ -1,57 +1,28 @@
-import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { useTRPC } from "@/integrations/clients";
-import { useIsomorphicLayoutEffect } from "@packages/ui/hooks/use-isomorphic-layout-effect";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateEditBrandDialog } from "../features/create-edit-brand-dialog";
-import { BrandFileViewerModal } from "../features/brand-file-viewer-modal";
-import { BrandLogoUploadDialog } from "../features/brand-logo-upload-dialog";
-import { useState, useMemo } from "react";
+import { Button } from "@packages/ui/components/button";
+import { Card, CardDescription, CardTitle } from "@packages/ui/components/card";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
-import { createToast } from "@/features/error-modal/lib/create-toast";
-import {
-   Card,
-   CardContent,
-   CardDescription,
-   CardHeader,
-   CardTitle,
-} from "@packages/ui/components/card";
-import { Markdown } from "@packages/ui/components/markdown";
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
 import { PendingComponent } from "@/default/pending";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
+import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { BrandFileViewerModal } from "../features/brand-file-viewer-modal";
+import { CreateEditBrandDialog } from "../features/create-edit-brand-dialog";
 import { BrandDetailsActions } from "./brand-details-actions";
-import { BrandStatsCard } from "./brand-stats-card";
-import { BrandInfoCard } from "./brand-info-card";
-import { BrandFeaturesCard } from "./brand-features-card";
 import { BrandDetailsKnowledgeBaseCard } from "./brand-details-knowledge-base-card";
+import { BrandFeaturesCard } from "./brand-features-card";
+import { BrandStatsCard } from "./brand-stats-card";
 
 export function BrandDetailsPage() {
    const trpc = useTRPC();
    const queryClient = useQueryClient();
-   const {
-      data: brand,
-      error: brandError,
-      isFetched,
-   } = useQuery(trpc.brand.getByOrganization.queryOptions());
-   const [showCreateDialog, setShowCreateDialog] = useState(false);
-   const [showLogoUploadDialog, setShowLogoUploadDialog] = useState(false);
-   const fileViewer = BrandFileViewerModal({ brandId: brand?.id || "" });
-
-   const { data: photo } = useQuery(
-      trpc.brandFile.getLogo.queryOptions(
-         {
-            brandId: brand?.id || "",
-         },
-         {
-            enabled: !!brand?.id,
-         },
-      ),
+   const { data: brand, error: brandError } = useSuspenseQuery(
+      trpc.brand.getByOrganization.queryOptions(),
    );
-
-   useIsomorphicLayoutEffect(() => {
-      if (isFetched && !brand?.id) {
-         setShowCreateDialog(true);
-      }
-      return;
-   }, [isFetched, brand]);
+   const [showCreateDialog, setShowCreateDialog] = useState(false);
+   const fileViewer = BrandFileViewerModal({ brandId: brand?.id || "" });
 
    const isGenerating = useMemo(
       () =>
@@ -66,16 +37,16 @@ export function BrandDetailsPage() {
             brandId: brand?.id || "",
          },
          {
+            enabled: Boolean(brand && isGenerating),
             async onData(data) {
                createToast({
-                  type: "success",
                   message: `Brand features status updated to: ${data.status}`,
+                  type: "success",
                });
                await queryClient.invalidateQueries({
                   queryKey: trpc.brand.getByOrganization.queryKey(),
                });
             },
-            enabled: Boolean(brand && isGenerating),
          },
       ),
    );
@@ -83,20 +54,27 @@ export function BrandDetailsPage() {
    if (!brand || brandError) {
       return (
          <main className="h-full w-full flex flex-col gap-4">
-            <Card>
-               <CardHeader>
-                  <CardTitle>Create Your Brand</CardTitle>
-                  <CardDescription>
-                     Set up your brand to start generating content and managing
-                     your brand assets.
+            <TalkingMascot message="Let's set up your brand to get started with content generation" />
+            <Card className="flex flex-col items-center justify-center py-12">
+               <div className="text-center max-w-md">
+                  <CardTitle className="mb-2">No Brand Yet</CardTitle>
+                  <CardDescription className="mb-6">
+                     Create your brand profile to start generating personalized
+                     content and managing your brand assets.
                   </CardDescription>
-               </CardHeader>
-               <CardContent>
+                  <Button
+                     className="mb-4"
+                     onClick={() => setShowCreateDialog(true)}
+                     size="lg"
+                  >
+                     <Plus className="mr-2 h-4 w-4" />
+                     Create Your First Brand
+                  </Button>
                   <CreateEditBrandDialog
-                     open={showCreateDialog}
                      onOpenChange={setShowCreateDialog}
+                     open={showCreateDialog}
                   />
-               </CardContent>
+               </div>
             </Card>
          </main>
       );
@@ -109,37 +87,15 @@ export function BrandDetailsPage() {
                <PendingComponent message="Wait while we analyze your brand" />
             ) : (
                <>
-                  <TalkingMascot message="Welcome to your brand dashboard! Here you can manage your brand information, view features, and track your brand analysis." />
+                  <TalkingMascot message="Here you can manage your brand settings and analysis" />
 
-                  <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
-                     <div className="col-span-1 md:col-span-2 flex flex-col gap-4">
-                        <BrandStatsCard brand={brand} />
-
+                  <div className="grid md:grid-cols-3 gap-4">
+                     <div className="col-span-1 md:col-span-2 grid gap-4">
+                        <BrandDetailsActions brand={brand} />
                         <BrandFeaturesCard brandId={brand.id} />
                      </div>
-
                      <div className="col-span-1 gap-4 flex flex-col">
-                        <BrandDetailsActions
-                           brand={brand}
-                           onLogoUpload={() => setShowLogoUploadDialog(true)}
-                        />
-
-                        <BrandInfoCard brand={brand} />
-
-                        <Card>
-                           <CardHeader>
-                              <CardTitle className="flex items-center gap-2">
-                                 Brand Description
-                              </CardTitle>
-                              <CardDescription>
-                                 This is how your brand describes itself and
-                                 what makes it unique.
-                              </CardDescription>
-                           </CardHeader>
-                           <CardContent>
-                              <Markdown content={brand.summary ?? ""} />
-                           </CardContent>
-                        </Card>
+                        <BrandStatsCard brand={brand} />
                         <BrandDetailsKnowledgeBaseCard brand={brand} />
                      </div>
                   </div>
@@ -149,14 +105,8 @@ export function BrandDetailsPage() {
 
          <CreateEditBrandDialog
             brand={brand}
-            open={showCreateDialog}
             onOpenChange={setShowCreateDialog}
-         />
-         <BrandLogoUploadDialog
-            open={showLogoUploadDialog}
-            onOpenChange={setShowLogoUploadDialog}
-            currentLogo={photo?.data ?? ""}
-            brandId={brand.id}
+            open={showCreateDialog}
          />
          <fileViewer.Modal />
       </>

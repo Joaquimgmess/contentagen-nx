@@ -1,18 +1,18 @@
+import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaBody,
-   CredenzaDescription,
 } from "@packages/ui/components/credenza";
-import { Button } from "@packages/ui/components/button";
 import { Skeleton } from "@packages/ui/components/skeleton";
-import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { useTRPC } from "@/integrations/clients";
 import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
-import { useMemo } from "react";
 
 export function CreateContentCredenza({
    open,
@@ -29,7 +29,7 @@ export function CreateContentCredenza({
    );
 
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>Select Agent</CredenzaTitle>
@@ -42,10 +42,10 @@ export function CreateContentCredenza({
                {isLoading && <Skeleton className="w-full h-16 mb-2" />}
                {!isLoading && !userHasAgents && (
                   <Link
-                     to="/agents/manual"
                      className="w-full flex justify-center"
+                     to="/agents/manual"
                   >
-                     <Button variant="default" className="w-full">
+                     <Button className="w-full" variant="default">
                         No agents found. Create one
                      </Button>
                   </Link>
@@ -55,14 +55,14 @@ export function CreateContentCredenza({
                   data.items.map((agent) => (
                      <Link
                         key={agent.id}
-                        to={"/agents/$agentId/content/request"}
                         params={{ agentId: agent.id }}
+                        to={"/agents/$agentId/content/request"}
                      >
                         <AgentWriterCard
-                           name={agent.personaConfig.metadata.name}
                            description={
                               agent.personaConfig.metadata.description
                            }
+                           name={agent.personaConfig.metadata.name}
                         />
                      </Link>
                   ))}

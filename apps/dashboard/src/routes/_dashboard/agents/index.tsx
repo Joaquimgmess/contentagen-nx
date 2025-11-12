@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_dashboard/agents/")({
    loader: async ({ context }) => {
       const { trpc, queryClient } = context;
       await queryClient.ensureQueryData(
-         trpc.agent.list.queryOptions({ page: 1, limit: 8 }),
+         trpc.agent.list.queryOptions({ limit: 8, page: 1 }),
       );
    },
 });

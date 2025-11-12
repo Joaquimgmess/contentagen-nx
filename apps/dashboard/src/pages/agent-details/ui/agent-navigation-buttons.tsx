@@ -1,7 +1,7 @@
-import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { FileText, Lightbulb } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { translate } from "@packages/localization";
+import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
+import { Link } from "@tanstack/react-router";
+import { FileText, Lightbulb } from "lucide-react";
 
 interface AgentNavigationButtonsProps {
    agentId: string;
@@ -12,7 +12,7 @@ export function AgentNavigationButtons({
 }: AgentNavigationButtonsProps) {
    return (
       <div className="grid grid-cols-2 gap-4">
-         <Link to="/content" search={{ agentId, page: 1 }}>
+         <Link search={{ agentId, page: 1 }} to="/content">
             <SquaredIconButton>
                <FileText className="w-6 h-6" />
                <span>
@@ -20,7 +20,7 @@ export function AgentNavigationButtons({
                </span>
             </SquaredIconButton>
          </Link>
-         <Link to="/ideas" search={{ agentId }}>
+         <Link search={{ agentId }} to="/ideas">
             <SquaredIconButton>
                <Lightbulb className="w-6 h-6" />
                <span>

@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
 import {
-   useContentRequestForm,
    type ContentRequestFormData,
+   useContentRequestForm,
 } from "../lib/use-content-request-form";
 import { BasicInfoStep, BasicInfoStepSubscribe } from "./basic-info-step";
 import {
@@ -47,9 +47,9 @@ export function ContentRequestForm({
 
    return (
       <Stepper.Provider
+         className="h-full w-full"
          labelOrientation="vertical"
          variant="horizontal"
-         className="h-full w-full"
       >
          {({ methods }) => (
             <form
@@ -80,13 +80,13 @@ export function ContentRequestForm({
                <TalkingMascot message={getMascotMessage(methods.current.id)} />
 
                <Stepper.Panel className="h-full">
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence initial={false} mode="wait">
                      <motion.div
-                        className="h-full space-y-4"
-                        key={methods.current.id}
-                        initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
+                        className="h-full space-y-4"
                         exit={{ opacity: 0, scale: 0.96 }}
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        key={methods.current.id}
                         transition={{ duration: 0.3 }}
                      >
                         {methods.switch({

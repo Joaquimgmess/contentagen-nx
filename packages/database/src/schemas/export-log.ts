@@ -1,7 +1,7 @@
-import { pgTable, uuid, text, jsonb, timestamp } from "drizzle-orm/pg-core";
-import { content } from "./content";
-import { user } from "./auth";
+import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { z } from "zod";
+import { user } from "./auth";
+import { content } from "./content";
 
 /**
  * ExportLogOptionsSchema defines the structure for the options JSONB field.
@@ -9,22 +9,22 @@ import { z } from "zod";
  * - [other options can be added as needed]
  */
 export const ExportLogOptionsSchema = z.object({
-   format: z.string(),
    fileName: z.string().optional(),
+   format: z.string(),
 });
 export type ExportLogOptions = z.infer<typeof ExportLogOptionsSchema>;
 export const exportLog = pgTable("export_log", {
-   id: uuid("id").primaryKey().defaultRandom(),
    contentId: uuid("content_id")
       .notNull()
       .references(() => content.id, { onDelete: "cascade" }),
-   userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-   options: jsonb("options").$type<ExportLogOptions>(),
    createdAt: timestamp("created_at")
       .$defaultFn(() => new Date())
       .notNull(),
+   id: uuid("id").primaryKey().defaultRandom(),
+   options: jsonb("options").$type<ExportLogOptions>(),
+   userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export type ExportLog = typeof exportLog.$inferSelect;

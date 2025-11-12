@@ -1,82 +1,124 @@
 {
-   "title": "Organization Management",
-   "mascot-message": "Create and manage your organization here. Invite team members and control access.",
-   "details": {
-      "title": "Organization Details",
-      "description": "View your organization info and invite new members."
-   },
-   "fields": {
-      "name": "Name",
-      "created-at": "Created At",
-      "members": "Members"
-   },
    "actions": {
+      "delete": "Delete Organization",
       "edit": "Edit Organization",
       "invite-member": "Invite Member",
-      "manage-members": "Manage Members",
-      "delete": "Delete Organization"
+      "manage-members": "Manage Members"
    },
-   "members": {
-      "title": "Members",
-      "invite": "Invite New Member",
-      "role": "Role",
-      "joined": "Joined",
-      "actions": "Actions",
-      "remove": "Remove",
-      "change-role": "Change Role"
+   "details": {
+      "description": "View your organization info and invite new members.",
+      "title": "Organization Details"
    },
-   "roles": {
-      "owner": "Owner",
-      "admin": "Admin",
-      "member": "Member"
+   "fields": {
+      "created-at": "Created At",
+      "members": "Members",
+      "name": "Name"
    },
    "invitations": {
-      "title": "Pending Invitations",
-      "email": "Email",
-      "role": "Role",
-      "invited": "Invited",
       "cancel": "Cancel",
-      "resend": "Resend"
+      "email": "Email",
+      "invited": "Invited",
+      "resend": "Resend",
+      "role": "Role",
+      "title": "Pending Invitations"
+   },
+   "mascot-message": "Create and manage your organization here. Invite team members and control access.",
+   "members": {
+      "actions": "Actions",
+      "change-role": "Change Role",
+      "invite": "Invite New Member",
+      "joined": "Joined",
+      "remove": "Remove",
+      "role": "Role",
+      "title": "Members"
    },
    "messages": {
-      "no-organization": "No organization found. Please create one to continue.",
-      "no-members": "No members found.",
-      "invite-success": "Invitation sent successfully!",
       "invite-error": "Failed to send invitation. Please try again.",
-      "remove-success": "Member removed successfully!",
+      "invite-success": "Invitation sent successfully!",
+      "no-members": "No members found.",
+      "no-organization": "No organization found. Please create one to continue.",
       "remove-error": "Failed to remove member. Please try again.",
-      "update-success": "Organization updated successfully!",
-      "update-error": "Failed to update organization. Please try again."
+      "remove-success": "Member removed successfully!",
+      "update-error": "Failed to update organization. Please try again.",
+      "update-success": "Organization updated successfully!"
    },
    "modals": {
+      "delete": {
+         "cancel": "Cancel",
+         "confirm": "Delete",
+         "description": "Are you sure you want to delete this organization? This action cannot be undone.",
+         "title": "Delete Organization"
+      },
       "invite": {
-         "title": "Invite Member",
+         "cancel": "Cancel",
          "description": "Enter the email address of the person you want to invite as a member.",
          "email-label": "Email",
          "email-placeholder": "Enter email address",
          "role-label": "Role",
          "send": "Send Invitation",
-         "cancel": "Cancel"
+         "title": "Invite Member"
       },
       "remove": {
-         "title": "Remove Member",
-         "description": "Are you sure you want to remove this member from the organization?",
+         "cancel": "Cancel",
          "confirm": "Remove",
-         "cancel": "Cancel"
-      },
-      "delete": {
-         "title": "Delete Organization",
-         "description": "Are you sure you want to delete this organization? This action cannot be undone.",
-         "confirm": "Delete",
-         "cancel": "Cancel"
+         "description": "Are you sure you want to remove this member from the organization?",
+         "title": "Remove Member"
       }
    },
-   "toasts": {
-      "invitation-sent": "Invitation sent to {{email}}",
-      "invitation-failed": "Failed to send invitation",
-      "invalid-email": "Please enter a valid email"
+   "overview": {
+      "information": {
+         "description": "View your organization details and information",
+         "state": {
+            "error": {
+               "description": "Failed to load organization information. Please try again.",
+               "title": "Error loading organization information"
+            }
+         },
+         "title": "Organization Information"
+      },
+      "mascot-message": "Here you can see your organization overview",
+      "quick-access": {
+         "members": {
+            "description": "Manage organization members and permissions",
+            "title": "Members"
+         },
+         "organization": {
+            "description": "Access your organization settings and details",
+            "title": "Organization"
+         },
+         "state": {
+            "error": {
+               "description": "Failed to load quick access options",
+               "title": "Error"
+            }
+         }
+      },
+      "stats": {
+         "agents": {
+            "description": "The total number of writer agents in the organization",
+            "title": "Total agents"
+         },
+         "description": "Key metrics and statistics for your organization",
+         "members": {
+            "description": "The total number of members in the organization",
+            "title": "Total Members"
+         },
+         "state": {
+            "error": {
+               "description": "Failed to load organization statistics. Please try again.",
+               "title": "Error loading statistics"
+            }
+         },
+         "title": "Organization Statistics"
+      }
+   },
+   "roles": {
+      "admin": "Admin",
+      "member": "Member",
+      "owner": "Owner"
    },
    "table": {
       "email": "Email"
-   }
+   },
+   "title": "Organization Management"
 }

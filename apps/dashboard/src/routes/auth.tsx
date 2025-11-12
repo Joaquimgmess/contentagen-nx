@@ -1,6 +1,6 @@
-import { useTRPC } from "@/integrations/clients";
 import brand from "@packages/brand/index.json";
 import logo from "@packages/brand/logo.svg";
+import { useIsomorphicLayoutEffect } from "@packages/ui/hooks/use-isomorphic-layout-effect";
 import { useQuery } from "@tanstack/react-query";
 import {
    createFileRoute,
@@ -8,16 +8,15 @@ import {
    useLocation,
    useRouter,
 } from "@tanstack/react-router";
-import { useIsomorphicLayoutEffect } from "@packages/ui/hooks/use-isomorphic-layout-effect";
+import { useTRPC } from "@/integrations/clients";
 export const Route = createFileRoute("/auth")({
+   component: AuthLayout,
    loader: async ({ context }) => {
       await context.queryClient.prefetchQuery(
          context.trpc.authHelpers.getSession.queryOptions(),
       );
       return;
    },
-
-   component: AuthLayout,
 });
 
 function AuthLayout() {
@@ -30,9 +29,9 @@ function AuthLayout() {
    useIsomorphicLayoutEffect(() => {
       if (session) {
          router.navigate({
-            to: "/home",
-            search: location.search,
             replace: true,
+            search: location.search,
+            to: "/home",
          });
       }
    }, [session, location]);

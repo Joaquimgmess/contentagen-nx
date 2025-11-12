@@ -1,27 +1,27 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-   createDescriptionFromText,
-   getKeywordsFromText,
-   createSlug,
-   countWords,
-   calculateReadTimeMinutes,
-   formatStringForDisplay,
-   calculateTextStats,
    calculateReadabilityScore,
+   calculateReadTimeMinutes,
+   calculateTextStats,
+   countWords,
+   createDescriptionFromText,
+   createSlug,
+   formatStringForDisplay,
+   getKeywordsFromText,
 } from "../src/text";
 
 describe("text utilities", () => {
    describe("createDescriptionFromText", () => {
       it("should create a description from text within maxLength", () => {
          const text = "This is a simple test.";
-         const result = createDescriptionFromText({ text, maxLength: 50 });
+         const result = createDescriptionFromText({ maxLength: 50, text });
          expect(result).toBe("This is a simple test.");
       });
 
       it("should truncate text longer than maxLength", () => {
          const text =
             "This is a very long text that should be truncated because it exceeds the maximum length.";
-         const result = createDescriptionFromText({ text, maxLength: 50 });
+         const result = createDescriptionFromText({ maxLength: 50, text });
          expect(result.length).toBeLessThanOrEqual(50);
          expect(result).toContain("...");
       });
@@ -29,7 +29,7 @@ describe("text utilities", () => {
       it("should remove markdown headers and links", () => {
          const text =
             "# Title\n\nThis is a [link](https://example.com) in text.";
-         const result = createDescriptionFromText({ text, maxLength: 100 });
+         const result = createDescriptionFromText({ maxLength: 100, text });
          expect(result).not.toContain("# Title");
          expect(result).not.toContain("[link](https://example.com)");
          expect(result).toContain("link");
@@ -37,7 +37,7 @@ describe("text utilities", () => {
 
       it("should extract first paragraph", () => {
          const text = "First paragraph.\n\nSecond paragraph.";
-         const result = createDescriptionFromText({ text, maxLength: 100 });
+         const result = createDescriptionFromText({ maxLength: 100, text });
          expect(result).toContain("First paragraph");
          expect(result).not.toContain("Second paragraph");
       });
@@ -55,7 +55,7 @@ describe("text utilities", () => {
 
       it("should filter words by minimum length", () => {
          const text = "This is a test with some longer words";
-         const result = getKeywordsFromText({ text, minLength: 5 });
+         const result = getKeywordsFromText({ minLength: 5, text });
          expect(result).toContain("longer");
          expect(result).toContain("words");
          expect(result).not.toContain("this");
@@ -65,7 +65,7 @@ describe("text utilities", () => {
       it("should limit to top 10 keywords", () => {
          const text =
             "word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12";
-         const result = getKeywordsFromText({ text, minLength: 3 });
+         const result = getKeywordsFromText({ minLength: 3, text });
          expect(result.length).toBeLessThanOrEqual(10);
       });
    });

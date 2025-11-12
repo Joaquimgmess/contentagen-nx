@@ -4,9 +4,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-   integrations: [react(), sitemap()],
-   site: "https://www.contentagen.com",
-   output: "static",
    i18n: {
       defaultLocale: "en",
       locales: ["en", "pt"],
@@ -14,6 +11,9 @@ export default defineConfig({
          prefixDefaultLocale: false,
       },
    },
+   integrations: [react(), sitemap()],
+   output: "static",
+   site: "https://www.contentagen.com",
    vite: {
       plugins: [tailwindcss()],
       ssr: {

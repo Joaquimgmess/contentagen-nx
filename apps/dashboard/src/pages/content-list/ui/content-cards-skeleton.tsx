@@ -14,8 +14,8 @@ export function ContentCardsSkeleton() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
          {Array.from({ length: 8 }).map((_, index) => (
             <Card
-               key={`skeleton-${index + 1}`}
                className="w-full animate-pulse"
+               key={`skeleton-${index + 1}`}
             >
                <CardHeader>
                   <CardTitle>

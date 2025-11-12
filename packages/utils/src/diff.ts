@@ -118,9 +118,9 @@ function computeLineDiff(lines1: string[], lines2: string[]): LineDiff {
       if (line1 === line2 && line1 !== undefined) {
          // Lines are identical
          diff.push({
-            type: "context",
-            lineNumber: lineNumber,
             content: line1,
+            lineNumber: lineNumber,
+            type: "context",
          });
          i++;
          j++;
@@ -132,10 +132,10 @@ function computeLineDiff(lines1: string[], lines2: string[]): LineDiff {
          if (similarity > 0.3) {
             // If lines are similar enough, treat as modification
             diff.push({
-               type: "modify",
-               lineNumber: lineNumber,
                content: line2,
+               lineNumber: lineNumber,
                oldContent: line1,
+               type: "modify",
             });
             i++;
             j++;
@@ -143,14 +143,14 @@ function computeLineDiff(lines1: string[], lines2: string[]): LineDiff {
          } else {
             // Treat as separate remove and add operations
             diff.push({
-               type: "remove",
-               lineNumber: lineNumber,
                content: line1,
+               lineNumber: lineNumber,
+               type: "remove",
             });
             diff.push({
-               type: "add",
-               lineNumber: lineNumber,
                content: line2,
+               lineNumber: lineNumber,
+               type: "add",
             });
             i++;
             j++;
@@ -159,18 +159,18 @@ function computeLineDiff(lines1: string[], lines2: string[]): LineDiff {
       } else if (line1 !== undefined) {
          // Line was removed
          diff.push({
-            type: "remove",
-            lineNumber: lineNumber,
             content: line1,
+            lineNumber: lineNumber,
+            type: "remove",
          });
          i++;
          lineNumber++;
       } else if (line2 !== undefined) {
          // Line was added
          diff.push({
-            type: "add",
-            lineNumber: lineNumber,
             content: line2,
+            lineNumber: lineNumber,
+            type: "add",
          });
          j++;
          lineNumber++;
@@ -213,13 +213,13 @@ function computeInlineChanges(
    for (const [op, text] of charDiff) {
       switch (op) {
          case -1:
-            inlineChanges.push({ type: "remove", text });
+            inlineChanges.push({ text, type: "remove" });
             break;
          case 1:
-            inlineChanges.push({ type: "add", text });
+            inlineChanges.push({ text, type: "add" });
             break;
          case 0:
-            inlineChanges.push({ type: "unchanged", text });
+            inlineChanges.push({ text, type: "unchanged" });
             break;
       }
    }

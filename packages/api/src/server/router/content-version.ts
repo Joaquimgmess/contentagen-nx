@@ -1,27 +1,27 @@
-import { protectedProcedure, router } from "../trpc";
-import {
-   getAllVersionsByContentId,
-   getNextVersionNumber,
-   createContentVersion,
-} from "@packages/database/repositories/content-version-repository";
 import { hasContentAccess } from "@packages/database/repositories/access-control-repository";
 import {
    getContentById,
    updateContent,
    updateContentCurrentVersion,
 } from "@packages/database/repositories/content-repository";
-import { APIError, propagateError } from "@packages/utils/errors";
-import { z } from "zod";
-import { calculateTextStats } from "@packages/utils/text";
+import {
+   createContentVersion,
+   getAllVersionsByContentId,
+   getNextVersionNumber,
+} from "@packages/database/repositories/content-version-repository";
 import { createDiff, createLineDiff } from "@packages/utils/diff";
+import { APIError, propagateError } from "@packages/utils/errors";
+import { calculateTextStats } from "@packages/utils/text";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
 
 export const contentVersionRouter = router({
    editBodyAndCreateNewVersion: protectedProcedure
       .input(
          z.object({
-            id: z.uuid(),
-            body: z.string(),
             baseVersion: z.number().optional(), // Optional version to compare against
+            body: z.string(),
+            id: z.uuid(),
          }),
       )
       .mutation(async ({ ctx, input }) => {
@@ -76,13 +76,13 @@ export const contentVersionRouter = router({
             // Create new version
             await createContentVersion(db, {
                contentId: input.id,
-               userId,
-               version: versionNumber,
                meta: {
+                  changedFields,
                   diff: diff,
                   lineDiff: lineDiff,
-                  changedFields,
                },
+               userId,
+               version: versionNumber,
             });
 
             // Update the content's current version
@@ -104,7 +104,7 @@ export const contentVersionRouter = router({
                stats: updatedStats,
             });
 
-            return { success: true, content: updated, version: versionNumber };
+            return { content: updated, success: true, version: versionNumber };
          } catch (err) {
             propagateError(err);
             throw APIError.internal(

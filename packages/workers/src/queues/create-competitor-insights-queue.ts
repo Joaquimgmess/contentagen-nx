@@ -1,12 +1,12 @@
-import { Worker, Queue, type Job } from "bullmq";
-import { serverEnv } from "@packages/environment/server";
-import { registerGracefulShutdown, createRedisClient } from "../helpers";
 import {
+   type CustomRuntimeContext,
    mastra,
    setRuntimeContext,
-   type CustomRuntimeContext,
 } from "@packages/agents";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { type Job, Queue, Worker } from "bullmq";
+import { createRedisClient, registerGracefulShutdown } from "../helpers";
 
 export interface CreateCompetitorInsightsJobData {
    organizationId: string;
@@ -26,32 +26,31 @@ export async function runCreateCompetitorInsightsWorkflow(
          .createRunAsync();
 
       const result = await run.start({
-         runtimeContext: setRuntimeContext({
-            language: runtimeContext?.language ?? "en",
-            userId,
-            brandId: runtimeContext?.brandId,
-         }),
-
          inputData: {
+            competitorId,
             organizationId,
             userId,
-            competitorId,
          },
+         runtimeContext: setRuntimeContext({
+            brandId: runtimeContext?.brandId,
+            language: runtimeContext?.language,
+            userId,
+         }),
       });
 
       return {
-         userId,
-         organizationId,
          competitorId,
+         organizationId,
          result,
+         userId,
       };
    } catch (error) {
       console.error("[CreateCompetitorInsightsWorkflow] WORKFLOW ERROR", {
-         organizationId,
-         userId,
          competitorId,
          error: error instanceof Error ? error.message : error,
+         organizationId,
          stack: error instanceof Error && error.stack ? error.stack : undefined,
+         userId,
       });
       propagateError(error);
       throw AppError.internal(

@@ -1,6 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
-import { createToast } from "@/features/error-modal/lib/create-toast";
+import type { RouterOutput } from "@packages/api/client";
 import {
    AlertDialog,
    AlertDialogAction,
@@ -11,8 +9,10 @@ import {
    AlertDialogHeader,
    AlertDialogTitle,
 } from "@packages/ui/components/alert-dialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import type { RouterOutput } from "@packages/api/client";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
 
 interface DeleteBrandConfirmationDialogProps {
    brand: RouterOutput["brand"]["list"]["items"][number];
@@ -30,21 +30,21 @@ export function DeleteBrandConfirmationDialog({
 
    const deleteMutation = useMutation(
       trpc.brand.delete.mutationOptions({
+         onError: (error) => {
+            createToast({
+               message: `Failed to delete brand: ${error.message ?? "Unknown error"}`,
+               type: "danger",
+            });
+         },
          onSuccess: async () => {
             createToast({
-               type: "success",
                message: "Brand deleted successfully",
+               type: "success",
             });
             await queryClient.invalidateQueries({
                queryKey: trpc.brand.getByOrganization.queryKey(),
             });
             onOpenChange(false);
-         },
-         onError: (error) => {
-            createToast({
-               type: "danger",
-               message: `Failed to delete brand: ${error.message ?? "Unknown error"}`,
-            });
          },
       }),
    );
@@ -58,13 +58,13 @@ export function DeleteBrandConfirmationDialog({
    };
 
    return (
-      <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialog onOpenChange={onOpenChange} open={open}>
          <AlertDialogContent>
             <AlertDialogHeader>
                <AlertDialogTitle>Delete Brand</AlertDialogTitle>
                <AlertDialogDescription>
-                  Are you sure you want to delete "{brand.name}"? This action
-                  cannot be undone.
+                  Are you sure you want to delete ? This action cannot be
+                  undone.
                   <br />
                   <br />
                   <span className="font-semibold text-destructive">
@@ -78,9 +78,9 @@ export function DeleteBrandConfirmationDialog({
                   Cancel
                </AlertDialogCancel>
                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  disabled={deleteMutation.isPending}
+                  onClick={handleDelete}
                >
                   {deleteMutation.isPending ? (
                      <>

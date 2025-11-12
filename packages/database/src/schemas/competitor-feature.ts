@@ -1,15 +1,15 @@
+import { relations } from "drizzle-orm";
 import {
+   index,
+   jsonb,
    pgTable,
-   uuid,
    text,
    timestamp,
-   jsonb,
-   index,
+   uuid,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { competitor } from "./competitor";
-import { relations } from "drizzle-orm";
 import z from "zod";
+import { competitor } from "./competitor";
 
 export const CompetitorFeatureMetaSchema = z.object({
    category: z
@@ -33,16 +33,16 @@ export type CompetitorFeatureMeta = z.infer<typeof CompetitorFeatureMetaSchema>;
 export const competitorFeature = pgTable(
    "competitor_feature",
    {
-      id: uuid("id").primaryKey().defaultRandom(),
       competitorId: uuid("competitor_id")
          .notNull()
          .references(() => competitor.id, { onDelete: "cascade" }),
+      extractedAt: timestamp("extracted_at").defaultNow().notNull(),
       featureName: text("feature_name").notNull(),
-      summary: text("summary").notNull(),
+      id: uuid("id").primaryKey().defaultRandom(),
+      meta: jsonb("meta").$type<CompetitorFeatureMeta>().default({}),
       rawContent: text("raw_content").notNull(),
       sourceUrl: text("source_url"),
-      extractedAt: timestamp("extracted_at").defaultNow().notNull(),
-      meta: jsonb("meta").$type<CompetitorFeatureMeta>().default({}),
+      summary: text("summary").notNull(),
    },
    (table) => [
       index("competitor_feature_competitor_id_feature_name_idx").on(

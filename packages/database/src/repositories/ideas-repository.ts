@@ -1,8 +1,8 @@
-import { ideas } from "../schemas/ideas";
-import type { IdeaSelect, IdeaInsert } from "../schemas/ideas";
-import type { DatabaseInstance } from "../client";
 import { AppError, propagateError } from "@packages/utils/errors";
 import { eq, inArray } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
+import type { IdeaInsert, IdeaSelect } from "../schemas/ideas";
+import { ideas } from "../schemas/ideas";
 
 export async function createIdea(
    dbClient: DatabaseInstance,
@@ -122,10 +122,10 @@ export async function listAllIdeasPaginated(
          limit,
          offset,
          orderBy: (ideas, { desc }) => [desc(ideas.createdAt)],
+         where: inArray(ideas.agentId, agentIds),
          with: {
             agent: true,
          },
-         where: inArray(ideas.agentId, agentIds),
       });
       const totalRes = await dbClient.query.ideas.findMany({
          where: inArray(ideas.agentId, agentIds),

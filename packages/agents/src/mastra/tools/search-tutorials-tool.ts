@@ -1,10 +1,10 @@
 import { createTool } from "@mastra/core/tools";
-import { z } from "zod";
-import { serverEnv } from "@packages/environment/server";
 import { createDb } from "@packages/database/client";
-import { searchContent } from "@packages/database/repositories/content-repository";
-import { AppError, propagateError } from "@packages/utils/errors";
 import { listAgents } from "@packages/database/repositories/agent-repository";
+import { searchContent } from "@packages/database/repositories/content-repository";
+import { serverEnv } from "@packages/environment/server";
+import { AppError, propagateError } from "@packages/utils/errors";
+import { z } from "zod";
 
 export function getSearchTutorialsInstructions(): string {
    return `
@@ -25,26 +25,7 @@ Searches through all tutorials the user has written based on various criteria.
 }
 
 export const searchTutorialsTool = createTool({
-   id: "search-tutorials",
    description: "Searches through user's written tutorials",
-   inputSchema: z.object({
-      query: z
-         .string()
-         .optional()
-         .describe(
-            "Search term to look for in titles, descriptions, or content",
-         ),
-      keywords: z
-         .array(z.string())
-         .optional()
-         .describe("Specific keywords to search for"),
-      limit: z
-         .number()
-         .min(1)
-         .max(50)
-         .default(10)
-         .describe("Maximum number of results to return"),
-   }),
    execute: async ({ context, runtimeContext }) => {
       const { query, keywords, limit = 10 } = context;
 
@@ -59,8 +40,8 @@ export const searchTutorialsTool = createTool({
          });
 
          const agents = await listAgents(dbClient, {
-            userId,
             limit: 20,
+            userId,
          });
 
          const { results } = await searchContent(
@@ -68,11 +49,11 @@ export const searchTutorialsTool = createTool({
             agents.map((agent) => agent.id),
             query || "",
             {
-               status: ["approved", "draft"],
-               layout: ["tutorial"],
                includeBody: true,
+               layout: ["tutorial"],
                limit: Math.min(limit, 50),
                offset: 0,
+               status: ["approved", "draft"],
             },
          );
 
@@ -90,4 +71,23 @@ export const searchTutorialsTool = createTool({
          );
       }
    },
+   id: "search-tutorials",
+   inputSchema: z.object({
+      keywords: z
+         .array(z.string())
+         .optional()
+         .describe("Specific keywords to search for"),
+      limit: z
+         .number()
+         .min(1)
+         .max(50)
+         .default(10)
+         .describe("Maximum number of results to return"),
+      query: z
+         .string()
+         .optional()
+         .describe(
+            "Search term to look for in titles, descriptions, or content",
+         ),
+   }),
 });

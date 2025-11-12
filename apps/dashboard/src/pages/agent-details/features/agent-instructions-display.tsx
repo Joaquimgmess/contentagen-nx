@@ -1,13 +1,13 @@
-import { Markdown } from "@packages/ui/components/markdown";
-import { translate, type TranslationKey } from "@packages/localization";
+import type { PersonaConfig } from "@packages/database/schemas/agent";
+import { type TranslationKey, translate } from "@packages/localization";
 import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
+import { Markdown } from "@packages/ui/components/markdown";
 import {
    Tabs,
+   TabsContent,
    TabsList,
    TabsTrigger,
-   TabsContent,
 } from "@packages/ui/components/tabs";
-import type { PersonaConfig } from "@packages/database/schemas/agent";
 import { useMemo } from "react";
 
 interface AgentInstructionsDisplayProps {
@@ -29,27 +29,27 @@ export function AgentInstructionsDisplay({
 
       return [
          {
-            titleKey: "pages.agent-details.instructions.tabs.audience.title",
             descriptionKey:
                "pages.agent-details.instructions.tabs.audience.description",
             placeholderKey:
                "pages.agent-details.instructions.tabs.audience.placeholder",
+            titleKey: "pages.agent-details.instructions.tabs.audience.title",
             value: instructions?.audienceProfile,
          },
          {
-            titleKey: "pages.agent-details.instructions.tabs.writing.title",
             descriptionKey:
                "pages.agent-details.instructions.tabs.writing.description",
             placeholderKey:
                "pages.agent-details.instructions.tabs.writing.placeholder",
+            titleKey: "pages.agent-details.instructions.tabs.writing.title",
             value: instructions?.writingGuidelines,
          },
          {
-            titleKey: "pages.agent-details.instructions.tabs.rag.title",
             descriptionKey:
                "pages.agent-details.instructions.tabs.rag.description",
             placeholderKey:
                "pages.agent-details.instructions.tabs.rag.placeholder",
+            titleKey: "pages.agent-details.instructions.tabs.rag.title",
             value: instructions?.ragIntegration,
          },
       ] as InstructionCard[];

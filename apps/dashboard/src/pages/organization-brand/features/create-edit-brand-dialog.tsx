@@ -1,24 +1,26 @@
-import { useCallback } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
-import { createToast } from "@/features/error-modal/lib/create-toast";
-import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogFooter,
-   DialogHeader,
-   DialogTitle,
-} from "@packages/ui/components/dialog";
-import { Button } from "@packages/ui/components/button";
-import { Input } from "@packages/ui/components/input";
-import { useAppForm } from "@packages/ui/components/form";
 import type { RouterOutput } from "@packages/api/client";
-import { z } from "zod";
+import { Button } from "@packages/ui/components/button";
+import { useAppForm } from "@packages/ui/components/form";
+import { Input } from "@packages/ui/components/input";
+import {
+   Sheet,
+   SheetContent,
+   SheetDescription,
+   SheetFooter,
+   SheetHeader,
+   SheetTitle,
+} from "@packages/ui/components/sheet";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FormEvent } from "react";
+import { useCallback } from "react";
+import { z } from "zod";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
 
 const brandSchema = z.object({
-   websiteUrl: z.url("Please enter a valid URL"),
+   websiteUrl: z
+      .url("Please enter a valid URL")
+      .min(1, "Website URL is required"),
 });
 
 interface CreateEditBrandDialogProps {
@@ -38,42 +40,42 @@ export function CreateEditBrandDialog({
 
    const updateMutation = useMutation(
       trpc.brand.update.mutationOptions({
+         onError: (error) => {
+            createToast({
+               message: `Failed to update brand: ${error.message ?? "Unknown error"}`,
+               type: "danger",
+            });
+         },
          onSuccess: async () => {
             createToast({
-               type: "success",
                message: "Brand updated successfully",
+               type: "success",
             });
             await queryClient.invalidateQueries({
                queryKey: trpc.brand.getByOrganization.queryKey(),
             });
             onOpenChange(false);
-         },
-         onError: (error) => {
-            createToast({
-               type: "danger",
-               message: `Failed to update brand: ${error.message ?? "Unknown error"}`,
-            });
          },
       }),
    );
 
    const createMutation = useMutation(
       trpc.brand.create.mutationOptions({
+         onError: (error) => {
+            createToast({
+               message: `Failed to create brand: ${error.message ?? "Unknown error"}`,
+               type: "danger",
+            });
+         },
          onSuccess: async () => {
             createToast({
-               type: "success",
                message: "Brand created successfully",
+               type: "success",
             });
             await queryClient.invalidateQueries({
                queryKey: trpc.brand.getByOrganization.queryKey(),
             });
             onOpenChange(false);
-         },
-         onError: (error) => {
-            createToast({
-               type: "danger",
-               message: `Failed to create brand: ${error.message ?? "Unknown error"}`,
-            });
          },
       }),
    );
@@ -88,8 +90,8 @@ export function CreateEditBrandDialog({
       async (values: z.infer<typeof brandSchema>) => {
          if (!brand) return;
          await updateMutation.mutateAsync({
-            id: brand.id,
             data: values,
+            id: brand.id,
          });
       },
       [updateMutation, brand],
@@ -99,9 +101,6 @@ export function CreateEditBrandDialog({
       defaultValues: {
          websiteUrl: brand?.websiteUrl || "",
       },
-      validators: {
-         onChange: brandSchema,
-      },
       onSubmit: async ({ value, formApi }) => {
          if (isEditing) {
             await updateBrand(value);
@@ -109,6 +108,9 @@ export function CreateEditBrandDialog({
             await createBrand(value);
          }
          formApi.reset();
+      },
+      validators: {
+         onChange: brandSchema,
       },
    });
 
@@ -122,66 +124,63 @@ export function CreateEditBrandDialog({
    );
 
    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-         <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-               <DialogTitle>
+      <Sheet onOpenChange={onOpenChange} open={open}>
+         <SheetContent>
+            <SheetHeader>
+               <SheetTitle>
                   {isEditing ? "Edit Brand" : "Create New Brand"}
-               </DialogTitle>
-               <DialogDescription>
+               </SheetTitle>
+               <SheetDescription>
                   {isEditing
                      ? "Update your brand information and settings."
                      : "Create a new brand to start generating content and managing your brand assets."}
-               </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit}>
-               <div className="grid gap-4 py-4">
-                  <form.AppField name="websiteUrl">
-                     {(field) => (
-                        <field.FieldContainer>
-                           <field.FieldLabel>Website URL</field.FieldLabel>
-                           <Input
-                              id={field.name}
-                              name={field.name}
-                              onBlur={field.handleBlur}
-                              onChange={(e) =>
-                                 field.handleChange(e.target.value)
-                              }
-                              placeholder="https://example.com"
-                              value={field.state.value}
-                           />
-                           <field.FieldMessage />
-                        </field.FieldContainer>
-                     )}
-                  </form.AppField>
-               </div>
-               <DialogFooter>
-                  <Button
-                     type="button"
-                     variant="outline"
-                     onClick={() => onOpenChange(false)}
-                  >
-                     Cancel
-                  </Button>
-                  <form.Subscribe>
-                     {(formState) => (
-                        <Button
-                           type="submit"
-                           disabled={
-                              !formState.canSubmit || formState.isSubmitting
-                           }
-                        >
-                           {formState.isSubmitting
-                              ? "Saving..."
-                              : isEditing
-                                ? "Save Changes"
-                                : "Create Brand"}
-                        </Button>
-                     )}
-                  </form.Subscribe>
-               </DialogFooter>
+               </SheetDescription>
+            </SheetHeader>
+            <form className="grid gap-4 px-4" onSubmit={handleSubmit}>
+               <form.AppField name="websiteUrl">
+                  {(field) => (
+                     <field.FieldContainer>
+                        <field.FieldLabel>Website URL</field.FieldLabel>
+                        <Input
+                           id={field.name}
+                           name={field.name}
+                           onBlur={field.handleBlur}
+                           onChange={(e) => field.handleChange(e.target.value)}
+                           placeholder="https://example.com"
+                           value={field.state.value}
+                        />
+                        <field.FieldMessage />
+                     </field.FieldContainer>
+                  )}
+               </form.AppField>
             </form>
-         </DialogContent>
-      </Dialog>
+            <SheetFooter>
+               <Button
+                  onClick={() => onOpenChange(false)}
+                  type="button"
+                  variant="outline"
+               >
+                  Cancel
+               </Button>
+               <form.Subscribe>
+                  {(formState) => (
+                     <Button
+                        disabled={
+                           !formState.canSubmit || formState.isSubmitting
+                        }
+                        onClick={() => form.handleSubmit()}
+                        type="submit"
+                     >
+                        {formState.isSubmitting
+                           ? "Saving..."
+                           : isEditing
+                             ? "Save Changes"
+                             : "Create Brand"}
+                     </Button>
+                  )}
+               </form.Subscribe>
+            </SheetFooter>
+         </SheetContent>
+      </Sheet>
    );
 }

@@ -1,31 +1,31 @@
-import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { Badge } from "@packages/ui/components/badge";
-import { ScrollArea } from "@packages/ui/components/scroll-area";
 import { translate } from "@packages/localization";
-import { useTRPC } from "@/integrations/clients";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { CompetitorDetailsActions } from "./competitor-details-actions";
-import { CompetitorStatsCard } from "./competitor-stats-card";
-import { CompetitorInfoCard } from "./competitor-info-card";
-import { CreateEditCompetitorDialog } from "../../competitor-list/features/create-edit-competitor-dialog";
-import { CompetitorFileViewerModal } from "../features/competitor-file-viewer-modal";
-import { CompetitorLogoUploadDialog } from "../features/competitor-logo-upload-dialog";
-import { useState, useMemo } from "react";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { createToast } from "@/features/error-modal/lib/create-toast";
+import { Badge } from "@packages/ui/components/badge";
 import {
    Card,
+   CardAction,
    CardContent,
    CardDescription,
    CardHeader,
    CardTitle,
-   CardAction,
 } from "@packages/ui/components/card";
 import { Markdown } from "@packages/ui/components/markdown";
-import { CompetitorFeaturesCard } from "./competitor-features-card";
-import { CompetitorDetailsKnowledgeBaseCard } from "./competitor-details-knowledge-base-card";
+import { ScrollArea } from "@packages/ui/components/scroll-area";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useMemo, useState } from "react";
 import { PendingComponent } from "@/default/pending";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
+import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { CreateEditCompetitorDialog } from "../../competitor-list/features/create-edit-competitor-dialog";
+import { CompetitorFileViewerModal } from "../features/competitor-file-viewer-modal";
+import { CompetitorLogoUploadDialog } from "../features/competitor-logo-upload-dialog";
+import { CompetitorDetailsActions } from "./competitor-details-actions";
+import { CompetitorDetailsKnowledgeBaseCard } from "./competitor-details-knowledge-base-card";
+import { CompetitorFeaturesCard } from "./competitor-features-card";
+import { CompetitorInfoCard } from "./competitor-info-card";
+import { CompetitorStatsCard } from "./competitor-stats-card";
 
 export function CompetitorDetailsPage() {
    const trpc = useTRPC();
@@ -73,13 +73,14 @@ export function CompetitorDetailsPage() {
             competitorId: id,
          },
          {
+            enabled: Boolean(isGenerating),
             async onData(data) {
                createToast({
-                  type: "success",
                   message: translate(
                      "pages.competitor-details.messages.features-status-updated",
                      { status: data.status },
                   ),
+                  type: "success",
                });
                await queryClient.invalidateQueries({
                   queryKey: trpc.competitor.get.queryKey({
@@ -87,7 +88,6 @@ export function CompetitorDetailsPage() {
                   }),
                });
             },
-            enabled: Boolean(isGenerating),
          },
       ),
    );
@@ -255,13 +255,13 @@ export function CompetitorDetailsPage() {
 
          <CreateEditCompetitorDialog
             competitor={competitor}
-            open={showEditDialog}
             onOpenChange={setShowEditDialog}
+            open={showEditDialog}
          />
          <CompetitorLogoUploadDialog
-            open={showLogoUploadDialog}
-            onOpenChange={setShowLogoUploadDialog}
             currentLogo={photo?.data ?? ""}
+            onOpenChange={setShowLogoUploadDialog}
+            open={showLogoUploadDialog}
          />
          <fileViewer.Modal />
       </>

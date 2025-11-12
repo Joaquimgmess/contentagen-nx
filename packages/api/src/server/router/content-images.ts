@@ -1,18 +1,18 @@
-import { protectedProcedure, router, organizationProcedure } from "../trpc";
 import {
    getContentById,
    updateContent,
 } from "@packages/database/repositories/content-repository";
+import { streamFileForProxy, uploadFile } from "@packages/files/client";
+import { compressImage } from "@packages/files/image-helper";
 import { APIError, propagateError } from "@packages/utils/errors";
 import { z } from "zod";
-import { uploadFile, streamFileForProxy } from "@packages/files/client";
-import { compressImage } from "@packages/files/image-helper";
+import { organizationProcedure, protectedProcedure, router } from "../trpc";
 
 const ContentImageUploadInput = z.object({
-   id: z.uuid(),
-   fileName: z.string(),
-   fileBuffer: z.base64(), // base64 encoded
    contentType: z.string(),
+   fileBuffer: z.base64(), // base64 encoded
+   fileName: z.string(),
+   id: z.uuid(),
 });
 
 const ContentImageStreamInput = z.object({
@@ -33,10 +33,40 @@ export const contentImagesRouter = router({
             const updated = await updateContent(db, input.id, {
                imageUrl: input.imageUrl,
             });
-            return { success: true, content: updated };
+            return { content: updated, success: true };
          } catch (err) {
             propagateError(err);
             throw APIError.internal("Failed to add image URL");
+         }
+      }),
+   getImage: protectedProcedure
+      .input(ContentImageStreamInput)
+      .query(async ({ ctx, input }) => {
+         try {
+            const db = (await ctx).db;
+            const content = await getContentById(db, input.id);
+
+            if (!content?.imageUrl) {
+               return null;
+            }
+
+            const bucketName = (await ctx).minioBucket;
+            const key = content.imageUrl;
+
+            const { buffer, contentType } = await streamFileForProxy(
+               key,
+               bucketName,
+               (await ctx).minioClient,
+            );
+
+            const base64 = buffer.toString("base64");
+            return {
+               contentType,
+               data: `data:${contentType};base64,${base64}`,
+            };
+         } catch (error) {
+            console.error("Error fetching content image:", error);
+            return null;
          }
       }),
    uploadImage: organizationProcedure
@@ -101,41 +131,11 @@ export const contentImagesRouter = router({
             // Update content imageUrl with the file key
             await updateContent(db, id, { imageUrl: key });
 
-            return { url, success: true };
+            return { success: true, url };
          } catch (err) {
             propagateError(err);
             console.error("Error uploading content image:", err);
             throw APIError.internal("Failed to upload image");
-         }
-      }),
-   getImage: protectedProcedure
-      .input(ContentImageStreamInput)
-      .query(async ({ ctx, input }) => {
-         try {
-            const db = (await ctx).db;
-            const content = await getContentById(db, input.id);
-
-            if (!content?.imageUrl) {
-               return null;
-            }
-
-            const bucketName = (await ctx).minioBucket;
-            const key = content.imageUrl;
-
-            const { buffer, contentType } = await streamFileForProxy(
-               key,
-               bucketName,
-               (await ctx).minioClient,
-            );
-
-            const base64 = buffer.toString("base64");
-            return {
-               data: `data:${contentType};base64,${base64}`,
-               contentType,
-            };
-         } catch (error) {
-            console.error("Error fetching content image:", error);
-            return null;
          }
       }),
 });

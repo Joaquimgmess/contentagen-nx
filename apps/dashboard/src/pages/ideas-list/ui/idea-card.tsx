@@ -1,34 +1,34 @@
+import type { RouterOutput } from "@packages/api/client";
 import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
 import {
    Card,
-   CardHeader,
-   CardContent,
-   CardFooter,
-   CardTitle,
    CardAction,
+   CardContent,
    CardDescription,
+   CardFooter,
+   CardHeader,
+   CardTitle,
 } from "@packages/ui/components/card";
-import { Badge } from "@packages/ui/components/badge";
 import { Checkbox } from "@packages/ui/components/checkbox";
-import type { RouterOutput } from "@packages/api/client";
-import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
-import { useTRPC } from "@/integrations/clients";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaDescription,
    CredenzaTrigger,
-   CredenzaBody,
 } from "@packages/ui/components/credenza";
 import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Eye } from "lucide-react";
-import { useIdeasList } from "../lib/ideas-list-context";
 import { formatStringForDisplay } from "@packages/utils/text";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { Eye } from "lucide-react";
+import { useState } from "react";
+import { useTRPC } from "@/integrations/clients";
+import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
+import { useIdeasList } from "../lib/ideas-list-context";
 export function IdeaCard({
    idea,
 }: {
@@ -47,8 +47,8 @@ export function IdeaCard({
 
    const handleViewDetails = () => {
       navigate({
-         to: "/ideas/$id",
          params: { id: idea.id },
+         to: "/ideas/$id",
       });
       setIsCredenzaOpen(false);
    };
@@ -59,7 +59,7 @@ export function IdeaCard({
          idea.content.description.includes("Generating"));
 
    return (
-      <Credenza open={isCredenzaOpen} onOpenChange={setIsCredenzaOpen}>
+      <Credenza onOpenChange={setIsCredenzaOpen} open={isCredenzaOpen}>
          <CredenzaTrigger asChild>
             <Card
                className={`cursor-pointer ${isGenerating ? "border-blue-500 bg-blue-50/50" : ""}`}
@@ -84,15 +84,15 @@ export function IdeaCard({
                </CardHeader>
                <CardContent className="flex flex-col gap-2">
                   <AgentWriterCard
-                     photo={data?.data}
-                     name={
-                        idea.agent?.personaConfig.metadata.name ||
-                        translate("pages.ideas-list.card.unknown-agent")
-                     }
                      description={
                         idea.agent?.personaConfig.metadata.description ||
                         translate("pages.ideas-list.card.no-description")
                      }
+                     name={
+                        idea.agent?.personaConfig.metadata.name ||
+                        translate("pages.ideas-list.card.unknown-agent")
+                     }
+                     photo={data?.data}
                   />
                </CardContent>
                <CardFooter className="flex items-center justify-between">

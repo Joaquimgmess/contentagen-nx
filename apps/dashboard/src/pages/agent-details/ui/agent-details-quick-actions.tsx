@@ -1,8 +1,6 @@
-import { useState } from "react";
-import { useRouter } from "@tanstack/react-router";
-import { Button } from "@packages/ui/components/button";
+import type { RouterOutput } from "@packages/api/client";
 import { translate } from "@packages/localization";
-import { Edit, Trash, Plus, Camera, FileEdit, Users } from "lucide-react";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
    CardContent,
@@ -12,14 +10,16 @@ import {
 } from "@packages/ui/components/card";
 import {
    Tooltip,
-   TooltipTrigger,
    TooltipContent,
+   TooltipTrigger,
 } from "@packages/ui/components/tooltip";
+import { useRouter } from "@tanstack/react-router";
+import { Camera, Edit, FileEdit, Plus, Trash, Users } from "lucide-react";
+import { useState } from "react";
 import { DeleteAgentDialog } from "@/features/agent-actions/ui/delete-agent-dialog";
 import { EditAgentAction } from "@/features/agent-actions/ui/edit-agent-action";
 import { ManageAgentPhoto } from "../features/manage-agent-photo";
 import { TransferAgentToOrganizationDialog } from "../features/transfer-agent-to-organization";
-import type { RouterOutput } from "@packages/api/client";
 
 interface AgentDetailsQuickActionsProps {
    agent: RouterOutput["agent"]["get"];
@@ -38,51 +38,51 @@ export function AgentDetailsQuickActions({
 
    const handleCreateContent = () => {
       router.navigate({
-         to: "/agents/$agentId/content/request",
          params: { agentId: agent?.id ?? "" },
+         to: "/agents/$agentId/content/request",
       });
    };
 
    const actions = [
       {
+         disabled: false,
          icon: Edit,
          label: translate("pages.agent-details.quick-actions.edit-agent"),
          onClick: handleEdit,
-         disabled: false,
       },
       {
+         disabled: !onEditInstructions,
          icon: FileEdit,
          label: translate(
             "pages.agent-details.quick-actions.edit-instructions",
          ),
          onClick: onEditInstructions,
-         disabled: !onEditInstructions,
       },
       {
+         disabled: false,
          icon: Trash,
          label: translate("pages.agent-details.quick-actions.delete-agent"),
          onClick: () => setDeleteDialogOpen(true),
-         disabled: false,
       },
       {
+         disabled: !!agent?.organizationId,
          icon: Users,
          label: "Transfer to Organization", // TODO: Add translation key
          onClick: () => setTransferDialogOpen(true),
-         disabled: !!agent?.organizationId,
       },
       {
+         disabled: false,
          icon: Plus,
          label: translate("pages.agent-details.quick-actions.create-content"),
          onClick: handleCreateContent,
-         disabled: false,
       },
       {
+         disabled: false,
          icon: Camera,
          label: translate(
             "pages.agent-details.quick-actions.manage-agent-photo",
          ),
          onClick: () => setManagePhotoOpen(true),
-         disabled: false,
       },
    ];
 
@@ -102,10 +102,10 @@ export function AgentDetailsQuickActions({
                   <Tooltip key={`agent-action-${index + 1}`}>
                      <TooltipTrigger asChild>
                         <Button
+                           disabled={action.disabled}
+                           onClick={action.onClick}
                            size="icon"
                            variant="outline"
-                           onClick={action.onClick}
-                           disabled={action.disabled}
                         >
                            <action.icon />
                         </Button>
@@ -119,21 +119,21 @@ export function AgentDetailsQuickActions({
          <DeleteAgentDialog
             agentId={agent?.id ?? ""}
             agentName={agent?.personaConfig.metadata.name ?? ""}
-            open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
+            open={deleteDialogOpen}
          />
 
          <ManageAgentPhoto
             agent={agent}
-            open={managePhotoOpen}
             onOpenChange={setManagePhotoOpen}
+            open={managePhotoOpen}
          />
 
          <TransferAgentToOrganizationDialog
             agentId={agent?.id ?? ""}
             agentName={agent?.personaConfig.metadata.name ?? ""}
-            open={transferDialogOpen}
             onOpenChange={setTransferDialogOpen}
+            open={transferDialogOpen}
          />
       </>
    );

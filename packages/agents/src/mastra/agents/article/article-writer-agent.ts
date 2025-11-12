@@ -1,12 +1,12 @@
 import { Agent } from "@mastra/core/agent";
-import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import {
-   getWritingGuidelinesTool,
-   getWritingGuidelinesInstructions,
-} from "../../tools/get-writing-guidelines-tool";
 import { serverEnv } from "@packages/environment/server";
 import { createToolSystemPrompt } from "../../helpers";
+import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
+import {
+   getWritingGuidelinesInstructions,
+   getWritingGuidelinesTool,
+} from "../../tools/get-writing-guidelines-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -25,7 +25,6 @@ Your entire article output must be written in ${languageNames[language]}.
 };
 
 export const articleWriterAgent = new Agent({
-   name: "Article Writer",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -122,5 +121,6 @@ Just write the article with the title as H1, then text, then H2 sections. Nothin
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Article Writer",
    tools: { dateTool, getWritingGuidelinesTool },
 });

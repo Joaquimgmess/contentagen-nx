@@ -1,5 +1,6 @@
-import { serverEnv } from "@packages/environment/server";
 import { isProduction } from "@packages/environment/helpers";
+import { serverEnv } from "@packages/environment/server";
+
 // Authentication constants
 
 const ADMIN_USER = serverEnv.AP_QUEUE_UI_USERNAME;
@@ -71,19 +72,17 @@ export function bullAuth(request: Request) {
       // Set auth cookie for subsequent requests
 
       return new Response(null, {
-         status: 302,
-
          headers: {
             Location: url.pathname,
 
             "Set-Cookie": `${COOKIE_NAME}=${COOKIE_VALUE}; ${COOKIE_OPTS}`,
          },
+         status: 302,
       });
    }
 
    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-
       headers: { "Content-Type": "application/json" },
+      status: 401,
    });
 }

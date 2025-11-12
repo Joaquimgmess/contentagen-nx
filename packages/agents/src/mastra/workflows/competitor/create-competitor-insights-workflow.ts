@@ -1,31 +1,26 @@
-import { createWorkflow, createStep } from "@mastra/core/workflows";
-import { competitorIntelligenceAgent } from "../../agents/competitor-intelligence-agent";
-import { serverEnv } from "@packages/environment/server";
+import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { createDb } from "@packages/database/client";
 import { updateCompetitor } from "@packages/database/repositories/competitor-repository";
-import { ingestUsage, type MastraLLMUsage } from "../../helpers";
-import { z } from "zod";
 import { CompetitorFindingsSchema } from "@packages/database/schema";
+import { serverEnv } from "@packages/environment/server";
+import { z } from "zod";
+import { competitorIntelligenceAgent } from "../../agents/competitor-intelligence-agent";
+import { ingestUsage, type MastraLLMUsage } from "../../helpers";
 
 export const CreateCompetitorInsightsInput = z.object({
+   competitorId: z.string(),
    organizationId: z.string(),
    userId: z.string(),
-   competitorId: z.string(),
 });
 
 export const CreateCompetitorInsightsOutput = z.object({
-   findings: CompetitorFindingsSchema,
    competitorId: z.string(),
+   findings: CompetitorFindingsSchema,
 });
 
 // Step 1: Generate insights for a single competitor using AI
 const generateInsights = createStep({
-   id: "generate-insights-step",
    description: "Generate competitor insights and priorities using AI analysis",
-   inputSchema: CreateCompetitorInsightsInput,
-   outputSchema: CreateCompetitorInsightsInput.extend({
-      findings: CompetitorFindingsSchema,
-   }),
 
    execute: async ({ inputData, runtimeContext }) => {
       const { organizationId, userId, competitorId } = inputData;
@@ -48,13 +43,13 @@ Focus on specific, actionable intelligence that would be valuable for strategic 
          const result = await competitorIntelligenceAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: CompetitorFindingsSchema,
+               runtimeContext,
             },
          );
 
@@ -68,10 +63,10 @@ Focus on specific, actionable intelligence that would be valuable for strategic 
          }
 
          return {
-            organizationId,
-            userId,
             competitorId,
             findings: result.object,
+            organizationId,
+            userId,
          };
       } catch (err) {
          console.error("Failed to generate competitor insights:", err);
@@ -80,16 +75,16 @@ Focus on specific, actionable intelligence that would be valuable for strategic 
          );
       }
    },
+   id: "generate-insights-step",
+   inputSchema: CreateCompetitorInsightsInput,
+   outputSchema: CreateCompetitorInsightsInput.extend({
+      findings: CompetitorFindingsSchema,
+   }),
 });
 
 // Step 2: Save the insights to competitor table
 const saveInsights = createStep({
-   id: "save-insights-step",
    description: "Save the generated insights to the competitor table",
-   inputSchema: CreateCompetitorInsightsInput.extend({
-      findings: CompetitorFindingsSchema,
-   }),
-   outputSchema: CreateCompetitorInsightsOutput,
 
    execute: async ({ inputData }) => {
       const { competitorId, findings } = inputData;
@@ -102,8 +97,8 @@ const saveInsights = createStep({
          });
 
          return {
-            findings,
             competitorId,
+            findings,
          };
       } catch (err) {
          console.error("Failed to save competitor insights:", err);
@@ -112,12 +107,17 @@ const saveInsights = createStep({
          );
       }
    },
+   id: "save-insights-step",
+   inputSchema: CreateCompetitorInsightsInput.extend({
+      findings: CompetitorFindingsSchema,
+   }),
+   outputSchema: CreateCompetitorInsightsOutput,
 });
 
 export const createCompetitorInsightsWorkflow = createWorkflow({
-   id: "create-competitor-insights",
    description:
       "Generate competitor insights and priorities from competitive analysis",
+   id: "create-competitor-insights",
    inputSchema: CreateCompetitorInsightsInput,
    outputSchema: CreateCompetitorInsightsOutput,
 })

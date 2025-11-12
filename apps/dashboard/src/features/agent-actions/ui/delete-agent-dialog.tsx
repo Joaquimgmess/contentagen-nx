@@ -42,10 +42,10 @@ export function DeleteAgentDialog({
 
    return (
       <DeleteConfirmationCredenza
-         open={open}
-         onOpenChange={onOpenChange}
-         onDelete={handleDelete}
          message={`This will permanently delete the agent "${agentName}" and all associated data from our servers. This action cannot be undone.`}
+         onDelete={handleDelete}
+         onOpenChange={onOpenChange}
+         open={open}
       />
    );
 }

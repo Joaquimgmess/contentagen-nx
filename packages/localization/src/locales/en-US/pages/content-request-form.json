@@ -1,13 +1,7 @@
 {
-   "title": "Content Request",
-   "steps": {
-      "basic-info": "Basic Info",
-      "review-submit": "Review & Submit"
-   },
-   "mascot-messages": {
-      "basic-info": "Let's start by defining what content you'd like to create!",
-      "review-submit": "Perfect! Let's review your content request before submitting!",
-      "default": "Let's create some amazing content!"
+   "actions": {
+      "back": "Back",
+      "next": "Next"
    },
    "basic-info": {
       "headline": {
@@ -18,19 +12,25 @@
          "label": "Layout *"
       }
    },
-   "review-submit": {
-      "headline-label": "Headline of your content",
-      "edit-request": "Edit Request",
-      "editing": "Editing...",
-      "create-request": "Create Request",
-      "creating": "Creating..."
-   },
-   "actions": {
-      "next": "Next",
-      "back": "Back"
+   "mascot-messages": {
+      "basic-info": "Let's start by defining what content you'd like to create!",
+      "default": "Let's create some amazing content!",
+      "review-submit": "Perfect! Let's review your content request before submitting!"
    },
    "messages": {
-      "generation-started": "Content begun generation successfully!",
-      "creation-failed": "Failed to create content"
-   }
+      "creation-failed": "Failed to create content",
+      "generation-started": "Content begun generation successfully!"
+   },
+   "review-submit": {
+      "create-request": "Create Request",
+      "creating": "Creating...",
+      "edit-request": "Edit Request",
+      "editing": "Editing...",
+      "headline-label": "Headline of your content"
+   },
+   "steps": {
+      "basic-info": "Basic Info",
+      "review-submit": "Review & Submit"
+   },
+   "title": "Content Request"
 }

@@ -1,6 +1,6 @@
-import { Polar } from "@polar-sh/sdk";
 import { isProduction } from "@packages/environment/helpers";
 import { AppError } from "@packages/utils/errors";
+import { Polar } from "@polar-sh/sdk";
 export function getPaymentClient(POLAR_ACCESS_TOKEN: string) {
    if (!POLAR_ACCESS_TOKEN) {
       throw AppError.validation("POLAR_ACCESS_TOKEN is required");

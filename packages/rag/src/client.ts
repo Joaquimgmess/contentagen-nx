@@ -13,12 +13,12 @@ export const createPgVector = (
    opts?: PgVectorDatabaseClientOptions,
 ): PgVectorDatabaseInstance => {
    return drizzle({
-      schema,
       casing: "snake_case",
 
       connection: {
          connectionString: opts?.pgVectorURL,
          max: opts?.max,
       },
+      schema,
    });
 };

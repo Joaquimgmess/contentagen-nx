@@ -1,19 +1,19 @@
+import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { spawn } from "node:child_process";
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 
 const program = new Command();
 
 // Colors
 const colors = {
    blue: chalk.blue,
-   green: chalk.green,
-   yellow: chalk.yellow,
-   red: chalk.red,
    cyan: chalk.cyan,
+   green: chalk.green,
    magenta: chalk.magenta,
+   red: chalk.red,
+   yellow: chalk.yellow,
 };
 
 // Database packages
@@ -88,9 +88,9 @@ async function runOnPackages(
             colors.red(`❌ Package directory not found: ${packageDir}`),
          );
          results.push({
+            error: "Directory not found",
             package: packageName,
             success: false,
-            error: "Directory not found",
          });
          continue;
       }
@@ -109,9 +109,9 @@ async function runOnPackages(
             colors.red(`❌ ${packageName} ${action} failed: ${error}`),
          );
          results.push({
+            error: error instanceof Error ? error.message : String(error),
             package: packageName,
             success: false,
-            error: error instanceof Error ? error.message : String(error),
          });
       }
 
@@ -280,9 +280,9 @@ async function checkStatus(
             colors.red(`❌ Package directory not found: ${packageDir}`),
          );
          results.push({
+            error: "Directory not found",
             package: packageName,
             success: false,
-            error: "Directory not found",
          });
          continue;
       }
@@ -329,9 +329,9 @@ async function checkStatus(
             colors.red(`❌ ${packageName} status check failed: ${error}`),
          );
          results.push({
+            error: error instanceof Error ? error.message : String(error),
             package: packageName,
             success: false,
-            error: error instanceof Error ? error.message : String(error),
          });
       }
 

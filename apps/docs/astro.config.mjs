@@ -13,38 +13,38 @@ export default defineConfig({
    integrations: [
       starlight({
          customCss: ["./src/styles/global.css"],
+         description: "Documentation for ContentaGen app",
+         logo: {
+            src: "./src/assets/contentagen-logo.svg",
+         },
          sidebar: [
             {
-               label: "SDK",
                items: [
                   { label: "Overview", link: "/sdk/" },
                   { label: "Setup", link: "/sdk/setup" },
                   { label: "API Reference", link: "/sdk/api" },
                   { label: "Error Handling", link: "/sdk/error-handling" },
                   {
-                     label: "Integrations",
                      items: [
                         { label: "AstroJS", link: "/sdk/integrations/astrojs" },
                      ],
+                     label: "Integrations",
                   },
                ],
+               label: "SDK",
             },
          ],
          title: "ContentaGen",
-         logo: {
-            src: "./src/assets/contentagen-logo.svg",
-         },
-         description: "Documentation for ContentaGen app",
       }),
       mdx(),
    ],
+   output: "static",
 
    site: "https://docs.contentagen.com",
-   output: "static",
    vite: {
+      plugins: [tailwindcss()],
       ssr: {
          noExternal: ["zod"],
       },
-      plugins: [tailwindcss()],
    },
 });

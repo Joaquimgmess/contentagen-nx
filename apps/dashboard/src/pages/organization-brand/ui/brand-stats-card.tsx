@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { StatsCard } from "@packages/ui/components/stats-card";
 import type { RouterOutput } from "@packages/api/client";
+import { StatsCard } from "@packages/ui/components/stats-card";
+import { useMemo } from "react";
 
 interface BrandStatsCardProps {
    brand: RouterOutput["brand"]["getByOrganization"];
@@ -26,13 +26,13 @@ export function BrandStatsCard({ brand }: BrandStatsCardProps) {
          totalFeatures > 0
             ? [
                  {
-                    title: "High Confidence",
                     description: "Features with confidence above 80%",
+                    title: "High Confidence",
                     value: String(highCount),
                  },
                  {
-                    title: "Medium Confidence",
                     description: "Features with confidence between 50-80%",
+                    title: "Medium Confidence",
                     value: String(mediumCount),
                  },
               ]
@@ -43,29 +43,29 @@ export function BrandStatsCard({ brand }: BrandStatsCardProps) {
 
       return [
          {
-            label: "Total Features",
             description: "Total number of features identified for this brand",
+            label: "Total Features",
             value: String(totalFeatures),
          },
          {
-            label: "Average Confidence",
             description:
                "Average confidence score across all extracted features",
-            value: `${avgConfidence}%`,
             details: confidenceDetails,
+            label: "Average Confidence",
+            value: `${avgConfidence}%`,
          },
       ];
    }, [brand?.features]);
 
    return (
-      <div className="w-full gap-4 grid md:grid-cols-2">
+      <div className="grid h-min grid-cols-2 gap-4">
          {items.map((item) => (
             <StatsCard
+               description={item.description}
+               details={item.details}
                key={item.label}
                title={item.label}
-               description={item.description}
                value={item.value}
-               details={item.details}
             />
          ))}
       </div>

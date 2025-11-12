@@ -1,8 +1,8 @@
-import OTPEmail from "./emails/otp";
-import { AppError } from "@packages/utils/errors";
-import OrganizationInvitationEmail from "./emails/organization-invitation";
 import brandConfig from "@packages/brand/index.json";
+import { AppError } from "@packages/utils/errors";
 import { Resend } from "resend";
+import OrganizationInvitationEmail from "./emails/organization-invitation";
+import OTPEmail from "./emails/otp";
 
 export interface SendEmailOTPOptions {
    email: string;
@@ -41,10 +41,10 @@ export const sendOrganizationInvitation = async (
       from: `${brandConfig.name} <support@app.contentagen.com>`,
       react: (
          <OrganizationInvitationEmail
-            invitedByUsername={invitedByUsername}
             invitedByEmail={invitedByEmail}
-            teamName={teamName}
+            invitedByUsername={invitedByUsername}
             inviteLink={inviteLink}
+            teamName={teamName}
          />
       ),
       subject,

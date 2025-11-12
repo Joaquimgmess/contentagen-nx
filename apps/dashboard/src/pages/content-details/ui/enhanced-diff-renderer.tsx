@@ -1,7 +1,7 @@
 import { Badge } from "@packages/ui/components/badge";
 import { ScrollArea } from "@packages/ui/components/scroll-area";
-import { Plus, Minus, GitBranch } from "lucide-react";
 import { cn } from "@packages/ui/lib/utils";
+import { GitBranch, Minus, Plus } from "lucide-react";
 
 interface LineDiffItem {
    type: "add" | "remove" | "context" | "modify";
@@ -84,8 +84,8 @@ export function EnhancedDiffRenderer({
             case "add":
                return (
                   <span
-                     key={`${change.type}-${index}-${change.text}`}
                      className="bg-green-200 dark:bg-green-700 px-0.5 rounded-sm"
+                     key={`${change.type}-${index}-${change.text}`}
                   >
                      {change.text}
                   </span>
@@ -93,8 +93,8 @@ export function EnhancedDiffRenderer({
             case "remove":
                return (
                   <span
-                     key={`${change.type}-${index}-${change.text}`}
                      className="bg-red-200 dark:bg-red-700 px-0.5 rounded-sm line-through"
+                     key={`${change.type}-${index}-${change.text}`}
                   >
                      {change.text}
                   </span>
@@ -111,9 +111,9 @@ export function EnhancedDiffRenderer({
 
    const stats = {
       additions: lineDiff.filter((item) => item.type === "add").length,
+      changes: lineDiff.filter((item) => item.type !== "context").length,
       deletions: lineDiff.filter((item) => item.type === "remove").length,
       modifications: lineDiff.filter((item) => item.type === "modify").length,
-      changes: lineDiff.filter((item) => item.type !== "context").length,
    };
 
    return (
@@ -128,9 +128,9 @@ export function EnhancedDiffRenderer({
                      </span>
                      {changedFields.map((field) => (
                         <Badge
+                           className="text-xs"
                            key={field}
                            variant="secondary"
-                           className="text-xs"
                         >
                            {field}
                         </Badge>

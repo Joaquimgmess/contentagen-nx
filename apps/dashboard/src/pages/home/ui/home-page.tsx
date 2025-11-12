@@ -1,22 +1,22 @@
-import { useMemo } from "react";
+import { translate } from "@packages/localization";
 import { Badge } from "@packages/ui/components/badge";
-import { Markdown } from "@packages/ui/components/markdown";
 import {
-   CardContent,
    Card,
+   CardAction,
+   CardContent,
    CardDescription,
    CardHeader,
    CardTitle,
-   CardAction,
 } from "@packages/ui/components/card";
+import { Markdown } from "@packages/ui/components/markdown";
 import { ScrollArea } from "@packages/ui/components/scroll-area";
-import { translate } from "@packages/localization";
-import { Bot, FileText } from "lucide-react";
-import { StatsCard } from "@packages/ui/components/stats-card";
 import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { Link } from "@tanstack/react-router";
-import { useTRPC } from "@/integrations/clients";
+import { StatsCard } from "@packages/ui/components/stats-card";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Bot, FileText } from "lucide-react";
+import { useMemo } from "react";
+import { useTRPC } from "@/integrations/clients";
 
 export function DashboardHomePage() {
    const trpc = useTRPC();
@@ -40,24 +40,24 @@ export function DashboardHomePage() {
    const statsCards = useMemo(
       () => [
          {
-            title: translate("pages.home.stats-cards.agent-stats.title"),
             description: translate(
                "pages.home.stats-cards.agent-stats.description",
             ),
+            title: translate("pages.home.stats-cards.agent-stats.title"),
             value: data.totalAgents,
          },
          {
-            title: translate("pages.home.stats-cards.words-written.title"),
             description: translate(
                "pages.home.stats-cards.words-written.description",
             ),
+            title: translate("pages.home.stats-cards.words-written.title"),
             value: data.wordCount30d?.toLocaleString() ?? "0",
          },
          {
-            title: translate("pages.home.stats-cards.content-generated.title"),
             description: translate(
                "pages.home.stats-cards.content-generated.description",
             ),
+            title: translate("pages.home.stats-cards.content-generated.title"),
             value: data.contentGenerated,
          },
       ],
@@ -69,9 +69,9 @@ export function DashboardHomePage() {
          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {statsCards.map((card) => (
                <StatsCard
+                  description={card.description}
                   key={card.title}
                   title={card.title}
-                  description={card.description}
                   value={card.value}
                />
             ))}
@@ -173,7 +173,7 @@ export function DashboardHomePage() {
                   {translate("pages.home.navigation.agents")}
                </SquaredIconButton>
             </Link>
-            <Link to="/content" search={{ page: 1 }}>
+            <Link search={{ page: 1 }} to="/content">
                <SquaredIconButton>
                   <FileText className="w-5 h-5" />
                   {translate("pages.home.navigation.content")}

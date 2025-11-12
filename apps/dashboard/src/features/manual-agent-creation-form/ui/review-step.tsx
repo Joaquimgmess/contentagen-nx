@@ -1,9 +1,9 @@
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import { InfoItem } from "@packages/ui/components/info-item";
-import { translate } from "@packages/localization";
-import type { AgentForm } from "../lib/use-agent-form";
-import { UserIcon, FileTextIcon, LayoutGridIcon } from "lucide-react";
 import { formatStringForDisplay } from "@packages/utils/text";
+import { FileTextIcon, LayoutGridIcon, UserIcon } from "lucide-react";
+import type { AgentForm } from "../lib/use-agent-form";
 
 export function ReviewStep({ form }: { form: AgentForm }) {
    // Collect all items with their values
@@ -49,8 +49,8 @@ export function ReviewStep({ form }: { form: AgentForm }) {
          <div className="grid grid-cols-2 gap-4 text-sm">
             {allSingleItems.map((item) => (
                <InfoItem
-                  key={item.label}
                   icon={item.icon}
+                  key={item.label}
                   label={item.label}
                   value={item.value}
                />
@@ -62,8 +62,8 @@ export function ReviewStep({ form }: { form: AgentForm }) {
             <div className="space-y-4">
                {fullWidthItems.map((item) => (
                   <InfoItem
-                     key={item.label}
                      icon={item.icon}
+                     key={item.label}
                      label={item.label}
                      value={item.value}
                   />
@@ -89,7 +89,7 @@ export function ReviewStepSubscribe({
          })}
       >
          {({ canSubmit, isSubmitting }) => (
-            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+            <Button disabled={!canSubmit || isSubmitting} type="submit">
                {isSubmitting
                   ? mode === "edit"
                      ? translate("common.actions.updating")

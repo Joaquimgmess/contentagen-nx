@@ -1,8 +1,8 @@
 import { Agent } from "@mastra/core/agent";
-import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
 import { createToolSystemPrompt } from "../../helpers";
+import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -17,7 +17,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const changelogEditorAgent = new Agent({
-   name: "Changelog Editor",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -74,5 +73,6 @@ Return clean, scannable markdown that:
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Changelog Editor",
    tools: { dateTool },
 });

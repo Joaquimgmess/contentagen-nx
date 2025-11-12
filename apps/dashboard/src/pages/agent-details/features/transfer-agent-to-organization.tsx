@@ -1,9 +1,9 @@
 import { DeleteConfirmationCredenza } from "@packages/ui/components/delete-confirmation-credenza";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Users } from "lucide-react";
+import { useCallback } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "@/integrations/clients";
-import { useCallback } from "react";
-import { Users } from "lucide-react";
 
 type TransferAgentToOrganizationDialogProps = {
    agentId: string;
@@ -46,14 +46,14 @@ export function TransferAgentToOrganizationDialog({
    //TODO: Add translation
    return (
       <DeleteConfirmationCredenza
-         open={open}
-         onOpenChange={onOpenChange}
-         title="Transfer Agent to Organization"
          description="This will transfer ownership of this agent to your active organization. You won't be able to undo this action."
-         message={`Are you sure you want to transfer "${agentName}" to your organization? This action cannot be undone.`}
          icon={Users}
-         variant="default"
+         message={`Are you sure you want to transfer "${agentName}" to your organization? This action cannot be undone.`}
          onDelete={handleTransfer}
+         onOpenChange={onOpenChange}
+         open={open}
+         title="Transfer Agent to Organization"
+         variant="default"
       />
    );
 }

@@ -15,12 +15,12 @@ export function BulkDeleteConfirmationCredenza({
 }: BulkDeleteConfirmationCredenzaProps) {
    return (
       <DeleteConfirmationCredenza
-         open={open}
-         onOpenChange={onOpenChange}
-         onDelete={onConfirm}
          message={`This will permanently delete ${selectedItemsCount} content item${
             selectedItemsCount > 1 ? "s" : ""
          } and all associated data. This action cannot be undone.`}
+         onDelete={onConfirm}
+         onOpenChange={onOpenChange}
+         open={open}
       />
    );
 }

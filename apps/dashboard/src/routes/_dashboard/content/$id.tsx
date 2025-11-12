@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ContentRequestDetailsPage } from "@/pages/content-details/ui/content-request-details-page";
 import { z } from "zod";
+import { ContentRequestDetailsPage } from "@/pages/content-details/ui/content-request-details-page";
 
 const contentDetailsSearchSchema = z.object({
    agentId: z.string().optional(),
@@ -8,6 +8,7 @@ const contentDetailsSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_dashboard/content/$id")({
+   component: ContentRequestDetailsPage,
    loader: async ({ context, params }) => {
       const { trpc, queryClient } = context;
       const { id } = params;
@@ -18,5 +19,4 @@ export const Route = createFileRoute("/_dashboard/content/$id")({
       );
    },
    validateSearch: (search) => contentDetailsSearchSchema.parse(search),
-   component: ContentRequestDetailsPage,
 });

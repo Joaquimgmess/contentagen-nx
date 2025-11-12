@@ -6,11 +6,10 @@ import {
    loggerLink,
    splitLink,
 } from "@trpc/client";
-
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import SuperJSON from "superjson";
 import urlJoin from "url-join";
 import type { AppRouter } from "../server";
-import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 export interface APIClientOptions {
    serverUrl: string;
@@ -30,25 +29,10 @@ export const createTrpcClient = ({
          splitLink({
             // uses the httpSubscriptionLink for subscriptions
             condition: (op) => op.type === "subscription",
-            true: httpSubscriptionLink({
-               url: urlJoin(serverUrl, "/trpc"),
-               transformer: SuperJSON,
-               eventSourceOptions() {
-                  return {
-                     withCredentials: true,
-                  };
-               },
-            }),
             false: splitLink({
                // Use streaming for operations that contain "stream" in the path
                condition: (op) => op.path.includes("stream"),
-               true: httpBatchStreamLink({
-                  url: urlJoin(serverUrl, "/trpc"),
-                  transformer: SuperJSON,
-               }),
                false: httpBatchLink({
-                  url: urlJoin(serverUrl, "/trpc"),
-                  transformer: SuperJSON,
                   fetch(url, options) {
                      const requestHeaders = new Headers(options?.headers);
 
@@ -69,7 +53,8 @@ export const createTrpcClient = ({
                         if (cookie) {
                            requestHeaders.set("cookie", cookie);
                         }
-                        const authorization = incomingHeaders.get("authorization");
+                        const authorization =
+                           incomingHeaders.get("authorization");
                         if (authorization) {
                            requestHeaders.set("authorization", authorization);
                         }
@@ -80,7 +65,22 @@ export const createTrpcClient = ({
                         headers: requestHeaders,
                      });
                   },
+                  transformer: SuperJSON,
+                  url: urlJoin(serverUrl, "/trpc"),
                }),
+               true: httpBatchStreamLink({
+                  transformer: SuperJSON,
+                  url: urlJoin(serverUrl, "/trpc"),
+               }),
+            }),
+            true: httpSubscriptionLink({
+               eventSourceOptions() {
+                  return {
+                     withCredentials: true,
+                  };
+               },
+               transformer: SuperJSON,
+               url: urlJoin(serverUrl, "/trpc"),
             }),
          }),
       ],

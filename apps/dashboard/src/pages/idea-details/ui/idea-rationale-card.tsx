@@ -1,3 +1,5 @@
+import type { IdeaSelect } from "@packages/database/schema";
+import { translate } from "@packages/localization";
 import {
    Card,
    CardContent,
@@ -6,8 +8,6 @@ import {
    CardTitle,
 } from "@packages/ui/components/card";
 import { Markdown } from "@packages/ui/components/markdown";
-import { translate } from "@packages/localization";
-import type { IdeaSelect } from "@packages/database/schema";
 
 interface IdeaRationaleCardProps {
    idea: IdeaSelect;

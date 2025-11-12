@@ -1,29 +1,29 @@
 {
-   "title": "Email Verification",
    "description": "Enter the verification code sent to your email.",
    "form": {
+      "resend": "Resend verification code",
+      "submit": "Submit Code",
       "verification-code": {
          "label": "Verification Code",
          "placeholder": "Enter verification code"
-      },
-      "submit": "Submit Code",
-      "resend": "Resend verification code"
+      }
    },
    "messages": {
-      "success": "Email verified successfully!",
       "error": "Invalid verification code. Please try again.",
-      "resend-success": "Verification code sent successfully!",
-      "resend-error": "Failed to resend verification code. Please try again.",
+      "invalid-otp": "Invalid verification code",
       "loading-send": "Please wait while we send the code...",
       "loading-verify": "Validating the code, please wait...",
+      "resend-error": "Failed to resend verification code. Please try again.",
+      "resend-success": "Verification code sent successfully!",
+      "success": "Email verified successfully!",
       "success-send": "Code sent successfully",
       "success-send-description": "Check your email to continue.",
       "success-verify": "Email verified successfully",
       "success-verify-description": "You will be redirected to login.",
       "unknown-error": "Unknown error",
-      "invalid-otp": "Invalid verification code",
       "verification-error": "An error occurred while verifying the email"
    },
+   "title": "Email Verification",
    "validation": {
       "otp-length": "Enter a 6-digit code"
    }

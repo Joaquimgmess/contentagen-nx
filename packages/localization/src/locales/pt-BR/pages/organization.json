@@ -1,82 +1,82 @@
 {
-   "title": "Gerenciamento de Organização",
-   "mascot-message": "Crie e gerencie sua organização aqui. Convide membros da equipe e controle o acesso.",
-   "details": {
-      "title": "Detalhes da Organização",
-      "description": "Visualize as informações da sua organização e convide novos membros."
-   },
-   "fields": {
-      "name": "Nome",
-      "created-at": "Criado em",
-      "members": "Membros"
-   },
    "actions": {
+      "delete": "Excluir Organização",
       "edit": "Editar Organização",
       "invite-member": "Convidar Membro",
-      "manage-members": "Gerenciar Membros",
-      "delete": "Excluir Organização"
+      "manage-members": "Gerenciar Membros"
    },
-   "members": {
-      "title": "Membros",
-      "invite": "Convidar Novo Membro",
-      "role": "Função",
-      "joined": "Ingressou",
-      "actions": "Ações",
-      "remove": "Remover",
-      "change-role": "Alterar Função"
+   "details": {
+      "description": "Visualize as informações da sua organização e convide novos membros.",
+      "title": "Detalhes da Organização"
    },
-   "roles": {
-      "owner": "Proprietário",
-      "admin": "Administrador",
-      "member": "Membro"
+   "fields": {
+      "created-at": "Criado em",
+      "members": "Membros",
+      "name": "Nome"
    },
    "invitations": {
-      "title": "Convites Pendentes",
-      "email": "Email",
-      "role": "Função",
-      "invited": "Convidado",
       "cancel": "Cancelar",
-      "resend": "Reenviar"
+      "email": "Email",
+      "invited": "Convidado",
+      "resend": "Reenviar",
+      "role": "Função",
+      "title": "Convites Pendentes"
+   },
+   "mascot-message": "Crie e gerencie sua organização aqui. Convide membros da equipe e controle o acesso.",
+   "members": {
+      "actions": "Ações",
+      "change-role": "Alterar Função",
+      "invite": "Convidar Novo Membro",
+      "joined": "Ingressou",
+      "remove": "Remover",
+      "role": "Função",
+      "title": "Membros"
    },
    "messages": {
-      "no-organization": "Nenhuma organização encontrada. Crie uma para continuar.",
-      "no-members": "Nenhum membro encontrado.",
-      "invite-success": "Convite enviado com sucesso!",
       "invite-error": "Falha ao enviar convite. Tente novamente.",
-      "remove-success": "Membro removido com sucesso!",
+      "invite-success": "Convite enviado com sucesso!",
+      "no-members": "Nenhum membro encontrado.",
+      "no-organization": "Nenhuma organização encontrada. Crie uma para continuar.",
       "remove-error": "Falha ao remover membro. Tente novamente.",
-      "update-success": "Organização atualizada com sucesso!",
-      "update-error": "Falha ao atualizar organização. Tente novamente."
+      "remove-success": "Membro removido com sucesso!",
+      "update-error": "Falha ao atualizar organização. Tente novamente.",
+      "update-success": "Organização atualizada com sucesso!"
    },
    "modals": {
+      "delete": {
+         "cancel": "Cancelar",
+         "confirm": "Excluir",
+         "description": "Tem certeza de que deseja excluir esta organização? Esta ação não pode ser desfeita.",
+         "title": "Excluir Organização"
+      },
       "invite": {
-         "title": "Convidar Membro",
+         "cancel": "Cancelar",
          "description": "Digite o endereço de email da pessoa que você deseja convidar como membro.",
          "email-label": "Email",
          "email-placeholder": "Digite o endereço de email",
          "role-label": "Função",
          "send": "Enviar Convite",
-         "cancel": "Cancelar"
+         "title": "Convidar Membro"
       },
       "remove": {
-         "title": "Remover Membro",
-         "description": "Tem certeza de que deseja remover este membro da organização?",
+         "cancel": "Cancelar",
          "confirm": "Remover",
-         "cancel": "Cancelar"
-      },
-      "delete": {
-         "title": "Excluir Organização",
-         "description": "Tem certeza de que deseja excluir esta organização? Esta ação não pode ser desfeita.",
-         "confirm": "Excluir",
-         "cancel": "Cancelar"
+         "description": "Tem certeza de que deseja remover este membro da organização?",
+         "title": "Remover Membro"
       }
    },
-   "toasts": {
-      "invitation-sent": "Convite enviado para {{email}}",
-      "invitation-failed": "Falha ao enviar convite",
-      "invalid-email": "Por favor, digite um email válido"
+   "roles": {
+      "admin": "Administrador",
+      "member": "Membro",
+      "owner": "Proprietário"
    },
    "table": {
       "email": "Email"
+   },
+   "title": "Gerenciamento de Organização",
+   "toasts": {
+      "invalid-email": "Por favor, digite um email válido",
+      "invitation-failed": "Falha ao enviar convite",
+      "invitation-sent": "Convite enviado para {{email}}"
    }
 }

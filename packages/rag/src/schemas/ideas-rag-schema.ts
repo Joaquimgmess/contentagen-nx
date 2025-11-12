@@ -1,11 +1,11 @@
 import {
-   pgTable,
    index,
+   pgEnum,
+   pgTable,
    text,
    timestamp,
    uuid,
    vector,
-   pgEnum,
 } from "drizzle-orm/pg-core";
 
 export const ideaLayoutType = pgEnum("idea_layout_type", [
@@ -17,15 +17,15 @@ export const ideaLayoutType = pgEnum("idea_layout_type", [
 export const ideasRag = pgTable(
    "ideas_rag",
    {
-      id: uuid("id").primaryKey().defaultRandom(),
-      externalId: uuid("external_id").notNull(),
-      title: text("title").notNull(),
-      description: text("description").notNull(),
-      layout: ideaLayoutType("layout").notNull(),
-      embedding: vector("embedding", { dimensions: 1536 }).notNull(),
       createdAt: timestamp("created_at")
          .$defaultFn(() => new Date())
          .notNull(),
+      description: text("description").notNull(),
+      embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+      externalId: uuid("external_id").notNull(),
+      id: uuid("id").primaryKey().defaultRandom(),
+      layout: ideaLayoutType("layout").notNull(),
+      title: text("title").notNull(),
       updatedAt: timestamp("updated_at")
          .$defaultFn(() => new Date())
          .notNull(),

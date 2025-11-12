@@ -1,16 +1,6 @@
-import { useRouter } from "@tanstack/react-router";
-import { Button } from "@packages/ui/components/button";
+import type { ContentSelect } from "@packages/database/schema";
 import { translate } from "@packages/localization";
-import {
-   Edit,
-   Trash2,
-   RotateCcw,
-   CheckCircle,
-   Upload,
-   Share,
-   Lock,
-   Eye,
-} from "lucide-react";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
    CardContent,
@@ -20,17 +10,27 @@ import {
 } from "@packages/ui/components/card";
 import {
    Tooltip,
-   TooltipTrigger,
    TooltipContent,
+   TooltipTrigger,
 } from "@packages/ui/components/tooltip";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
+import {
+   CheckCircle,
+   Edit,
+   Eye,
+   Lock,
+   RotateCcw,
+   Share,
+   Trash2,
+   Upload,
+} from "lucide-react";
 import { useState } from "react";
-import type { ContentSelect } from "@packages/database/schema";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
 import { ContentDeleteConfirmationCredenza } from "../../content-list/features/content-delete-confirmation-credenza";
-import { UploadContentImage } from "./upload-content-image";
 import { BlogPreviewCredenza } from "./blog-preview-credenza";
+import { UploadContentImage } from "./upload-content-image";
 
 export function ContentDetailsQuickActions({
    content,
@@ -48,6 +48,13 @@ export function ContentDetailsQuickActions({
 
    const regenerateMutation = useMutation(
       trpc.content.regenerate.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               translate("pages.content-details.messages.regenerate-error", {
+                  error: error.message ?? "Unknown error",
+               }),
+            );
+         },
          onSuccess: async () => {
             toast.success(
                translate("pages.content-details.messages.regenerate-success"),
@@ -64,18 +71,18 @@ export function ContentDetailsQuickActions({
                }),
             });
          },
-         onError: (error) => {
-            toast.error(
-               translate("pages.content-details.messages.regenerate-error", {
-                  error: error.message ?? "Unknown error",
-               }),
-            );
-         },
       }),
    );
 
    const approveMutation = useMutation(
       trpc.content.approve.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               translate("pages.content-details.messages.approve-error", {
+                  error: error.message ?? "Unknown error",
+               }),
+            );
+         },
          onSuccess: async () => {
             toast.success(
                translate("pages.content-details.messages.approve-success"),
@@ -92,27 +99,11 @@ export function ContentDetailsQuickActions({
                }),
             });
          },
-         onError: (error) => {
-            toast.error(
-               translate("pages.content-details.messages.approve-error", {
-                  error: error.message ?? "Unknown error",
-               }),
-            );
-         },
       }),
    );
 
    const deleteMutation = useMutation(
       trpc.content.delete.mutationOptions({
-         onSuccess: () => {
-            toast.success(
-               translate("pages.content-details.messages.delete-success"),
-            );
-            router.navigate({
-               to: "/content",
-               search: { agentId: content.agentId, page: 1 },
-            });
-         },
          onError: (error) => {
             toast.error(
                translate("pages.content-details.messages.delete-error", {
@@ -120,11 +111,27 @@ export function ContentDetailsQuickActions({
                }),
             );
          },
+         onSuccess: () => {
+            toast.success(
+               translate("pages.content-details.messages.delete-success"),
+            );
+            router.navigate({
+               search: { agentId: content.agentId, page: 1 },
+               to: "/content",
+            });
+         },
       }),
    );
 
    const toggleShareMutation = useMutation(
       trpc.content.toggleShare.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               translate("pages.content-details.messages.share-error", {
+                  error: error.message ?? "Unknown error",
+               }),
+            );
+         },
          onSuccess: async (data) => {
             const status =
                data.shareStatus === "shared"
@@ -141,13 +148,6 @@ export function ContentDetailsQuickActions({
             await queryClient.invalidateQueries({
                queryKey: trpc.content.listAllContent.queryKey(),
             });
-         },
-         onError: (error) => {
-            toast.error(
-               translate("pages.content-details.messages.share-error", {
-                  error: error.message ?? "Unknown error",
-               }),
-            );
          },
       }),
    );
@@ -178,49 +178,49 @@ export function ContentDetailsQuickActions({
 
    const actions: ActionItem[] = [
       {
+         disabled: regenerateMutation.isPending,
          icon: RotateCcw,
          label: translate("pages.content-details.quick-actions.regenerate"),
          onClick: handleRegenerate,
-         disabled: regenerateMutation.isPending,
       },
       {
+         disabled: false,
          icon: Edit,
          label: translate("pages.content-details.quick-actions.edit"),
          onClick: onEditBody,
-         disabled: false,
       },
       {
+         disabled: false,
          icon: Upload,
          label: translate("pages.content-details.quick-actions.upload-image"),
          onClick: () => setUploadImageOpen(true),
-         disabled: false,
       },
       {
+         disabled: false,
          icon: Eye,
          label: translate("pages.content-details.quick-actions.preview"),
          onClick: () => setBlogPreviewOpen(true),
-         disabled: false,
       },
       {
+         disabled: approveMutation.isPending || content.status === "approved",
          icon: CheckCircle,
          label: translate("pages.content-details.quick-actions.approve"),
          onClick: handleApprove,
-         disabled: approveMutation.isPending || content.status === "approved",
       },
       {
+         disabled: toggleShareMutation.isPending,
          icon: content.shareStatus === "shared" ? Lock : Share,
          label:
             content.shareStatus === "shared"
                ? translate("pages.content-details.quick-actions.make-private")
                : translate("pages.content-details.quick-actions.share"),
          onClick: handleToggleShare,
-         disabled: toggleShareMutation.isPending,
       },
       {
+         disabled: false,
          icon: Trash2,
          label: translate("pages.content-details.quick-actions.delete"),
          onClick: () => setDeleteDialogOpen(true),
-         disabled: false,
       },
    ];
 
@@ -240,11 +240,11 @@ export function ContentDetailsQuickActions({
                   <Tooltip key={`content-action-${index + 1}`}>
                      <TooltipTrigger asChild>
                         <Button
+                           className="flex items-center gap-2"
+                           disabled={action.disabled}
+                           onClick={action.onClick}
                            size="icon"
                            variant="outline"
-                           onClick={action.onClick}
-                           disabled={action.disabled}
-                           className="flex items-center gap-2"
                         >
                            <action.icon className="w-4 h-4" />
                         </Button>
@@ -256,24 +256,24 @@ export function ContentDetailsQuickActions({
          </Card>
 
          <ContentDeleteConfirmationCredenza
-            open={deleteDialogOpen}
-            onOpenChange={setDeleteDialogOpen}
             contentTitle={
                content.meta?.title ||
                translate("pages.content-details.messages.untitled-content")
             }
             onConfirm={handleDeleteConfirm}
+            onOpenChange={setDeleteDialogOpen}
+            open={deleteDialogOpen}
          />
 
          <UploadContentImage
             content={content}
-            open={uploadImageOpen}
             onOpenChange={setUploadImageOpen}
+            open={uploadImageOpen}
          />
          <BlogPreviewCredenza
             content={content}
-            open={blogPreviewOpen}
             onOpenChange={setBlogPreviewOpen}
+            open={blogPreviewOpen}
          />
       </>
    );

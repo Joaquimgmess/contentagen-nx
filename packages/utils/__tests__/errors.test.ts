@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { propagateError, validateInput, AppError } from "../src/errors";
+import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { AppError, propagateError, validateInput } from "../src/errors";
 
 describe("error utilities", () => {
    describe("propagateError", () => {
@@ -33,29 +33,29 @@ describe("error utilities", () => {
    describe("validateInput", () => {
       it("should validate input against schema", () => {
          const schema = z.object({
-            name: z.string(),
             age: z.number(),
+            name: z.string(),
          });
 
-         const validInput = { name: "John", age: 30 };
+         const validInput = { age: 30, name: "John" };
          const result = validateInput(schema, validInput);
          expect(result).toEqual(validInput);
       });
 
       it("should throw for invalid input", () => {
          const schema = z.object({
-            name: z.string(),
             age: z.number(),
+            name: z.string(),
          });
 
-         const invalidInput = { name: "John", age: "not-a-number" };
+         const invalidInput = { age: "not-a-number", name: "John" };
          expect(() => validateInput(schema, invalidInput)).toThrow();
       });
 
       it("should handle partial validation", () => {
          const schema = z.object({
-            name: z.string(),
             age: z.number().optional(),
+            name: z.string(),
          });
 
          const partialInput = { name: "John" };

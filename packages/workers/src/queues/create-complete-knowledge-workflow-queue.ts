@@ -1,12 +1,12 @@
-import { Worker, Queue, type Job } from "bullmq";
-import { serverEnv } from "@packages/environment/server";
-import { registerGracefulShutdown, createRedisClient } from "../helpers";
 import {
+   type CustomRuntimeContext,
    mastra,
    setRuntimeContext,
-   type CustomRuntimeContext,
 } from "@packages/agents";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { type Job, Queue, Worker } from "bullmq";
+import { createRedisClient, registerGracefulShutdown } from "../helpers";
 
 export interface CreateCompleteKnowledgeWorkflowJobData {
    websiteUrl: string;
@@ -29,34 +29,33 @@ export async function runCreateCompleteKnowledgeWorkflow(
          .createRunAsync();
 
       const result = await run.start({
-         runtimeContext: setRuntimeContext({
-            language: runtimeContext?.language ?? "en",
-            userId,
-         }),
-
          inputData: {
-            websiteUrl,
-            userId,
             id,
             target,
+            userId,
+            websiteUrl,
          },
+         runtimeContext: setRuntimeContext({
+            language: runtimeContext?.language,
+            userId,
+         }),
       });
 
       return {
-         userId,
          id,
-         websiteUrl,
-         target,
          result,
+         target,
+         userId,
+         websiteUrl,
       };
    } catch (error) {
       console.error("[CreateCompleteKnowledgeWorkflow] WORKFLOW ERROR", {
-         websiteUrl,
-         userId,
-         id,
-         target,
          error: error instanceof Error ? error.message : error,
+         id,
          stack: error instanceof Error && error.stack ? error.stack : undefined,
+         target,
+         userId,
+         websiteUrl,
       });
       propagateError(error);
       throw AppError.internal(

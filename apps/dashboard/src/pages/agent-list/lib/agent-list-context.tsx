@@ -1,12 +1,12 @@
+import type { RouterOutput } from "@packages/api/client";
+import type { ReactNode } from "react";
 import React, {
    createContext,
-   useContext,
-   useState,
    useCallback,
+   useContext,
    useMemo,
+   useState,
 } from "react";
-import type { ReactNode } from "react";
-import type { RouterOutput } from "@packages/api/client";
 
 interface AgentListContextType {
    // Pagination state
@@ -105,26 +105,26 @@ export function AgentListProvider({ children, data }: AgentListProviderProps) {
    }, [selectableItems, allSelected]);
 
    const value: AgentListContextType = {
-      // Pagination
-      page,
-      totalPages,
-      setPage,
-      handlePageChange,
-
-      // Selection
-      selectedItems,
-      handleSelectionChange,
       allSelected,
-      handleSelectAll,
-      selectedItemsCount: selectedItems.size,
 
       // Data
       data,
-      selectableItems,
+      handlePageChange,
+      handleSelectAll,
+      handleSelectionChange,
 
       // Constants
       limit,
+      // Pagination
+      page,
+      selectableItems,
+
+      // Selection
+      selectedItems,
+      selectedItemsCount: selectedItems.size,
+      setPage,
       total: data?.total || 0,
+      totalPages,
    };
 
    return React.createElement(AgentListContext.Provider, { value }, children);

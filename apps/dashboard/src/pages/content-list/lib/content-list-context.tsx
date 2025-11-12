@@ -1,13 +1,13 @@
-import React, {
-   createContext,
-   useContext,
-   useState,
-   useCallback,
-   useMemo,
-} from "react";
-import type { ReactNode } from "react";
 import type { RouterInput, RouterOutput } from "@packages/api/client";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+import React, {
+   createContext,
+   useCallback,
+   useContext,
+   useMemo,
+   useState,
+} from "react";
 
 export type ContentStatuses =
    RouterInput["content"]["listAllContent"]["status"];
@@ -108,9 +108,9 @@ export function ContentListProvider({
    const handlePageChange = useCallback(
       (newPage: number) => {
          navigate({
-            to: "/content",
-            search: (prev) => ({ ...prev, page: newPage }),
             replace: true,
+            search: (prev) => ({ ...prev, page: newPage }),
+            to: "/content",
          });
       },
       [navigate],
@@ -175,35 +175,35 @@ export function ContentListProvider({
    }, []);
 
    const value: ContentListContextType = {
+      agents,
+      allSelectableSelected,
+      allStatuses,
+      clearSelection,
+
+      // Data
+      data,
+      filteredStatuses,
+      handlePageChange,
+      handleSelectAll,
+      handleSelectionChange,
+      hasGeneratingContent,
+
+      // Constants
+      limit,
       // Pagination
       page,
-      totalPages,
-      handlePageChange,
+      selectableItems,
+      selectedAgents,
 
       // Selection
       selectedItems,
-      handleSelectionChange,
-      allSelectableSelected,
-      handleSelectAll,
-      clearSelection,
       selectedItemsCount: selectedItems.size,
 
       // Filtering
       selectedStatuses,
-      selectedAgents,
-      setSelectedStatuses,
       setSelectedAgents,
-
-      // Data
-      data,
-      agents,
-      hasGeneratingContent,
-      selectableItems,
-
-      // Constants
-      limit,
-      allStatuses,
-      filteredStatuses,
+      setSelectedStatuses,
+      totalPages,
    };
 
    return React.createElement(ContentListContext.Provider, { value }, children);

@@ -1,16 +1,16 @@
+import type { RouterOutput } from "@packages/api/client";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
+   CredenzaFooter,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaBody,
-   CredenzaFooter,
-   CredenzaDescription,
 } from "@packages/ui/components/credenza";
 import { ScrollArea } from "@packages/ui/components/scroll-area";
 import { FileText, GitCompare, Minus, Plus } from "lucide-react";
 import { EnhancedDiffRenderer } from "./enhanced-diff-renderer";
-import type { RouterOutput } from "@packages/api/client";
 
 interface VersionDetailsCredenzaProps {
    version: RouterOutput["content"]["versions"]["getVersions"][number];
@@ -28,18 +28,18 @@ export function VersionDetailsCredenza({
    const stats = {
       additions: version.meta?.lineDiff?.filter((item) => item.type === "add")
          .length,
+      changes:
+         version.meta?.lineDiff?.filter((item) => item.type !== "context")
+            .length || 0,
       deletions: version.meta?.lineDiff?.filter(
          (item) => item.type === "remove",
       ).length,
       modifications: version.meta?.lineDiff?.filter(
          (item) => item.type === "modify",
       ).length,
-      changes:
-         version.meta?.lineDiff?.filter((item) => item.type !== "context")
-            .length || 0,
    };
    return (
-      <Credenza open={isOpen} onOpenChange={onClose}>
+      <Credenza onOpenChange={onClose} open={isOpen}>
          <CredenzaContent className="">
             <CredenzaHeader>
                <CredenzaTitle className="">
@@ -65,8 +65,8 @@ export function VersionDetailsCredenza({
                     (version.meta.lineDiff || version.meta.diff) ? (
                      version.meta.lineDiff ? (
                         <EnhancedDiffRenderer
-                           lineDiff={version.meta.lineDiff}
                            changedFields={version.meta.changedFields}
+                           lineDiff={version.meta.lineDiff}
                         />
                      ) : version.meta.diff ? (
                         <ScrollArea className="h-64 w-full border rounded-md p-4 bg-muted/20">
@@ -96,8 +96,8 @@ export function VersionDetailsCredenza({
 
                                     return (
                                        <div
-                                          key={`changes-${index + 1}`}
                                           className={className}
+                                          key={`changes-${index + 1}`}
                                        >
                                           {prefix}
                                           {text}

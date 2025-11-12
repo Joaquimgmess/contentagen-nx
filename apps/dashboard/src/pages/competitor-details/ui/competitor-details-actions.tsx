@@ -1,32 +1,32 @@
+import type { RouterOutput } from "@packages/api/client";
+import { translate } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
    CardContent,
+   CardDescription,
    CardHeader,
    CardTitle,
-   CardDescription,
 } from "@packages/ui/components/card";
-import { Button } from "@packages/ui/components/button";
-import {
-   ExternalLink,
-   RefreshCw,
-   Edit,
-   Trash,
-   Upload,
-   Brain,
-} from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
-import { createToast } from "@/features/error-modal/lib/create-toast";
 import {
    Tooltip,
-   TooltipTrigger,
    TooltipContent,
+   TooltipTrigger,
 } from "@packages/ui/components/tooltip";
-import { CreateEditCompetitorDialog } from "../../competitor-list/features/create-edit-competitor-dialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+   Brain,
+   Edit,
+   ExternalLink,
+   RefreshCw,
+   Trash,
+   Upload,
+} from "lucide-react";
 import { useState } from "react";
+import { createToast } from "@/features/error-modal/lib/create-toast";
+import { useTRPC } from "@/integrations/clients";
+import { CreateEditCompetitorDialog } from "../../competitor-list/features/create-edit-competitor-dialog";
 import { DeleteCompetitorConfirmationDialog } from "../../competitor-list/features/delete-competitor-confirmation-dialog";
-import type { RouterOutput } from "@packages/api/client";
-import { translate } from "@packages/localization";
 
 interface CompetitorDetailsActionsProps {
    competitor: RouterOutput["competitor"]["list"]["items"][number];
@@ -44,26 +44,26 @@ export function CompetitorDetailsActions({
 
    const analyzeMutation = useMutation(
       trpc.competitor.analyze.mutationOptions({
-         onSuccess: () => {
-            createToast({
-               type: "success",
-               message: translate(
-                  "pages.competitor-details.messages.analysis-started",
-               ),
-            });
-            queryClient.invalidateQueries({
-               queryKey: trpc.competitor.get.queryKey({ id: competitor.id }),
-            });
-         },
          onError: (error) => {
             createToast({
-               type: "danger",
                message: translate(
                   "pages.competitor-details.messages.analysis-error",
                   {
                      error: error.message ?? "Unknown error",
                   },
                ),
+               type: "danger",
+            });
+         },
+         onSuccess: () => {
+            createToast({
+               message: translate(
+                  "pages.competitor-details.messages.analysis-started",
+               ),
+               type: "success",
+            });
+            queryClient.invalidateQueries({
+               queryKey: trpc.competitor.get.queryKey({ id: competitor.id }),
             });
          },
       }),
@@ -71,19 +71,19 @@ export function CompetitorDetailsActions({
 
    const generateFindingsMutation = useMutation(
       trpc.competitor.generateInsights.mutationOptions({
+         onError: (error) => {
+            createToast({
+               message: `Error generating findings: ${error.message ?? "Unknown error"}`,
+               type: "danger",
+            });
+         },
          onSuccess: () => {
             createToast({
-               type: "success",
                message: "Findings generation started!",
+               type: "success",
             });
             queryClient.invalidateQueries({
                queryKey: trpc.competitor.get.queryKey({ id: competitor.id }),
-            });
-         },
-         onError: (error) => {
-            createToast({
-               type: "danger",
-               message: `Error generating findings: ${error.message ?? "Unknown error"}`,
             });
          },
       }),
@@ -103,14 +103,15 @@ export function CompetitorDetailsActions({
 
    const actions = [
       {
+         disabled: false,
          icon: ExternalLink,
          label: translate(
             "pages.competitor-details.actions.buttons.visit-website",
          ),
          onClick: handleVisitWebsite,
-         disabled: false,
       },
       {
+         disabled: analyzeMutation.isPending,
          icon: RefreshCw,
          label: analyzeMutation.isPending
             ? translate("pages.competitor-details.actions.buttons.analyzing")
@@ -118,39 +119,38 @@ export function CompetitorDetailsActions({
                  "pages.competitor-details.actions.buttons.refresh-analysis",
               ),
          onClick: handleAnalyze,
-         disabled: analyzeMutation.isPending,
       },
       {
+         disabled: generateFindingsMutation.isPending,
          icon: Brain,
          label: generateFindingsMutation.isPending
             ? "Generating..."
             : "Generate Findings",
          onClick: handleGenerateFindings,
-         disabled: generateFindingsMutation.isPending,
       },
       {
+         disabled: !onLogoUpload,
          icon: Upload,
          label: translate(
             "pages.competitor-details.actions.buttons.upload-logo",
          ),
          onClick: onLogoUpload,
-         disabled: !onLogoUpload,
       },
       {
+         disabled: false,
          icon: Edit,
          label: translate(
             "pages.competitor-details.actions.buttons.edit-competitor",
          ),
          onClick: () => setShowEditDialog(true),
-         disabled: false,
       },
       {
+         disabled: false,
          icon: Trash,
          label: translate(
             "pages.competitor-details.actions.buttons.delete-competitor",
          ),
          onClick: () => setShowDeleteDialog(true),
-         disabled: false,
       },
    ];
 
@@ -172,10 +172,10 @@ export function CompetitorDetailsActions({
                   <Tooltip key={`competitor-action-${index + 1}`}>
                      <TooltipTrigger asChild>
                         <Button
+                           disabled={action.disabled}
+                           onClick={action.onClick}
                            size="icon"
                            variant="outline"
-                           onClick={action.onClick}
-                           disabled={action.disabled}
                         >
                            <action.icon />
                         </Button>
@@ -188,14 +188,14 @@ export function CompetitorDetailsActions({
 
          <CreateEditCompetitorDialog
             competitor={competitor}
-            open={showEditDialog}
             onOpenChange={setShowEditDialog}
+            open={showEditDialog}
          />
 
          <DeleteCompetitorConfirmationDialog
             competitor={competitor}
-            open={showDeleteDialog}
             onOpenChange={setShowDeleteDialog}
+            open={showDeleteDialog}
          />
       </>
    );

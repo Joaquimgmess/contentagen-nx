@@ -1,6 +1,6 @@
+import i18n from "@packages/localization";
 import posthog from "posthog-js";
 import { toast } from "sonner";
-import i18n from "@packages/localization";
 
 type OpenErrorModalFn = (params: {
    title: string;
@@ -30,7 +30,7 @@ export function createToast({
    }
 
    if (type === "warning") {
-      toast.warning(message, { position: "top-center", duration });
+      toast.warning(message, { duration, position: "top-center" });
       return;
    }
 
@@ -45,16 +45,16 @@ export function createToast({
    }
 
    posthog.capture("error-toast-opened", {
-      title: title,
       description: message,
+      title: title,
    });
 
    if (globalOpenErrorModal) {
       globalOpenErrorModal({
-         title: title || i18n.t("common.errorModal.title"),
          description: message,
+         title: title || i18n.t("common.errorModal.title"),
       });
    } else {
-      toast.error(message, { position: "top-center", duration });
+      toast.error(message, { duration, position: "top-center" });
    }
 }

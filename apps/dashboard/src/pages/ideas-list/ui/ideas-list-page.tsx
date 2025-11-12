@@ -1,11 +1,11 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import type { RouterOutput } from "@packages/api/client";
 import { translate } from "@packages/localization";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/integrations/clients";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { IdeasListProvider, useIdeasList } from "../lib/ideas-list-context";
 import { IdeaCard } from "./idea-card";
 import { IdeasListToolbar } from "./ideas-list-toolbar";
-import { IdeasListProvider, useIdeasList } from "../lib/ideas-list-context";
-import { useTRPC } from "@/integrations/clients";
-import type { RouterOutput } from "@packages/api/client";
 
 interface IdeasListPageProps {
    agentId?: string;
@@ -20,9 +20,9 @@ function IdeasListPageContent() {
       : translate("pages.ideas-list.mascot-message.general");
 
    const queryOptions = trpc.ideas.listAllIdeas.queryOptions({
-      page,
-      limit,
       agentId,
+      limit,
+      page,
    });
 
    const { data } = useSuspenseQuery(queryOptions);
@@ -36,7 +36,7 @@ function IdeasListPageContent() {
                (
                   item: RouterOutput["ideas"]["listAllIdeas"]["items"][number],
                ) => (
-                  <IdeaCard key={item.id} idea={item} />
+                  <IdeaCard idea={item} key={item.id} />
                ),
             )}
          </div>
@@ -50,13 +50,13 @@ export function IdeasListPage({ agentId }: IdeasListPageProps) {
    const { data } = useSuspenseQuery(
       trpc.ideas.listAllIdeas.queryOptions({
          agentId: agentId ?? "",
-         page: 1,
          limit: 8,
+         page: 1,
       }),
    );
 
    return (
-      <IdeasListProvider data={data} agentId={agentId}>
+      <IdeasListProvider agentId={agentId} data={data}>
          <IdeasListPageContent />
       </IdeasListProvider>
    );

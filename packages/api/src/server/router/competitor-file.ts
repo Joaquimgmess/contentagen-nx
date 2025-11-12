@@ -1,13 +1,17 @@
-import { listFiles, uploadFile } from "@packages/files/client";
-import { compressImage } from "@packages/files/image-helper";
-import { z } from "zod";
-import { protectedProcedure, router, organizationProcedure } from "../trpc";
 import {
-   updateCompetitor,
    getCompetitorById,
+   updateCompetitor,
 } from "@packages/database/repositories/competitor-repository";
-import { getFile, streamFileForProxy } from "@packages/files/client";
+import {
+   getFile,
+   listFiles,
+   streamFileForProxy,
+   uploadFile,
+} from "@packages/files/client";
+import { compressImage } from "@packages/files/image-helper";
 import { deleteAllCompetitorKnowledgeByExternalIdAndType } from "@packages/rag/repositories/competitor-knowledge-repository";
+import { z } from "zod";
+import { organizationProcedure, protectedProcedure, router } from "../trpc";
 
 const CompetitorFileDeleteInput = z.object({
    fileName: z.string(),
@@ -15,85 +19,12 @@ const CompetitorFileDeleteInput = z.object({
 
 const CompetitorLogoUploadInput = z.object({
    competitorId: z.uuid(),
-   fileName: z.string(),
-   fileBuffer: z.base64(), // base64 encoded
    contentType: z.string(),
+   fileBuffer: z.base64(), // base64 encoded
+   fileName: z.string(),
 });
 
 export const competitorFileRouter = router({
-   uploadLogo: organizationProcedure
-      .input(CompetitorLogoUploadInput)
-      .mutation(async ({ ctx, input }) => {
-         const { competitorId, fileName, fileBuffer } = input;
-
-         // Get current competitor to check for existing logo
-         const db = (await ctx).db;
-         const currentCompetitor = await getCompetitorById(db, competitorId);
-
-         // Delete old logo if it exists
-         if (currentCompetitor?.logoPhoto) {
-            try {
-               const bucketName = (await ctx).minioBucket;
-               const minioClient = (await ctx).minioClient;
-               await minioClient.removeObject(
-                  bucketName,
-                  currentCompetitor.logoPhoto,
-               );
-            } catch (error) {
-               console.error("Error deleting old logo:", error);
-               // Continue with upload even if deletion fails
-            }
-         }
-
-         const key = `${competitorId}/logo/${fileName}`;
-         const buffer = Buffer.from(fileBuffer, "base64");
-
-         // Compress the image
-         const compressedBuffer = await compressImage(buffer, {
-            format: "webp",
-            quality: 80,
-         });
-
-         const bucketName = (await ctx).minioBucket;
-         const minioClient = (await ctx).minioClient;
-         // Upload to S3/Minio
-         const url = await uploadFile(
-            key,
-            compressedBuffer,
-            "image/webp",
-            bucketName,
-            minioClient,
-         );
-         // Update competitor logoPath
-         await updateCompetitor(db, competitorId, { logoPhoto: key });
-         return { url };
-      }),
-
-   getFileContent: protectedProcedure
-      .input(z.object({ competitorId: z.uuid(), fileName: z.string() }))
-      .query(async ({ ctx, input }) => {
-         const minioClient = (await ctx).minioClient;
-         const bucketName = (await ctx).minioBucket;
-         const key = `${input.competitorId}/${input.fileName}`;
-         const stream = await getFile(key, bucketName, minioClient);
-         const chunks: Buffer[] = [];
-         for await (const chunk of stream) {
-            chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-         }
-         const content = Buffer.concat(chunks).toString("utf-8");
-         return { content };
-      }),
-
-   listCompetitorFiles: protectedProcedure
-      .input(z.object({ competitorId: z.uuid() }))
-      .query(async ({ ctx, input }) => {
-         const minioClient = (await ctx).minioClient;
-         const bucketName = (await ctx).minioBucket;
-         const prefix = `${input.competitorId}/`;
-         const files = await listFiles(bucketName, prefix, minioClient);
-         return { files };
-      }),
-
    delete: protectedProcedure
       .input(
          z.object({ competitorId: z.uuid() }).and(CompetitorFileDeleteInput),
@@ -146,7 +77,7 @@ export const competitorFileRouter = router({
             : [];
 
          if (uploadedFiles.length === 0) {
-            return { success: true, message: "No files to delete" };
+            return { message: "No files to delete", success: true };
          }
 
          // Delete files from MinIO bucket
@@ -179,9 +110,24 @@ export const competitorFileRouter = router({
          });
 
          return {
-            success: true,
             message: `Successfully deleted ${uploadedFiles.length} files`,
+            success: true,
          };
+      }),
+
+   getFileContent: protectedProcedure
+      .input(z.object({ competitorId: z.uuid(), fileName: z.string() }))
+      .query(async ({ ctx, input }) => {
+         const minioClient = (await ctx).minioClient;
+         const bucketName = (await ctx).minioBucket;
+         const key = `${input.competitorId}/${input.fileName}`;
+         const stream = await getFile(key, bucketName, minioClient);
+         const chunks: Buffer[] = [];
+         for await (const chunk of stream) {
+            chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+         }
+         const content = Buffer.concat(chunks).toString("utf-8");
+         return { content };
       }),
 
    getLogo: protectedProcedure
@@ -207,12 +153,69 @@ export const competitorFileRouter = router({
             );
             const base64 = buffer.toString("base64");
             return {
-               data: `data:${contentType};base64,${base64}`,
                contentType,
+               data: `data:${contentType};base64,${base64}`,
             };
          } catch (error) {
             console.error("Error fetching logo:", error);
             return null;
          }
+      }),
+
+   listCompetitorFiles: protectedProcedure
+      .input(z.object({ competitorId: z.uuid() }))
+      .query(async ({ ctx, input }) => {
+         const minioClient = (await ctx).minioClient;
+         const bucketName = (await ctx).minioBucket;
+         const prefix = `${input.competitorId}/`;
+         const files = await listFiles(bucketName, prefix, minioClient);
+         return { files };
+      }),
+   uploadLogo: organizationProcedure
+      .input(CompetitorLogoUploadInput)
+      .mutation(async ({ ctx, input }) => {
+         const { competitorId, fileName, fileBuffer } = input;
+
+         // Get current competitor to check for existing logo
+         const db = (await ctx).db;
+         const currentCompetitor = await getCompetitorById(db, competitorId);
+
+         // Delete old logo if it exists
+         if (currentCompetitor?.logoPhoto) {
+            try {
+               const bucketName = (await ctx).minioBucket;
+               const minioClient = (await ctx).minioClient;
+               await minioClient.removeObject(
+                  bucketName,
+                  currentCompetitor.logoPhoto,
+               );
+            } catch (error) {
+               console.error("Error deleting old logo:", error);
+               // Continue with upload even if deletion fails
+            }
+         }
+
+         const key = `${competitorId}/logo/${fileName}`;
+         const buffer = Buffer.from(fileBuffer, "base64");
+
+         // Compress the image
+         const compressedBuffer = await compressImage(buffer, {
+            format: "webp",
+            quality: 80,
+         });
+
+         const bucketName = (await ctx).minioBucket;
+         const minioClient = (await ctx).minioClient;
+         // Upload to S3/Minio
+         const url = await uploadFile(
+            key,
+            compressedBuffer,
+            "image/webp",
+            bucketName,
+            minioClient,
+         );
+         // Update competitor logoPath
+         await updateCompetitor(db, competitorId, { logoPhoto: key });
+         return { url };
       }),
 });

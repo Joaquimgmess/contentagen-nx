@@ -1,12 +1,12 @@
+import { AppError, propagateError } from "@packages/utils/errors";
+import { and, cosineDistance, desc, eq, gt, sql } from "drizzle-orm";
+import type { PgVectorDatabaseInstance } from "../client";
+import { createEmbedding } from "../helpers";
 import {
-   relatedSlugs,
    type RelatedSlugs,
    type RelatedSlugsInsert,
+   relatedSlugs,
 } from "../schemas/related-slugs-schema";
-import { eq, desc, sql, gt, cosineDistance, and } from "drizzle-orm";
-import type { PgVectorDatabaseInstance } from "../client";
-import { AppError, propagateError } from "@packages/utils/errors";
-import { createEmbedding } from "../helpers";
 
 async function createRelatedSlugs(
    dbClient: PgVectorDatabaseInstance,
@@ -127,12 +127,12 @@ async function searchRelatedSlugsByCosineSimilarity(
 
       const result = await dbClient.query.relatedSlugs.findMany({
          columns: { slug: true },
+         limit,
+         orderBy: [desc(similarity)],
          where: and(
             gt(similarity, similarityThreshold),
             eq(relatedSlugs.externalId, externalId),
          ),
-         orderBy: [desc(similarity)],
-         limit,
       });
 
       return result;

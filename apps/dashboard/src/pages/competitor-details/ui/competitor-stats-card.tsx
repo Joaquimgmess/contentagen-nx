@@ -1,9 +1,9 @@
-import { useMemo } from "react";
+import { translate } from "@packages/localization";
 import { StatsCard } from "@packages/ui/components/stats-card";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
 import { useParams } from "@tanstack/react-router";
-import { translate } from "@packages/localization";
+import { useMemo } from "react";
+import { useTRPC } from "@/integrations/clients";
 
 export function CompetitorStatsCard() {
    const trpc = useTRPC();
@@ -35,20 +35,20 @@ export function CompetitorStatsCard() {
          totalFeatures > 0
             ? [
                  {
-                    title: translate(
-                       "pages.competitor-details.stats.high-confidence",
-                    ),
                     description: translate(
                        "pages.competitor-details.stats.high-confidence-description",
+                    ),
+                    title: translate(
+                       "pages.competitor-details.stats.high-confidence",
                     ),
                     value: String(highCount),
                  },
                  {
-                    title: translate(
-                       "pages.competitor-details.stats.medium-confidence",
-                    ),
                     description: translate(
                        "pages.competitor-details.stats.medium-confidence-description",
+                    ),
+                    title: translate(
+                       "pages.competitor-details.stats.medium-confidence",
                     ),
                     value: String(mediumCount),
                  },
@@ -60,21 +60,21 @@ export function CompetitorStatsCard() {
 
       return [
          {
-            label: translate("pages.competitor-details.stats.total-features"),
             description: translate(
                "pages.competitor-details.stats.total-features-description",
             ),
+            label: translate("pages.competitor-details.stats.total-features"),
             value: String(totalFeatures),
          },
          {
-            label: translate(
-               "pages.competitor-details.stats.average-confidence",
-            ),
             description: translate(
                "pages.competitor-details.stats.average-confidence-description",
             ),
-            value: `${avgConfidence}%`,
             details: confidenceDetails,
+            label: translate(
+               "pages.competitor-details.stats.average-confidence",
+            ),
+            value: `${avgConfidence}%`,
          },
       ];
    }, [competitor?.features]);
@@ -83,11 +83,11 @@ export function CompetitorStatsCard() {
       <div className="w-full gap-4 grid md:grid-cols-2">
          {items.map((item) => (
             <StatsCard
+               description={item.description}
+               details={item.details}
                key={item.label}
                title={item.label}
-               description={item.description}
                value={item.value}
-               details={item.details}
             />
          ))}
       </div>

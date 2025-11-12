@@ -1,14 +1,22 @@
-import { protectedProcedure, publicProcedure, router } from "../trpc";
 import {
    getTotalAgents,
    listAgents,
 } from "@packages/database/repositories/agent-repository";
-import { getContentStatsLast30Days } from "@packages/database/repositories/content-repository";
 import { isOrganizationOwner } from "@packages/database/repositories/auth-repository";
+import { getContentStatsLast30Days } from "@packages/database/repositories/content-repository";
 import { getCustomerState } from "@packages/payment/ingestion";
 import { APIError, propagateError } from "@packages/utils/errors";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const authHelpersRouter = router({
+   getActiveSubscription: protectedProcedure.query(async ({ ctx }) => {
+      const resolvedCtx = await ctx;
+      const customer = await resolvedCtx.auth.api.state({
+         headers: resolvedCtx.headers,
+      });
+      const activeSubscription = customer.activeSubscriptions[0] || null;
+      return activeSubscription;
+   }),
    getApiKeys: protectedProcedure.query(async ({ ctx }) => {
       const resolvedCtx = await ctx;
       const apiKeys = await resolvedCtx.auth.api.listApiKeys({
@@ -16,12 +24,74 @@ export const authHelpersRouter = router({
       });
       return apiKeys;
    }),
-   getDefaultOrganization: protectedProcedure.query(async ({ ctx }) => {
+   getBillingInfo: protectedProcedure.query(async ({ ctx }) => {
       const resolvedCtx = await ctx;
-      const organization = await resolvedCtx.auth.api.getFullOrganization({
+      const userId = resolvedCtx.session?.user.id;
+      const organizationId = resolvedCtx.session?.session?.activeOrganizationId;
+
+      if (!userId) {
+         throw APIError.unauthorized("User not authenticated");
+      }
+
+      // Get customer state
+      const customerState = await resolvedCtx.auth.api.state({
          headers: resolvedCtx.headers,
       });
-      return organization;
+
+      // Get active subscription
+      const activeSubscription = customerState.activeSubscriptions[0] || null;
+
+      // Determine billing state
+      if (!organizationId) {
+         // User is not in an organization
+         return {
+            activeSubscription,
+            billingState: activeSubscription
+               ? "active_subscription"
+               : "no_subscription",
+            customerState,
+            isOrganizationOwner: true,
+            organization: null,
+         };
+      }
+
+      // User is in an organization
+      const isOwner = await isOrganizationOwner(
+         resolvedCtx.db,
+         userId,
+         organizationId,
+      );
+
+      // Get organization details
+      const organization = await resolvedCtx.db.query.organization.findFirst({
+         columns: {
+            id: true,
+            name: true,
+         },
+         where: (org, { eq }) => eq(org.id, organizationId),
+      });
+
+      if (isOwner) {
+         // User is organization owner
+         return {
+            activeSubscription,
+            billingState: activeSubscription
+               ? "active_subscription"
+               : "no_subscription",
+            customerState,
+            isOrganizationOwner: true,
+            organization,
+         };
+      } else {
+         // User is organization member, billing is managed by organization
+         return {
+            activeSubscription: null, // Organization members don't have direct subscriptions
+            billingState: "organization_member",
+            customerState,
+            isOrganizationOwner: false,
+            organization,
+         };
+      }
    }),
    getCustomerState: protectedProcedure.query(async ({ ctx }) => {
       const resolvedCtx = await ctx;
@@ -30,9 +100,12 @@ export const authHelpersRouter = router({
       });
       return customer;
    }),
-   getSession: publicProcedure.query(async ({ ctx }) => {
+   getDefaultOrganization: protectedProcedure.query(async ({ ctx }) => {
       const resolvedCtx = await ctx;
-      return resolvedCtx.session;
+      const organization = await resolvedCtx.auth.api.getFullOrganization({
+         headers: resolvedCtx.headers,
+      });
+      return organization;
    }),
    getHomeStats: protectedProcedure.query(async ({ ctx }) => {
       const resolvedCtx = await ctx;
@@ -41,12 +114,12 @@ export const authHelpersRouter = router({
       const organizationId = resolvedCtx.session?.session?.activeOrganizationId;
       // Get agents for user/org
       const totalAgents = await getTotalAgents(db, {
-         userId,
          organizationId: organizationId ?? "",
+         userId,
       });
       const agents = await listAgents(db, {
-         userId,
          organizationId: organizationId ?? "",
+         userId,
       });
       const agentIds = agents.map((a) => a.id);
       // Get content stats for last 30 days
@@ -55,10 +128,14 @@ export const authHelpersRouter = router({
          "draft",
       ]);
       return {
+         contentGenerated: contentStats.count,
          totalAgents,
          wordCount30d: contentStats.wordsCount,
-         contentGenerated: contentStats.count,
       };
+   }),
+   getSession: publicProcedure.query(async ({ ctx }) => {
+      const resolvedCtx = await ctx;
+      return resolvedCtx.session;
    }),
    isOrganizationOwner: protectedProcedure.query(async ({ ctx }) => {
       const resolvedCtx = await ctx;

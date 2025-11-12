@@ -1,7 +1,7 @@
 import { createTool } from "@mastra/core/tools";
-import { serverEnv } from "@packages/environment/server";
 import { createDb } from "@packages/database/client";
 import { getAgentById } from "@packages/database/repositories/agent-repository";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
 export function getWritingGuidelinesInstructions(): string {
    return `
@@ -15,7 +15,6 @@ Retrieves specific writing rules, style preferences, and formatting requirements
 `;
 }
 export const getWritingGuidelinesTool = createTool({
-   id: "get-writing-guidelines",
    description: "Retrieve the writing guidelines for content creation",
    execute: async ({ runtimeContext }) => {
       if (!runtimeContext.has("agentId")) {
@@ -44,4 +43,5 @@ export const getWritingGuidelinesTool = createTool({
          );
       }
    },
+   id: "get-writing-guidelines",
 });

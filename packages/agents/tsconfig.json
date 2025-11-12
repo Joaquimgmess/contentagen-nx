@@ -1,7 +1,7 @@
 {
+   "exclude": ["node_modules"],
    "extends": "@tooling/typescript/internal-package.json",
    "include": ["src"],
-   "exclude": ["node_modules"],
    "references": [
       {
          "path": "../server-events"

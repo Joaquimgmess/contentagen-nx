@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
    DropdownMenu,
@@ -6,14 +6,14 @@ import {
    DropdownMenuItem,
    DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
-import { translate } from "@packages/localization";
 import {
+   CheckSquare,
    ChevronLeft,
    ChevronRight,
    MoreVertical,
-   CheckSquare,
    PlusIcon,
 } from "lucide-react";
+import React, { useMemo, useState } from "react";
 import { CreateEditCompetitorDialog } from "../features/create-edit-competitor-dialog";
 import { useCompetitorList } from "../lib/competitor-list-context";
 
@@ -32,15 +32,15 @@ export function CompetitorListToolbar() {
    const actions = useMemo(
       () => [
          {
+            icon: CheckSquare,
             label: allSelectableSelected
                ? translate("pages.competitor-list.toolbar.unselect-all")
                : translate("pages.competitor-list.toolbar.select-all"),
-            icon: CheckSquare,
             onClick: handleSelectAll,
          },
          {
-            label: translate("pages.competitor-list.toolbar.new-competitor"),
             icon: PlusIcon,
+            label: translate("pages.competitor-list.toolbar.new-competitor"),
             onClick: () => setShowCreateDialog(true),
          },
       ],
@@ -53,10 +53,10 @@ export function CompetitorListToolbar() {
          <div className="flex items-center justify-between gap-4 p-4 bg-background border rounded-lg shadow-sm">
             <div className="flex items-center gap-2">
                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handlePageChange(page - 1)}
                   disabled={page === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                  size="icon"
+                  variant="outline"
                >
                   <ChevronLeft className="h-4 w-4" />
                </Button>
@@ -67,10 +67,10 @@ export function CompetitorListToolbar() {
                </span>
 
                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handlePageChange(page + 1)}
                   disabled={page === totalPages}
+                  onClick={() => handlePageChange(page + 1)}
+                  size="icon"
+                  variant="outline"
                >
                   <ChevronRight className="h-4 w-4" />
                </Button>
@@ -86,16 +86,16 @@ export function CompetitorListToolbar() {
 
             <DropdownMenu>
                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button size="icon" variant="outline">
                      <MoreVertical className="h-4 w-4" />
                   </Button>
                </DropdownMenuTrigger>
                <DropdownMenuContent align="start">
                   {actions.map((action) => (
                      <DropdownMenuItem
+                        className="flex gap-2"
                         key={action.label}
                         onClick={action.onClick}
-                        className="flex gap-2"
                      >
                         {action.icon &&
                            React.createElement(action.icon, {
@@ -109,8 +109,8 @@ export function CompetitorListToolbar() {
          </div>
 
          <CreateEditCompetitorDialog
-            open={showCreateDialog}
             onOpenChange={setShowCreateDialog}
+            open={showCreateDialog}
          />
       </>
    );

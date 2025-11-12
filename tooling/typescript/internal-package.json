@@ -1,14 +1,14 @@
 {
    "$schema": "https://json.schemastore.org/tsconfig",
-   "extends": "./base.json",
    "compilerOptions": {
-      "lib": ["dom", "ES2022"],
       "composite": true,
       "declaration": true,
       "declarationMap": true,
-      "sourceMap": true,
       "emitDeclarationOnly": true,
+      "lib": ["dom", "ES2022"],
       "noEmit": false,
-      "outDir": "${configDir}/dist"
-   }
+      "outDir": "${configDir}/dist",
+      "sourceMap": true
+   },
+   "extends": "./base.json"
 }

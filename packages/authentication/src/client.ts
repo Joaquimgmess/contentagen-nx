@@ -1,4 +1,3 @@
-import { createAuthClient as createBetterAuthClient } from "better-auth/react";
 import { polarClient } from "@polar-sh/better-auth";
 import {
    adminClient,
@@ -6,6 +5,7 @@ import {
    emailOTPClient,
    organizationClient,
 } from "better-auth/client/plugins";
+import { createAuthClient as createBetterAuthClient } from "better-auth/react";
 
 export interface AuthClientOptions {
    apiBaseUrl: string;

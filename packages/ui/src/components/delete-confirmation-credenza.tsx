@@ -10,8 +10,8 @@ import {
    CredenzaHeader,
    CredenzaTitle,
 } from "@packages/ui/components/credenza";
-import { AlertTriangleIcon } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { AlertTriangleIcon } from "lucide-react";
 
 interface DeleteConfirmationCredenzaProps {
    open?: boolean;
@@ -45,7 +45,7 @@ const DeleteConfirmationCredenza = ({
    };
 
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>Confirmation Needed</CredenzaTitle>
@@ -55,17 +55,17 @@ const DeleteConfirmationCredenza = ({
             </CredenzaHeader>
             <CredenzaBody className="grid gap-4 place-items-center text-center ">
                <Icon className="h-12 w-12" />
-               <Alert variant={variant} className="font-semibold">
+               <Alert className="font-semibold" variant={variant}>
                   <AlertDescription>{message}</AlertDescription>
                </Alert>
             </CredenzaBody>
             <CredenzaFooter className="grid grid-cols-2 gap-2">
                <CredenzaClose asChild>
-                  <Button variant="outline" onClick={handleCancel}>
+                  <Button onClick={handleCancel} variant="outline">
                      Cancel
                   </Button>
                </CredenzaClose>
-               <Button variant={variant} onClick={handleDelete}>
+               <Button onClick={handleDelete} variant={variant}>
                   Confirm
                </Button>
             </CredenzaFooter>

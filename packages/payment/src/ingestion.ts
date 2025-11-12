@@ -2,23 +2,23 @@ import type { Polar } from "@polar-sh/sdk";
 import type { EventCreateCustomer } from "@polar-sh/sdk/models/components/eventcreatecustomer.js";
 export const MODELS = {
    "deepseek-v3.1-terminus": "deepseek/deepseek-chat-v3.1-terminus",
-   "grok-4-fast": "x-ai/grok-4-fast",
    "gpt-5-mini": "openai/gpt-5-mini",
+   "grok-4-fast": "x-ai/grok-4-fast",
 } as const;
 export const POLAR_BILLING_EVENTS = {
    CREDIT: "credit",
 } as const;
 
 export const USAGE_TYPE = {
-   LLM: "llm_usage",
-   WEB_SEARCH: "web_search",
-   RAG_OPERATIONS: "rag_operations",
    DB_OPERATIONS: "db_operations",
+   LLM: "llm_usage",
+   RAG_OPERATIONS: "rag_operations",
+   WEB_SEARCH: "web_search",
 } as const;
 
 export const BILLING_CONFIG = {
-   rag_usage: 0.05,
    llmPricePerMillionTokens: 2.5, // $2.5 per 1M tokens
+   rag_usage: 0.05,
    webSearchCost: 0.0008, // $0.08 cents per search
 };
 
@@ -42,9 +42,9 @@ export async function ingestBilling(
    await client.events.ingest({
       events: [
          {
-            name: POLAR_BILLING_EVENTS.CREDIT,
             externalCustomerId: params.externalCustomerId,
             metadata: params.metadata,
+            name: POLAR_BILLING_EVENTS.CREDIT,
          },
       ],
    });
@@ -56,11 +56,11 @@ export const createAiUsageMetadata = (params: {
 }) => {
    const creditsDebited = params.inputTokens + params.outputTokens;
    return {
-      usage_type: USAGE_TYPE.LLM,
+      credits_debited: creditsDebited,
+      effort: params.effort,
       input_tokens: params.inputTokens,
       output_tokens: params.outputTokens,
-      effort: params.effort,
-      credits_debited: creditsDebited,
+      usage_type: USAGE_TYPE.LLM,
    };
 };
 export const createWebSearchUsageMetadata = (params: {
@@ -75,19 +75,19 @@ export const createWebSearchUsageMetadata = (params: {
    const tokenEquivalent = convertWebSearchCostToTokens(actualCost);
 
    return {
-      usage_type: USAGE_TYPE.WEB_SEARCH,
-      method: params.method,
-      credits_debited: tokenEquivalent,
       actual_cost: actualCost,
+      credits_debited: tokenEquivalent,
+      method: params.method,
+      usage_type: USAGE_TYPE.WEB_SEARCH,
    };
 };
 
 export const createRagUsageMetadata = (params: { agentId: string }) => {
    const cost = convertRagOperationCostToTokens(BILLING_CONFIG.rag_usage);
    return {
-      usage_type: USAGE_TYPE.RAG_OPERATIONS,
       agent_id: params.agentId,
       credits_debited: cost,
+      usage_type: USAGE_TYPE.RAG_OPERATIONS,
    };
 };
 

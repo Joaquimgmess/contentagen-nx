@@ -1,7 +1,7 @@
-import { CheckIcon, CheckCheck } from "lucide-react";
 import { cn } from "@packages/ui/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CheckCheck, CheckIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type LoadingState = {
    text: string;
@@ -22,10 +22,10 @@ const CardLoaderCore = ({
 
             return (
                <motion.div
-                  key={`#card-loader-${index + 1}`}
+                  animate={{ opacity: opacity, y: -(value * 20) }}
                   className={cn("text-left flex gap-2 mb-2 text-sm")}
                   initial={{ opacity: 0, y: -(value * 20) }}
-                  animate={{ opacity: opacity, y: -(value * 20) }}
+                  key={`#card-loader-${index + 1}`}
                   transition={{ duration: 0.3 }}
                >
                   <div className="flex-shrink-0">
@@ -93,16 +93,16 @@ export const CardMultiStepLoader = ({
       <AnimatePresence mode="wait">
          {loading && (
             <motion.div
-               initial={{ opacity: 0, height: 0 }}
-               animate={{ opacity: 1, height: "auto" }}
-               exit={{ opacity: 0, height: 0 }}
-               transition={{ duration: 0.2 }}
+               animate={{ height: "auto", opacity: 1 }}
                className="overflow-hidden"
+               exit={{ height: 0, opacity: 0 }}
+               initial={{ height: 0, opacity: 0 }}
+               transition={{ duration: 0.2 }}
             >
                <div className="py-4">
                   <CardLoaderCore
-                     value={currentState}
                      loadingStates={loadingStates}
+                     value={currentState}
                   />
                </div>
             </motion.div>

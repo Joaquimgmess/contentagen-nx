@@ -1,18 +1,18 @@
-import { createWorkflow, createStep } from "@mastra/core/workflows";
-import { documentSynthesizerAgent } from "../../agents/document-syntethizer-agent";
-import { documentGenerationAgent } from "../../agents/document-generation-agent";
+import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { MDocument } from "@mastra/rag";
-import { uploadFile, getMinioClient } from "@packages/files/client";
-import { serverEnv } from "@packages/environment/server";
 import { createDb } from "@packages/database/client";
-import { updateCompetitor } from "@packages/database/repositories/competitor-repository";
 import { updateBrand } from "@packages/database/repositories/brand-repository";
-import { z } from "zod";
+import { updateCompetitor } from "@packages/database/repositories/competitor-repository";
+import { serverEnv } from "@packages/environment/server";
+import { getMinioClient, uploadFile } from "@packages/files/client";
 import { createPgVector } from "@packages/rag/client";
-import { createCompetitorKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/competitor-knowledge-repository";
 import { createBrandKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/brand-knowledge-repository";
+import { createCompetitorKnowledgeWithEmbeddingsBulk } from "@packages/rag/repositories/competitor-knowledge-repository";
 import { AppError, propagateError } from "@packages/utils/errors";
 import { sanitizeDocumentType } from "@packages/utils/file";
+import { z } from "zod";
+import { documentGenerationAgent } from "../../agents/document-generation-agent";
+import { documentSynthesizerAgent } from "../../agents/document-syntethizer-agent";
 import { ingestUsage, type MastraLLMUsage } from "../../helpers";
 
 const uploadDocumentsToStorage = async (
@@ -49,10 +49,10 @@ const uploadDocumentsToStorage = async (
 
 // Input schema for the workflow
 export const CreateKnowledgeAndIndexDocumentsInput = z.object({
-   websiteUrl: z.url(),
-   userId: z.string(),
    id: z.string(),
    target: z.enum(["brand", "competitor"]),
+   userId: z.string(),
+   websiteUrl: z.url(),
 });
 
 // Output schema for the workflow
@@ -65,13 +65,13 @@ const createDocumentsOutputSchema =
       generatedDocuments: z
          .array(
             z.object({
-               type: z.string().describe("Document type"),
                content: z
                   .string()
                   .describe(
                      "Complete document content in perfect markdown format",
                   ),
                title: z.string().describe("Document title"),
+               type: z.string().describe("Document type"),
             }),
          )
          .length(5)
@@ -86,10 +86,7 @@ const getFullAnalysisOutputSchema =
          .describe("Complete analysis document in perfect markdown format"),
    });
 const getFullAnalysis = createStep({
-   id: "get-full-analysis-step",
    description: "Get full analysis from website",
-   inputSchema: CreateKnowledgeAndIndexDocumentsInput,
-   outputSchema: getFullAnalysisOutputSchema,
 
    execute: async ({ inputData, runtimeContext }) => {
       const { userId, websiteUrl, id, target } = inputData;
@@ -102,15 +99,15 @@ userId: ${userId}
          const result = await documentSynthesizerAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: getFullAnalysisOutputSchema.pick({
                   fullAnalysis: true,
                }),
+               runtimeContext,
             },
          );
 
@@ -127,10 +124,10 @@ userId: ${userId}
 
          return {
             fullAnalysis,
-            userId,
-            websiteUrl,
             id,
             target,
+            userId,
+            websiteUrl,
          };
       } catch (err) {
          console.error(
@@ -141,13 +138,13 @@ userId: ${userId}
          throw AppError.internal("Failed to get full analysis from website");
       }
    },
+   id: "get-full-analysis-step",
+   inputSchema: CreateKnowledgeAndIndexDocumentsInput,
+   outputSchema: getFullAnalysisOutputSchema,
 });
 
 const createDocuments = createStep({
-   id: "create-documents-step",
    description: "Create business documents from analysis",
-   inputSchema: getFullAnalysisOutputSchema,
-   outputSchema: createDocumentsOutputSchema,
    execute: async ({ inputData, runtimeContext }) => {
       const { fullAnalysis, userId, id, target, websiteUrl } = inputData;
 
@@ -161,13 +158,13 @@ ${fullAnalysis}
          const result = await documentGenerationAgent.generate(
             [
                {
-                  role: "user",
                   content: inputPrompt,
+                  role: "user",
                },
             ],
             {
-               runtimeContext,
                output: createDocumentsOutputSchema,
+               runtimeContext,
             },
          );
 
@@ -185,10 +182,10 @@ ${fullAnalysis}
          const { generatedDocuments } = result.object;
          return {
             generatedDocuments,
-            userId,
-            websiteUrl,
             id,
             target,
+            userId,
+            websiteUrl,
          };
       } catch (err) {
          console.error(
@@ -201,14 +198,14 @@ ${fullAnalysis}
          );
       }
    },
+   id: "create-documents-step",
+   inputSchema: getFullAnalysisOutputSchema,
+   outputSchema: createDocumentsOutputSchema,
 });
 
 const saveBrandDocumentsKnowledge = createStep({
-   id: "save-brand-documents-knowledge-step",
    description:
       "Save brand documents knowledge to database and create embeddings",
-   inputSchema: createDocumentsOutputSchema,
-   outputSchema: CreateKnowledgeAndIndexDocumentsOutput,
    execute: async ({ inputData }) => {
       const { generatedDocuments, id } = inputData;
 
@@ -230,7 +227,7 @@ const saveBrandDocumentsKnowledge = createStep({
          );
 
          // Update brand with uploaded files and status
-         await updateBrand(db, id, { uploadedFiles, status: "completed" });
+         await updateBrand(db, id, { status: "completed", uploadedFiles });
 
          const knowledgeData: Parameters<
             typeof createBrandKnowledgeWithEmbeddingsBulk
@@ -239,9 +236,9 @@ const saveBrandDocumentsKnowledge = createStep({
          for (const [index, document] of generatedDocuments.entries()) {
             const doc = MDocument.fromMarkdown(document.content);
             const chunks = await doc.chunk({
-               strategy: "markdown",
                maxSize: 128,
                overlap: 25,
+               strategy: "markdown",
             });
 
             for (const chunk of chunks) {
@@ -267,14 +264,14 @@ const saveBrandDocumentsKnowledge = createStep({
          );
       }
    },
+   id: "save-brand-documents-knowledge-step",
+   inputSchema: createDocumentsOutputSchema,
+   outputSchema: CreateKnowledgeAndIndexDocumentsOutput,
 });
 
 const saveCompetitorDocumentsKnowledge = createStep({
-   id: "save-competitor-documents-knowledge-step",
    description:
       "Save competitor documents knowledge to database and create embeddings",
-   inputSchema: createDocumentsOutputSchema,
-   outputSchema: CreateKnowledgeAndIndexDocumentsOutput,
    execute: async ({ inputData }) => {
       const { generatedDocuments, id } = inputData;
 
@@ -295,7 +292,7 @@ const saveCompetitorDocumentsKnowledge = createStep({
             "competitor",
          );
 
-         await updateCompetitor(db, id, { uploadedFiles, status: "completed" });
+         await updateCompetitor(db, id, { status: "completed", uploadedFiles });
 
          const knowledgeData: Parameters<
             typeof createCompetitorKnowledgeWithEmbeddingsBulk
@@ -304,9 +301,9 @@ const saveCompetitorDocumentsKnowledge = createStep({
          for (const [index, document] of generatedDocuments.entries()) {
             const doc = MDocument.fromMarkdown(document.content);
             const chunks = await doc.chunk({
-               strategy: "semantic-markdown",
                maxSize: 128,
                overlap: 25,
+               strategy: "semantic-markdown",
             });
 
             for (const chunk of chunks) {
@@ -335,11 +332,14 @@ const saveCompetitorDocumentsKnowledge = createStep({
          );
       }
    },
+   id: "save-competitor-documents-knowledge-step",
+   inputSchema: createDocumentsOutputSchema,
+   outputSchema: CreateKnowledgeAndIndexDocumentsOutput,
 });
 
 export const createKnowledgeAndIndexDocumentsWorkflow = createWorkflow({
-   id: "create-knowledge-and-index-documents",
    description: "Create knowledge and index documents from analysis",
+   id: "create-knowledge-and-index-documents",
    inputSchema: CreateKnowledgeAndIndexDocumentsInput,
    outputSchema: CreateKnowledgeAndIndexDocumentsOutput,
 })

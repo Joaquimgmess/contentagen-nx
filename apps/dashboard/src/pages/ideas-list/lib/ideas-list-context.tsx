@@ -1,12 +1,13 @@
+import type { RouterOutput } from "@packages/api/client";
+import type { ReactNode } from "react";
 import React, {
    createContext,
-   useContext,
-   useState,
    useCallback,
+   useContext,
    useMemo,
+   useState,
 } from "react";
-import type { ReactNode } from "react";
-import type { RouterOutput } from "@packages/api/client";
+
 // import { useTRPC } from "@/integrations/clients";
 // import { useSubscription } from "@trpc/tanstack-react-query";
 
@@ -123,32 +124,31 @@ export function IdeasListProvider({
    }, []);
 
    const value: IdeasListContextType = {
-      // Pagination
-      page,
-      totalPages,
-      setPage,
-      handlePageChange,
-
-      // Selection
-      selectedItems,
-      handleSelectionChange,
-      allSelected,
-      handleSelectAll,
-      clearSelection,
-      selectedItemsCount: selectedItems.size,
-
-      // Data
-      data,
-      selectableItems,
-
       // Real-time updates
 
       // Filtering
       agentId,
+      allSelected,
+      clearSelection,
+
+      // Data
+      data,
+      handlePageChange,
+      handleSelectAll,
+      handleSelectionChange,
 
       // Constants
       limit,
+      // Pagination
+      page,
+      selectableItems,
+
+      // Selection
+      selectedItems,
+      selectedItemsCount: selectedItems.size,
+      setPage,
       total: data?.total ?? 0,
+      totalPages,
    };
 
    return React.createElement(IdeasListContext.Provider, { value }, children);

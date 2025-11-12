@@ -1,246 +1,342 @@
+import { translate } from "@packages/localization";
 import {
-   Card,
-   CardHeader,
-   CardTitle,
-   CardDescription,
-   CardContent,
-   CardAction,
-} from "@packages/ui/components/card";
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@packages/ui/components/alert-dialog";
 import { Button } from "@packages/ui/components/button";
 import {
-   DropdownMenu,
-   DropdownMenuTrigger,
-   DropdownMenuContent,
-   DropdownMenuItem,
-} from "@packages/ui/components/dropdown-menu";
-import { betterAuthClient } from "@/integrations/clients";
-import { Trash2, CheckCircle2, MoreVertical } from "lucide-react";
+   Card,
+   CardAction,
+   CardContent,
+   CardDescription,
+   CardHeader,
+   CardTitle,
+} from "@packages/ui/components/card";
 import {
-   useSuspenseQuery,
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuGroup,
+   DropdownMenuItem,
+   DropdownMenuLabel,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger,
+} from "@packages/ui/components/dropdown-menu";
+import {
+   Empty,
+   EmptyContent,
+   EmptyDescription,
+   EmptyHeader,
+   EmptyMedia,
+   EmptyTitle,
+} from "@packages/ui/components/empty";
+import {
+   Item,
+   ItemActions,
+   ItemContent,
+   ItemDescription,
+   ItemGroup,
+   ItemMedia,
+   ItemSeparator,
+   ItemTitle,
+} from "@packages/ui/components/item";
+import { Skeleton } from "@packages/ui/components/skeleton";
+import { toast } from "@packages/ui/components/sonner";
+import { TooltipProvider } from "@packages/ui/components/tooltip";
+import {
    useMutation,
    useQueryClient,
+   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { translate } from "@packages/localization";
+import { AlertCircle, Info, Monitor, MoreVertical, Trash2 } from "lucide-react";
+import { Fragment, Suspense, useMemo } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { useTRPC } from "@/integrations/clients";
+import { SessionDetailsSheet } from "../features/session-details-sheet";
 
-export function ProfilePageSessionsSection() {
-   const queryClient = useQueryClient();
-
-   // Fetch sessions and current session in parallel
-   const { data: sessions } = useSuspenseQuery({
-      queryKey: ["sessions"],
-      queryFn: async () => {
-         const { data } = await betterAuthClient.listSessions();
-         return data || [];
-      },
-   });
-   const { data: currentSession } = useSuspenseQuery({
-      queryKey: ["currentSession"],
-      queryFn: async () => {
-         const { data } = await betterAuthClient.getSession();
-         return data;
-      },
-   });
-   const currentSessionId = currentSession?.session.id || null;
-
-   // Mutations
-   const revokeSessionMutation = useMutation({
-      mutationFn: async (token: string) => {
-         await betterAuthClient.revokeSession({ token });
-      },
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["sessions"] });
-      },
-   });
-   const revokeOtherSessionsMutation = useMutation({
-      mutationFn: async () => {
-         await betterAuthClient.revokeOtherSessions();
-      },
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["sessions"] });
-      },
-   });
-   const revokeAllSessionsMutation = useMutation({
-      mutationFn: async () => {
-         await betterAuthClient.revokeSessions();
-      },
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["sessions"] });
-      },
-   });
-
-   function handleDelete(token: string) {
-      if (!window.confirm(translate("pages.profile.sessions.revoke-confirm")))
-         return;
-      revokeSessionMutation.mutate(token);
-   }
-
+function SessionsSectionErrorFallback() {
    return (
       <Card>
          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-               <div>
-                  <CardTitle>
-                     {translate("pages.profile.sessions.sessions-title")}
-                  </CardTitle>
-                  <CardDescription>
-                     {translate("pages.profile.sessions.sessions-description")}
-                  </CardDescription>
-               </div>
-               <div className="mt-2 sm:mt-0">
+            <CardTitle>{translate("pages.profile.sessions.title")}</CardTitle>
+            <CardDescription>
+               {translate("pages.profile.sessions.description")}
+            </CardDescription>
+         </CardHeader>
+         <CardContent>
+            <Empty>
+               <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                     <AlertCircle className="size-6" />
+                  </EmptyMedia>
+                  <EmptyTitle>
+                     {translate("pages.profile.sessions.state.error.title")}
+                  </EmptyTitle>
+                  <EmptyDescription>
+                     {translate(
+                        "pages.profile.sessions.state.error.description",
+                     )}
+                  </EmptyDescription>
+               </EmptyHeader>
+               <EmptyContent>
+                  <Button
+                     onClick={() => window.location.reload()}
+                     size="sm"
+                     variant="outline"
+                  >
+                     {translate("common.actions.retry")}
+                  </Button>
+               </EmptyContent>
+            </Empty>
+         </CardContent>
+      </Card>
+   );
+}
+
+function SessionsSectionSkeleton() {
+   return (
+      <Card>
+         <CardHeader>
+            <CardTitle>
+               <Skeleton className="h-6 w-1/3" />
+            </CardTitle>
+            <CardDescription>
+               <Skeleton className="h-4 w-2/3" />
+            </CardDescription>
+            <CardAction>
+               <Skeleton className="size-8" />
+            </CardAction>
+         </CardHeader>
+         <CardContent>
+            <ItemGroup>
+               {Array.from({ length: 3 }).map((_, index) => (
+                  <Fragment key={`session-skeleton-${index + 1}`}>
+                     <Item>
+                        <ItemMedia variant="icon">
+                           <Skeleton className="size-4" />
+                        </ItemMedia>
+                        <ItemContent className="truncate">
+                           <Skeleton className="h-5 w-1/2" />
+                           <Skeleton className="h-4 w-3/4" />
+                        </ItemContent>
+                        <ItemActions>
+                           <Skeleton className="size-8" />
+                        </ItemActions>
+                     </Item>
+                     {index !== 2 && <ItemSeparator />}
+                  </Fragment>
+               ))}
+            </ItemGroup>
+         </CardContent>
+      </Card>
+   );
+}
+
+function SessionsSectionContent() {
+   const queryClient = useQueryClient();
+   const trpc = useTRPC();
+   const { data: sessions } = useSuspenseQuery(
+      trpc.session.listAllSessions.queryOptions(),
+   );
+   const { data: currentSession } = useSuspenseQuery(
+      trpc.session.getSession.queryOptions(),
+   );
+
+   // Mutations
+   const revokeOtherSessionsMutation = useMutation(
+      trpc.session.revokeOtherSessions.mutationOptions({
+         onError: () => {
+            toast.error("Failed to revoke other sessions.");
+         },
+         onSuccess: () => {
+            queryClient.invalidateQueries({
+               queryKey: trpc.session.listAllSessions.queryKey(),
+            });
+            toast.success("Other sessions have been revoked successfully.");
+         },
+      }),
+   );
+   const revokeAllSessionsMutation = useMutation(
+      trpc.session.revokeSessions.mutationOptions({
+         onError: () => {
+            toast.error("Failed to revoke all sessions.");
+         },
+         onSuccess: () => {
+            queryClient.invalidateQueries({
+               queryKey: trpc.session.listAllSessions.queryKey(),
+            });
+            toast.success("All sessions have been revoked successfully.");
+         },
+      }),
+   );
+
+   // Memoize dropdown menu items
+   const dropdownMenuItems = useMemo(
+      () => [
+         {
+            action: async () => await revokeOtherSessionsMutation.mutateAsync(),
+            disabled: revokeOtherSessionsMutation.isPending,
+            icon: <Trash2 className="w-4 h-4 mr-2" />,
+            id: "revoke-others",
+            label: translate("pages.profile.sessions.actions.revoke-others"),
+            variant: "destructive" as const,
+         },
+         {
+            action: async () => await revokeAllSessionsMutation.mutateAsync(),
+            disabled: revokeAllSessionsMutation.isPending,
+            icon: <Trash2 className="w-4 h-4 mr-2 text-destructive" />,
+            id: "revoke-all",
+            label: translate("pages.profile.sessions.actions.revoke-all"),
+            variant: "destructive" as const,
+         },
+      ],
+      [
+         revokeOtherSessionsMutation.isPending,
+         revokeAllSessionsMutation.isPending,
+         revokeOtherSessionsMutation.mutateAsync,
+         revokeAllSessionsMutation.mutateAsync,
+      ],
+   );
+
+   return (
+      <TooltipProvider>
+         <Card>
+            <CardHeader>
+               <CardTitle>
+                  {translate("pages.profile.sessions.title")}
+               </CardTitle>
+               <CardDescription>
+                  {translate("pages.profile.sessions.description")}
+               </CardDescription>
+               <CardAction>
                   <DropdownMenu>
                      <DropdownMenuTrigger asChild>
                         <Button
-                           variant="ghost"
-                           size="icon"
                            aria-label={translate(
-                              "pages.profile.sessions.manage-sessions",
+                              "pages.profile.sessions.actions.title",
                            )}
+                           size="icon"
+                           variant="ghost"
                         >
                            <MoreVertical className="w-5 h-5" />
                         </Button>
-                     </DropdownMenuTrigger>{" "}
-                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                           onSelect={(e) => {
-                              e.preventDefault();
-                              revokeOtherSessionsMutation.mutate();
-                           }}
-                           disabled={revokeOtherSessionsMutation.isPending}
-                        >
-                           <Trash2 className="w-4 h-4 mr-2" />
-                           {revokeOtherSessionsMutation.isPending
-                              ? translate(
-                                   "pages.profile.sessions.revoke-other-loading",
-                                )
-                              : translate(
-                                   "pages.profile.sessions.revoke-other",
-                                )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                           onSelect={(e) => {
-                              e.preventDefault();
-                              revokeAllSessionsMutation.mutate();
-                           }}
-                           disabled={revokeAllSessionsMutation.isPending}
-                           variant="destructive"
-                        >
-                           <Trash2 className="w-4 h-4 mr-2 text-destructive" />
-                           {revokeAllSessionsMutation.isPending
-                              ? translate(
-                                   "pages.profile.sessions.revoke-all-loading",
-                                )
-                              : translate(
-                                   "pages.profile.sessions.revoke-all-sessions",
-                                )}
-                        </DropdownMenuItem>{" "}
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>
+                           {translate("pages.profile.sessions.actions.title")}
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                           {dropdownMenuItems.map((item) => (
+                              <AlertDialog key={item.id}>
+                                 <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                       disabled={item.disabled}
+                                       onSelect={(e) => e.preventDefault()}
+                                       variant={item.variant}
+                                    >
+                                       {item.icon}
+                                       {item.label}
+                                    </DropdownMenuItem>
+                                 </AlertDialogTrigger>
+                                 <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                       <AlertDialogTitle>
+                                          {translate(
+                                             "common.delete-confirmation.title",
+                                          )}
+                                       </AlertDialogTitle>
+                                       <AlertDialogDescription>
+                                          {translate(
+                                             "common.delete-confirmation.description",
+                                          )}
+                                       </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                       <AlertDialogCancel>
+                                          {translate("common.actions.cancel")}
+                                       </AlertDialogCancel>
+                                       <AlertDialogAction
+                                          disabled={item.disabled}
+                                          onClick={item.action}
+                                       >
+                                          {item.label}
+                                       </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                 </AlertDialogContent>
+                              </AlertDialog>
+                           ))}
+                        </DropdownMenuGroup>
                      </DropdownMenuContent>
                   </DropdownMenu>
-               </div>
-            </div>
-         </CardHeader>
-         <CardContent className="space-y-4 px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-               {sessions.length === 0 ? (
-                  <div className="col-span-full text-center text-muted-foreground py-8">
-                     {translate("pages.profile.sessions.no-sessions")}
-                  </div>
-               ) : (
-                  sessions.map((s) => {
-                     const isCurrent =
-                        s.token === currentSessionId ||
-                        s.id === currentSessionId;
-                     return (
-                        <Card
-                           key={s.id}
-                           className={`relative transition hover:shadow-lg ${isCurrent ? "ring-1 ring-primary/80" : ""}`}
-                        >
-                           <CardHeader>
-                              <CardTitle className="truncate text-base">
-                                 {s.userAgent ||
+               </CardAction>
+            </CardHeader>
+            <CardContent>
+               <ItemGroup>
+                  {sessions.map((session, index) => (
+                     <Fragment key={session.id}>
+                        <Item>
+                           <ItemMedia variant="icon">
+                              <Monitor className="size-4" />
+                           </ItemMedia>
+                           <ItemContent className="truncate">
+                              <ItemTitle>
+                                 {session.userAgent ||
                                     translate(
-                                       "pages.profile.sessions.unknown-device",
+                                       "pages.profile.sessions.item.unknown-device",
                                     )}
-                              </CardTitle>
-                              <CardDescription className="truncate">
-                                 {translate(
-                                    "pages.profile.sessions.ip-address",
-                                 )}{" "}
-                                 {s.ipAddress || "-"}
-                              </CardDescription>
-                              {isCurrent && (
-                                 <span className="text-green-600 flex items-center gap-1 text-xs font-semibold">
-                                    <CheckCircle2 className="w-4 h-4" />{" "}
-                                    {translate(
-                                       "pages.profile.sessions.current",
-                                    )}
-                                 </span>
-                              )}
-                              <CardAction>
-                                 <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                       <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          aria-label={translate(
-                                             "pages.profile.sessions.session-actions",
-                                          )}
-                                          disabled={
-                                             revokeSessionMutation.isPending
-                                          }
-                                       >
-                                          <MoreVertical className="w-5 h-5" />
-                                       </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                       <DropdownMenuItem
-                                          onSelect={(e) => {
-                                             e.preventDefault();
-                                             handleDelete(s.token || s.id);
-                                          }}
-                                          disabled={
-                                             revokeSessionMutation.isPending
-                                          }
-                                          variant="destructive"
-                                       >
-                                          <Trash2 className="w-4 h-4 mr-2 text-destructive" />
-                                          {revokeSessionMutation.isPending
-                                             ? translate(
-                                                  "pages.profile.sessions.revoke-session-loading",
-                                               )
-                                             : translate(
-                                                  "pages.profile.sessions.revoke-session",
-                                               )}
-                                       </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                 </DropdownMenu>
-                              </CardAction>
-                           </CardHeader>
-                           <CardContent>
-                              <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                              </ItemTitle>
+                              <ItemDescription>
                                  <span>
                                     {translate(
-                                       "pages.profile.sessions.created",
-                                    )}{" "}
-                                    {s.createdAt
-                                       ? new Date(s.createdAt).toLocaleString()
-                                       : "-"}
+                                       "pages.profile.sessions.item.ip-address",
+                                    )}
                                  </span>
-                                 <span>
-                                    {translate(
-                                       "pages.profile.sessions.last-active",
-                                    )}{" "}
-                                    {s.updatedAt
-                                       ? new Date(s.updatedAt).toLocaleString()
-                                       : "-"}
-                                 </span>
-                              </div>
-                           </CardContent>
-                        </Card>
-                     );
-                  })
-               )}
-            </div>{" "}
-         </CardContent>
-      </Card>
+                                 <span>:</span>
+                                 <span> {session.ipAddress || "-"}</span>
+                              </ItemDescription>
+                           </ItemContent>
+                           <ItemActions>
+                              <SessionDetailsSheet
+                                 currentSessionId={
+                                    currentSession?.session.id || ""
+                                 }
+                                 session={session}
+                              >
+                                 <Button
+                                    aria-label={translate(
+                                       "pages.profile.sessions.item.details",
+                                    )}
+                                    size="icon"
+                                    variant="ghost"
+                                 >
+                                    <Info className="w-4 h-4" />
+                                 </Button>
+                              </SessionDetailsSheet>
+                           </ItemActions>
+                        </Item>
+                        {index !== sessions.length - 1 && <ItemSeparator />}
+                     </Fragment>
+                  ))}
+               </ItemGroup>
+            </CardContent>
+         </Card>
+      </TooltipProvider>
+   );
+}
+
+export function ProfilePageSessionsSection() {
+   return (
+      <ErrorBoundary FallbackComponent={SessionsSectionErrorFallback}>
+         <Suspense fallback={<SessionsSectionSkeleton />}>
+            <SessionsSectionContent />
+         </Suspense>
+      </ErrorBoundary>
    );
 }

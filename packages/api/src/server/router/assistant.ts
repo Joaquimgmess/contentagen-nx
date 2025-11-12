@@ -1,5 +1,5 @@
-import { organizationProcedure, hasGenerationCredits, router } from "../trpc";
 import { z } from "zod";
+import { hasGenerationCredits, organizationProcedure, router } from "../trpc";
 
 export const assistantRouter = router({
    sendMessage: organizationProcedure

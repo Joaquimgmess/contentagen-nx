@@ -1,29 +1,88 @@
-import { ThemeToggler } from "@/layout/theme-provider";
-import { LanguageToggler } from "@/layout/language-toggler";
+import { translate } from "@packages/localization";
+
 import {
    Card,
    CardContent,
+   CardDescription,
    CardHeader,
    CardTitle,
 } from "@packages/ui/components/card";
-import { WorkflowPreferences } from "./workflow-preferences";
-import { translate } from "@packages/localization";
+import {
+   Item,
+   ItemActions,
+   ItemContent,
+   ItemDescription,
+   ItemGroup,
+   ItemMedia,
+   ItemSeparator,
+   ItemTitle,
+} from "@packages/ui/components/item";
+import { Globe, Moon } from "lucide-react";
+import { ThemeSwitcher } from "@/layout/theme-provider";
+import { LanguageCommand } from "../features/language-command";
 
 export function PreferencesSection() {
    return (
-      <div className="space-y-6">
+      <div className="">
          <Card>
             <CardHeader>
                <CardTitle>
                   {translate("pages.profile.preferences.title")}
                </CardTitle>
+               <CardDescription>
+                  {translate("pages.profile.preferences.description")}
+               </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4">
-               <ThemeToggler />
-               <LanguageToggler />
+            <CardContent>
+               <ItemGroup>
+                  {/* Theme Toggle Group */}
+                  <Item>
+                     <ItemMedia variant="icon">
+                        <Moon className="size-4" />
+                     </ItemMedia>
+                     <ItemContent className="truncate">
+                        <ItemTitle>
+                           {translate(
+                              "pages.profile.preferences.items.theme.title",
+                           )}
+                        </ItemTitle>
+                        <ItemDescription>
+                           {translate(
+                              "pages.profile.preferences.items.theme.description",
+                           )}
+                        </ItemDescription>
+                     </ItemContent>
+                     <ItemActions>
+                        <ThemeSwitcher />
+                     </ItemActions>
+                  </Item>
+
+                  <ItemSeparator />
+
+                  {/* Language Selection */}
+                  <Item>
+                     <ItemMedia variant="icon">
+                        <Globe className="size-4" />
+                     </ItemMedia>
+                     <ItemContent className="truncate">
+                        <ItemTitle>
+                           {translate(
+                              "pages.profile.preferences.items.language.title",
+                           )}
+                        </ItemTitle>
+                        <ItemDescription>
+                           {translate(
+                              "pages.profile.preferences.items.language.description",
+                           )}
+                        </ItemDescription>
+                     </ItemContent>
+                     <ItemActions>
+                        <LanguageCommand />
+                     </ItemActions>
+                  </Item>
+               </ItemGroup>
             </CardContent>
          </Card>
-         <WorkflowPreferences />
       </div>
    );
 }

@@ -1,171 +1,95 @@
-import { enqueueCreateNewContentWorkflowJob } from "@packages/workers/queues/create-new-content-queue";
-import {
-   hasGenerationCredits,
-   protectedProcedure,
-   publicProcedure,
-   router,
-   organizationProcedure,
-} from "../trpc";
-import {
-   eventEmitter,
-   EVENTS,
-   type ContentStatusChangedPayload,
-} from "@packages/server-events";
 import { on } from "node:events";
-import {
-   ContentInsertSchema,
-   ContentUpdateSchema,
-   ContentSelectSchema,
-} from "@packages/database/schema";
-import {
-   getAgentById,
-   listAgents,
-} from "@packages/database/repositories/agent-repository";
-import {
-   createContent,
-   getContentById,
-   updateContent,
-   deleteContent,
-   listContents,
-} from "@packages/database/repositories/content-repository";
 import {
    canModifyContent,
    getContentWithAccessControl,
 } from "@packages/database/repositories/access-control-repository";
-import { APIError, propagateError } from "@packages/utils/errors";
-import { z } from "zod";
-import { contentVersionRouter } from "./content-version";
-import { contentBulkOperationsRouter } from "./content-bulk-operations";
-import { contentImagesRouter } from "./content-images";
+import {
+   getAgentById,
+   listAgents,
+} from "@packages/database/repositories/agent-repository";
+import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
+import { listCompetitors } from "@packages/database/repositories/competitor-repository";
+import {
+   createContent,
+   deleteContent,
+   getContentById,
+   listContents,
+   updateContent,
+} from "@packages/database/repositories/content-repository";
 import { createContentVersion } from "@packages/database/repositories/content-version-repository";
 import {
-   searchRelatedSlugsByText,
+   ContentInsertSchema,
+   ContentSelectSchema,
+   ContentUpdateSchema,
+} from "@packages/database/schema";
+import {
    createRelatedSlugsWithEmbedding,
    deleteRelatedSlugsByExternalId,
+   searchRelatedSlugsByText,
 } from "@packages/rag/repositories/related-slugs-repository";
-import { listCompetitors } from "@packages/database/repositories/competitor-repository";
-import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
+import {
+   type ContentStatusChangedPayload,
+   EVENTS,
+   eventEmitter,
+} from "@packages/server-events";
+import { APIError, propagateError } from "@packages/utils/errors";
+import { enqueueCreateNewContentWorkflowJob } from "@packages/workers/queues/create-new-content-queue";
+import { z } from "zod";
+import {
+   hasGenerationCredits,
+   organizationProcedure,
+   protectedProcedure,
+   publicProcedure,
+   router,
+} from "../trpc";
+import { contentBulkOperationsRouter } from "./content-bulk-operations";
+import { contentImagesRouter } from "./content-images";
+import { contentVersionRouter } from "./content-version";
 
 export const contentRouter = router({
-   versions: contentVersionRouter,
-   bulk: contentBulkOperationsRouter,
-   images: contentImagesRouter,
-   regenerate: organizationProcedure
+   approve: organizationProcedure
       .use(hasGenerationCredits)
+
       .input(ContentInsertSchema.pick({ id: true }))
       .mutation(async ({ ctx, input }) => {
          try {
             if (!input.id) {
                throw APIError.validation("Content ID is required.");
             }
-            const resolvedCtx = await ctx;
             const db = (await ctx).db;
             const content = await getContentById(db, input.id);
             if (!content) {
                throw APIError.notFound("Content not found.");
             }
-            const agent = await getAgentById(db, content.agentId);
-            const organizationId =
-               resolvedCtx.session?.session?.activeOrganizationId ?? "";
-            const competitors = await listCompetitors(db, {
-               userId: agent.userId,
-               organizationId,
-            });
-            const brand = await getBrandByOrgId(db, organizationId);
-            await updateContent(db, input.id, { status: "pending" });
-            await enqueueCreateNewContentWorkflowJob({
-               agentId: content.agentId,
-               contentId: content.id,
-               request: content.request,
-               userId: agent.userId,
-               organizationId,
-               competitorIds: competitors.map((competitor) => competitor.id),
-               runtimeContext: {
-                  language: resolvedCtx.language,
-                  userId: agent.userId,
-                  brandId: brand?.id ?? "",
-               },
-            });
+            if (content.status !== "draft") {
+               throw APIError.validation("Only draft content can be approved.");
+            }
+            await updateContent(db, input.id, { status: "approved" });
+            if (content.meta?.slug) {
+               const ragClient = (await ctx).ragClient;
+               await createRelatedSlugsWithEmbedding(ragClient, {
+                  externalId: content.agentId,
+                  slug: content.meta.slug,
+               });
+            }
+            if (!content.meta?.keywords || content.meta.keywords.length === 0) {
+               throw APIError.validation(
+                  "Content must have keywords in meta to generate ideas.",
+               );
+            }
+            //TODO: IMPLEMENTAR IDEAS PLANNING
+            // await enqueueIdeasPlanningJob({
+            //    agentId: content.agentId,
+            //    keywords: content.meta?.keywords,
+            // });
             return { success: true };
          } catch (err) {
+            console.log(err);
             propagateError(err);
-            throw APIError.internal("Failed to create content");
+            throw APIError.internal("Failed to approve content");
          }
       }),
-   listAllContent: protectedProcedure
-      .input(
-         z.object({
-            status: ContentSelectSchema.shape.status.array().min(1),
-            limit: z.number().min(1).max(100).optional().default(10),
-            page: z.number().min(1).optional().default(1),
-            agentIds: z.array(z.string()).optional(),
-         }),
-      )
-      .query(async ({ ctx, input }) => {
-         const resolvedCtx = await ctx;
-         const userId = resolvedCtx.session?.user.id;
-         const organizationId =
-            resolvedCtx.session?.session?.activeOrganizationId;
-         if (!userId) {
-            throw APIError.unauthorized(
-               "User must be authenticated to list content.",
-            );
-         }
-         const agents = await listAgents(resolvedCtx.db, {
-            userId,
-            organizationId: organizationId ?? "",
-         });
-         const allUserAgentIds = agents.map((agent) => agent.id);
-         if (allUserAgentIds.length === 0) return { items: [], total: 0 };
-
-         // If agentIds provided, filter to only those belonging to the user
-         const agentIds = input.agentIds
-            ? input.agentIds.filter((id) => allUserAgentIds.includes(id))
-            : allUserAgentIds;
-
-         if (agentIds.length === 0) return { items: [], total: 0 };
-
-         const filteredStatus = input.status.filter(
-            (s): s is NonNullable<typeof s> => s !== null,
-         );
-         // Get all content for these agents
-         const all = await listContents(
-            resolvedCtx.db,
-            agentIds,
-            filteredStatus,
-         );
-         const start = (input.page - 1) * input.limit;
-         const end = start + input.limit;
-         const items = all.slice(start, end);
-         return { items, total: all.length };
-      }),
-   onStatusChanged: publicProcedure
-      .input(z.object({ contentId: z.string().optional() }).optional())
-      .subscription(async function* (opts) {
-         try {
-            for await (const [payload] of on(
-               eventEmitter,
-               EVENTS.contentStatus,
-               {
-                  signal: opts.signal,
-               },
-            )) {
-               const event = payload as ContentStatusChangedPayload;
-               if (payload.status === "draft") {
-                  return;
-               }
-               if (
-                  !opts.input?.contentId ||
-                  opts.input.contentId === event.contentId
-               ) {
-                  yield event;
-               }
-            }
-         } finally {
-            // Cleanup any side effects when subscription stops
-            // The subscription stops when status becomes draft or client disconnects
-         }
-      }),
+   bulk: contentBulkOperationsRouter,
    create: organizationProcedure
       .use(hasGenerationCredits)
 
@@ -193,13 +117,13 @@ export const contentRouter = router({
                });
                await createContentVersion(tx, {
                   contentId: c.id,
-                  userId,
-                  version: 1,
                   meta: {
+                     changedFields: [],
                      diff: null, // No diff for initial version
                      lineDiff: null,
-                     changedFields: [],
                   },
+                  userId,
+                  version: 1,
                });
                return c;
             });
@@ -208,46 +132,30 @@ export const contentRouter = router({
             const organizationId =
                resolvedCtx.session?.session?.activeOrganizationId ?? "";
             const competitors = await listCompetitors(db, {
-               userId: agent.userId,
                organizationId,
+               userId: agent.userId,
             });
             const brand = await getBrandByOrgId(db, organizationId).catch(
                () => null,
             );
             await enqueueCreateNewContentWorkflowJob({
                agentId: created.agentId,
-               contentId: created.id,
-               request: created.request,
-               userId: agent.userId,
-               organizationId,
                competitorIds: competitors.map((competitor) => competitor.id),
+               contentId: created.id,
+               organizationId,
+               request: created.request,
                runtimeContext: {
+                  brandId: brand?.id ?? "",
                   language: resolvedCtx.language,
                   userId: agent.userId,
-                  brandId: brand?.id ?? "",
                },
+               userId: agent.userId,
             });
             return created;
          } catch (err) {
             console.log(err);
             propagateError(err);
             throw APIError.internal("Failed to create content");
-         }
-      }),
-   update: protectedProcedure
-      .input(ContentUpdateSchema)
-      .mutation(async ({ ctx, input }) => {
-         const { id, ...updateFields } = input;
-         if (!id) {
-            throw APIError.validation("Content ID is required for update.");
-         }
-         try {
-            await updateContent((await ctx).db, id, updateFields);
-            return { success: true };
-         } catch (err) {
-            console.log(err);
-            propagateError(err);
-            throw APIError.internal("Failed to update content");
          }
       }),
    delete: protectedProcedure
@@ -304,6 +212,80 @@ export const contentRouter = router({
             throw APIError.internal("Failed to get content");
          }
       }),
+   getRelatedSlugs: protectedProcedure
+      .input(z.object({ agentId: z.string(), slug: z.string() }))
+      .query(async ({ ctx, input }) => {
+         try {
+            if (!input.agentId) {
+               throw APIError.validation(" Agent ID are required.");
+            }
+            if (!input.slug) {
+               return [];
+            }
+            const ragClient = (await ctx).ragClient;
+            const result = await searchRelatedSlugsByText(
+               ragClient,
+               input.slug,
+               input.agentId,
+            );
+            const slugs = result
+               .map((item) => item.slug)
+               .filter((slug) => slug !== input.slug);
+            return slugs;
+         } catch (err) {
+            console.log(err);
+            propagateError(err);
+            throw APIError.internal("Failed to get related slugs");
+         }
+      }),
+   images: contentImagesRouter,
+   listAllContent: protectedProcedure
+      .input(
+         z.object({
+            agentIds: z.array(z.string()).optional(),
+            limit: z.number().min(1).max(100).optional().default(10),
+            page: z.number().min(1).optional().default(1),
+            status: ContentSelectSchema.shape.status.array().min(1),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const resolvedCtx = await ctx;
+         const userId = resolvedCtx.session?.user.id;
+         const organizationId =
+            resolvedCtx.session?.session?.activeOrganizationId;
+         if (!userId) {
+            throw APIError.unauthorized(
+               "User must be authenticated to list content.",
+            );
+         }
+         const agents = await listAgents(resolvedCtx.db, {
+            organizationId: organizationId ?? "",
+            userId,
+         });
+         const allUserAgentIds = agents.map((agent) => agent.id);
+         if (allUserAgentIds.length === 0) return { items: [], total: 0 };
+
+         // If agentIds provided, filter to only those belonging to the user
+         const agentIds = input.agentIds
+            ? input.agentIds.filter((id) => allUserAgentIds.includes(id))
+            : allUserAgentIds;
+
+         if (agentIds.length === 0) return { items: [], total: 0 };
+
+         const filteredStatus = input.status.filter(
+            (s): s is NonNullable<typeof s> => s !== null,
+         );
+         // Get all content for these agents
+         const all = await listContents(
+            resolvedCtx.db,
+            agentIds,
+            filteredStatus,
+         );
+         const start = (input.page - 1) * input.limit;
+         const end = start + input.limit;
+         const items = all.slice(start, end);
+         return { items, total: all.length };
+      }),
    listByAgentId: protectedProcedure
       .input(
          z.object({
@@ -334,47 +316,73 @@ export const contentRouter = router({
             throw APIError.internal("Failed to list contents");
          }
       }),
-
-   approve: organizationProcedure
+   onStatusChanged: publicProcedure
+      .input(z.object({ contentId: z.string().optional() }).optional())
+      .subscription(async function* (opts) {
+         try {
+            for await (const [payload] of on(
+               eventEmitter,
+               EVENTS.contentStatus,
+               {
+                  signal: opts.signal,
+               },
+            )) {
+               const event = payload as ContentStatusChangedPayload;
+               if (payload.status === "draft") {
+                  return;
+               }
+               if (
+                  !opts.input?.contentId ||
+                  opts.input.contentId === event.contentId
+               ) {
+                  yield event;
+               }
+            }
+         } finally {
+            // Cleanup any side effects when subscription stops
+            // The subscription stops when status becomes draft or client disconnects
+         }
+      }),
+   regenerate: organizationProcedure
       .use(hasGenerationCredits)
-
       .input(ContentInsertSchema.pick({ id: true }))
       .mutation(async ({ ctx, input }) => {
          try {
             if (!input.id) {
                throw APIError.validation("Content ID is required.");
             }
+            const resolvedCtx = await ctx;
             const db = (await ctx).db;
             const content = await getContentById(db, input.id);
             if (!content) {
                throw APIError.notFound("Content not found.");
             }
-            if (content.status !== "draft") {
-               throw APIError.validation("Only draft content can be approved.");
-            }
-            await updateContent(db, input.id, { status: "approved" });
-            if (content.meta?.slug) {
-               const ragClient = (await ctx).ragClient;
-               await createRelatedSlugsWithEmbedding(ragClient, {
-                  externalId: content.agentId,
-                  slug: content.meta.slug,
-               });
-            }
-            if (!content.meta?.keywords || content.meta.keywords.length === 0) {
-               throw APIError.validation(
-                  "Content must have keywords in meta to generate ideas.",
-               );
-            }
-            //TODO: IMPLEMENTAR IDEAS PLANNING
-            // await enqueueIdeasPlanningJob({
-            //    agentId: content.agentId,
-            //    keywords: content.meta?.keywords,
-            // });
+            const agent = await getAgentById(db, content.agentId);
+            const organizationId =
+               resolvedCtx.session?.session?.activeOrganizationId ?? "";
+            const competitors = await listCompetitors(db, {
+               organizationId,
+               userId: agent.userId,
+            });
+            const brand = await getBrandByOrgId(db, organizationId);
+            await updateContent(db, input.id, { status: "pending" });
+            await enqueueCreateNewContentWorkflowJob({
+               agentId: content.agentId,
+               competitorIds: competitors.map((competitor) => competitor.id),
+               contentId: content.id,
+               organizationId,
+               request: content.request,
+               runtimeContext: {
+                  brandId: brand?.id ?? "",
+                  language: resolvedCtx.language,
+                  userId: agent.userId,
+               },
+               userId: agent.userId,
+            });
             return { success: true };
          } catch (err) {
-            console.log(err);
             propagateError(err);
-            throw APIError.internal("Failed to approve content");
+            throw APIError.internal("Failed to create content");
          }
       }),
    toggleShare: protectedProcedure
@@ -425,9 +433,9 @@ export const contentRouter = router({
             });
 
             return {
-               success: true,
-               shareStatus: newShareStatus,
                content: updated,
+               shareStatus: newShareStatus,
+               success: true,
             };
          } catch (err) {
             console.log(err);
@@ -435,30 +443,21 @@ export const contentRouter = router({
             throw APIError.internal("Failed to toggle share status");
          }
       }),
-   getRelatedSlugs: protectedProcedure
-      .input(z.object({ slug: z.string(), agentId: z.string() }))
-      .query(async ({ ctx, input }) => {
+   update: protectedProcedure
+      .input(ContentUpdateSchema)
+      .mutation(async ({ ctx, input }) => {
+         const { id, ...updateFields } = input;
+         if (!id) {
+            throw APIError.validation("Content ID is required for update.");
+         }
          try {
-            if (!input.agentId) {
-               throw APIError.validation(" Agent ID are required.");
-            }
-            if (!input.slug) {
-               return [];
-            }
-            const ragClient = (await ctx).ragClient;
-            const result = await searchRelatedSlugsByText(
-               ragClient,
-               input.slug,
-               input.agentId,
-            );
-            const slugs = result
-               .map((item) => item.slug)
-               .filter((slug) => slug !== input.slug);
-            return slugs;
+            await updateContent((await ctx).db, id, updateFields);
+            return { success: true };
          } catch (err) {
             console.log(err);
             propagateError(err);
-            throw APIError.internal("Failed to get related slugs");
+            throw APIError.internal("Failed to update content");
          }
       }),
+   versions: contentVersionRouter,
 });

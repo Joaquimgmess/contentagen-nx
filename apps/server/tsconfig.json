@@ -27,31 +27,28 @@
          "path": "../../packages/transactional"
       },
       {
-         "path": "../../packages/rag"
-      },
-      {
          "path": "../../packages/posthog"
-      },
-      {
-         "path": "../../packages/agents"
       },
       {
          "path": "../../packages/payment"
       },
       {
-         "path": "../../packages/files"
+         "path": "../../packages/environment"
       },
       {
-         "path": "../../packages/environment"
+         "path": "../../packages/api"
+      },
+      {
+         "path": "../../packages/rag"
+      },
+      {
+         "path": "../../packages/files"
       },
       {
          "path": "../../packages/database"
       },
       {
-         "path": "../../packages/authentication"
-      },
-      {
-         "path": "../../packages/api"
+         "path": "../../packages/agents"
       }
    ]
 }

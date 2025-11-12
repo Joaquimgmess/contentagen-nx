@@ -1,20 +1,19 @@
+import { execSync, spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as readline from "node:readline";
-import { execSync } from "node:child_process";
-import { spawn } from "node:child_process";
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 
 const program = new Command();
 
 // Colors
 const colors = {
    blue: chalk.blue,
-   green: chalk.green,
-   yellow: chalk.yellow,
-   red: chalk.red,
    cyan: chalk.cyan,
+   green: chalk.green,
    magenta: chalk.magenta,
+   red: chalk.red,
+   yellow: chalk.yellow,
 };
 
 // Directories and files to clean
@@ -56,10 +55,6 @@ const CLEAN_TARGETS = [
    "*.tsbuildinfo",
    ".eslintcache",
    ".cache",
-
-   // Drizzle specific
-   "**/drizzle",
-   "**/.drizzle",
 ];
 
 function runCommand(
@@ -95,7 +90,7 @@ function deletePath(pathToDelete: string): boolean {
          const stats = fs.statSync(pathToDelete);
 
          if (stats.isDirectory()) {
-            fs.rmSync(pathToDelete, { recursive: true, force: true });
+            fs.rmSync(pathToDelete, { force: true, recursive: true });
             console.log(colors.green(`🗑️  Deleted directory: ${pathToDelete}`));
          } else {
             fs.unlinkSync(pathToDelete);
@@ -115,12 +110,24 @@ function expandGlobPatterns(patterns: string[]): string[] {
 
    patterns.forEach((pattern) => {
       try {
-         // Use find to handle glob patterns safely
+         // Convert glob pattern to find-compatible pattern
+         let findPattern = pattern;
+
+         // Handle ** patterns by converting to -path with wildcards
+         if (pattern.includes("**")) {
+            findPattern = pattern.replace(/\*\*/g, "*");
+         }
+
+         // Handle * patterns
+         if (pattern.includes("*")) {
+            findPattern = pattern.replace(/\*/g, "*");
+         }
+
          const result = execSync(
-            `find . -path "${pattern}" -not -path "./node_modules/*" 2>/dev/null || true`,
+            `find . -path "./${findPattern}" -not -path "./node_modules/*" 2>/dev/null || true`,
             {
-               encoding: "utf8",
                cwd: process.cwd(),
+               encoding: "utf8",
             },
          );
 
@@ -298,8 +305,8 @@ program
    .option("--dry-run", "Show what would be deleted without actually deleting")
    .option("--no-install", "Skip dependency reinstallation prompt")
    .option("--deep", "Also clean node_modules in all packages")
-   .action((options) => {
-      clean(options);
+   .action(async (options) => {
+      await clean(options);
    });
 
 program
@@ -307,15 +314,15 @@ program
    .description("Complete reset: clean + git reset + clean uncommitted changes")
    .option("--force", "Skip confirmation prompt")
    .option("--no-install", "Skip dependency reinstallation prompt")
-   .action((options) => {
-      reset(options);
+   .action(async (options) => {
+      await reset(options);
    });
 
 program
    .command("cache")
    .description("Clean only cache files (no build files or node_modules)")
    .option("--dry-run", "Show what would be deleted without actually deleting")
-   .action((options) => {
+   .action(async (options) => {
       // Only clean cache-related targets
       const cacheTargets = [
          ".nx/cache",
@@ -330,11 +337,13 @@ program
       CLEAN_TARGETS.length = 0;
       CLEAN_TARGETS.push(...cacheTargets);
 
-      clean(options).then(() => {
+      try {
+         await clean(options);
+      } finally {
          // Restore original targets
          CLEAN_TARGETS.length = 0;
          CLEAN_TARGETS.push(...originalTargets);
-      });
+      }
    });
 
 program.parse();

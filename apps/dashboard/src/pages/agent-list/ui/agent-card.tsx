@@ -1,34 +1,34 @@
-import {
-   Card,
-   CardHeader,
-   CardFooter,
-   CardAction,
-} from "@packages/ui/components/card";
-import { Checkbox } from "@packages/ui/components/checkbox";
-import { Badge } from "@packages/ui/components/badge";
-import {
-   Credenza,
-   CredenzaContent,
-   CredenzaHeader,
-   CredenzaTitle,
-   CredenzaDescription,
-   CredenzaTrigger,
-   CredenzaBody,
-} from "@packages/ui/components/credenza";
-import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
-import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { formatValueToTitleCase } from "@packages/ui/lib/utils";
-import { useTRPC } from "@/integrations/clients";
-import { useAgentList } from "../lib/agent-list-context";
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Eye, Edit, Trash2, PlusIcon } from "lucide-react";
-import { DeleteAgentDialog } from "@/features/agent-actions/ui/delete-agent-dialog";
-import { EditAgentAction } from "@/features/agent-actions/ui/edit-agent-action";
 import type { AgentSelect } from "@packages/database/schema";
 import type { PersonaConfig } from "@packages/database/schemas/agent";
 import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
+import {
+   Card,
+   CardAction,
+   CardFooter,
+   CardHeader,
+} from "@packages/ui/components/card";
+import { Checkbox } from "@packages/ui/components/checkbox";
+import {
+   Credenza,
+   CredenzaBody,
+   CredenzaContent,
+   CredenzaDescription,
+   CredenzaHeader,
+   CredenzaTitle,
+   CredenzaTrigger,
+} from "@packages/ui/components/credenza";
+import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
+import { formatValueToTitleCase } from "@packages/ui/lib/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { Edit, Eye, PlusIcon, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { DeleteAgentDialog } from "@/features/agent-actions/ui/delete-agent-dialog";
+import { EditAgentAction } from "@/features/agent-actions/ui/edit-agent-action";
+import { useTRPC } from "@/integrations/clients";
+import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
+import { useAgentList } from "../lib/agent-list-context";
 
 type AgentCardProps = {
    agent: AgentSelect;
@@ -57,16 +57,16 @@ export function AgentCard({ agent }: AgentCardProps) {
 
    const handleViewDetails = () => {
       navigate({
-         to: "/agents/$agentId",
          params: { agentId: agent.id },
+         to: "/agents/$agentId",
       });
       setIsCredenzaOpen(false);
    };
 
    const handleViewContent = () => {
       navigate({
-         to: "/agents/$agentId/content/request",
          params: { agentId: agent.id },
+         to: "/agents/$agentId/content/request",
       });
       setIsCredenzaOpen(false);
    };
@@ -82,15 +82,15 @@ export function AgentCard({ agent }: AgentCardProps) {
 
    return (
       <>
-         <Credenza open={isCredenzaOpen} onOpenChange={setIsCredenzaOpen}>
+         <Credenza onOpenChange={setIsCredenzaOpen} open={isCredenzaOpen}>
             <CredenzaTrigger asChild>
                <Card className="cursor-pointer">
                   <CardHeader>
                      <AgentWriterCard
-                        isHeader={true}
-                        photo={profilePhoto?.data}
-                        name={personaConfig.metadata.name}
                         description={personaConfig.metadata.description}
+                        isHeader={true}
+                        name={personaConfig.metadata.name}
+                        photo={profilePhoto?.data}
                      />
 
                      <CardAction>
@@ -151,8 +151,8 @@ export function AgentCard({ agent }: AgentCardProps) {
          <DeleteAgentDialog
             agentId={agent.id}
             agentName={personaConfig.metadata.name}
-            open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
+            open={deleteDialogOpen}
          />
       </>
    );

@@ -1,17 +1,17 @@
-import { initTRPC, TRPCError } from "@trpc/server";
-import type { Polar } from "@polar-sh/sdk";
-import SuperJSON from "superjson";
 import type { AuthInstance } from "@packages/authentication/server";
+import { createContentaSdk } from "@packages/contenta-sdk";
 import type { DatabaseInstance } from "@packages/database/client";
-import type { MinioClient } from "@packages/files/client";
-import type { PgVectorDatabaseInstance } from "@packages/rag/client";
 import {
    findMemberByUserId,
    isOrganizationOwner,
 } from "@packages/database/repositories/auth-repository";
-import { getCustomerState } from "@packages/payment/ingestion";
+import type { MinioClient } from "@packages/files/client";
 import type { SupportedLng } from "@packages/localization";
-import { createContentaSdk } from "@packages/contenta-sdk";
+import { getCustomerState } from "@packages/payment/ingestion";
+import type { PgVectorDatabaseInstance } from "@packages/rag/client";
+import type { Polar } from "@polar-sh/sdk";
+import { initTRPC, TRPCError } from "@trpc/server";
+import SuperJSON from "superjson";
 export const createTRPCContext = async ({
    auth,
    polarClient,
@@ -47,16 +47,16 @@ export const createTRPCContext = async ({
    const language = headers.get("x-locale") as SupportedLng;
    const contentaSdk = createContentaSdk(language || "en");
    return {
-      polarClient,
-      minioBucket,
-      minioClient,
-      db,
-      ragClient,
-      session,
       auth,
       contentaSdk,
+      db,
       headers,
       language,
+      minioBucket,
+      minioClient,
+      polarClient,
+      ragClient,
+      session,
    };
 };
 
@@ -109,8 +109,8 @@ const sdkAuth = t.middleware(async ({ ctx, next }) => {
    }
 
    const apiKeyData = await resolvedCtx.auth.api.verifyApiKey({
-      headers: resolvedCtx.headers,
       body: { key: authHeader },
+      headers: resolvedCtx.headers,
    });
 
    if (!apiKeyData.valid) {
@@ -206,8 +206,8 @@ const hasOrganizationAccess = t.middleware(async ({ ctx, next }) => {
 
    return next({
       ctx: {
-         session: { ...resolvedCtx.session },
          customerState,
+         session: { ...resolvedCtx.session },
       },
    });
 });
@@ -304,8 +304,8 @@ export const hasGenerationCredits = t.middleware(async ({ ctx, next }) => {
 
       return next({
          ctx: {
-            session: { ...resolvedCtx.session },
             customerState,
+            session: { ...resolvedCtx.session },
          },
       });
    }
@@ -344,8 +344,8 @@ export const hasGenerationCredits = t.middleware(async ({ ctx, next }) => {
 
    return next({
       ctx: {
-         session: { ...resolvedCtx.session },
          customerState: customerStateToCheck,
+         session: { ...resolvedCtx.session },
       },
    });
 });

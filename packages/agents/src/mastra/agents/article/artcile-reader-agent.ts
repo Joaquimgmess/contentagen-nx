@@ -1,12 +1,12 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import {
-   getAudienceProfileGuidelinesTool,
-   getAudienceProfileGuidelinesInstructions,
-} from "../../tools/get-audience-profile-guidelines-tool";
 import { serverEnv } from "@packages/environment/server";
-import { dateTool } from "../../tools/date-tool";
 import { createToolSystemPrompt } from "../../helpers";
+import { dateTool } from "../../tools/date-tool";
+import {
+   getAudienceProfileGuidelinesInstructions,
+   getAudienceProfileGuidelinesTool,
+} from "../../tools/get-audience-profile-guidelines-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -21,7 +21,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const articleReaderAgent = new Agent({
-   name: "Article Requirements Evaluator",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -89,5 +88,6 @@ Focus on requirements fulfillment and content quality. Provide specific evidence
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Article Requirements Evaluator",
    tools: { dateTool, getAudiencePersona: getAudienceProfileGuidelinesTool },
 });

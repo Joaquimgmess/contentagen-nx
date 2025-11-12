@@ -1,21 +1,21 @@
-import { betterAuthClient, useTRPC } from "@/integrations/clients";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
+   CredenzaFooter,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaFooter,
-   CredenzaBody,
-   CredenzaDescription,
 } from "@packages/ui/components/credenza";
 import { useAppForm } from "@packages/ui/components/form";
 import { Input } from "@packages/ui/components/input";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, type FormEvent } from "react";
+import { type FormEvent, useCallback } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { translate } from "@packages/localization";
+import { betterAuthClient, useTRPC } from "@/integrations/clients";
 
 export function UpdateApiKeyCredenza({
    keyId,
@@ -44,6 +44,10 @@ export function UpdateApiKeyCredenza({
                name: values.name,
             },
             {
+               onError: (e) => {
+                  console.error("Error updating API key:", e);
+                  toast.error(translate("pages.api-key.messages.update-error"));
+               },
                onSuccess: async () => {
                   toast.success(
                      translate("pages.api-key.messages.update-success"),
@@ -52,10 +56,6 @@ export function UpdateApiKeyCredenza({
                      queryKey: trpc.authHelpers.getApiKeys.queryKey(),
                   });
                   onOpenChange(false);
-               },
-               onError: (e) => {
-                  console.error("Error updating API key:", e);
-                  toast.error(translate("pages.api-key.messages.update-error"));
                },
             },
          );
@@ -71,12 +71,12 @@ export function UpdateApiKeyCredenza({
 
    const form = useAppForm({
       defaultValues: { name: initialName },
-      validators: {
-         onBlur: schema,
-      },
       onSubmit: async ({ value, formApi }) => {
          await updateApiKey(value);
          formApi.reset();
+      },
+      validators: {
+         onBlur: schema,
       },
    });
 
@@ -90,7 +90,7 @@ export function UpdateApiKeyCredenza({
    );
 
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>

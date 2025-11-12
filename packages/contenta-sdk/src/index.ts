@@ -1,6 +1,6 @@
 import { createSdk } from "@contentagen/sdk";
-import { serverEnv } from "@packages/environment/server";
 import { isProduction } from "@packages/environment/helpers";
+import { serverEnv } from "@packages/environment/server";
 
 export const createContentaSdk = (
    locale: Parameters<typeof createSdk>[0]["locale"],

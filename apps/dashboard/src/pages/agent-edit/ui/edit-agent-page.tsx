@@ -1,9 +1,9 @@
-import { AgentCreationManualForm } from "@/features/manual-agent-creation-form/ui/agent-creation-manual-form";
-import { useTRPC } from "@/integrations/clients";
+import { translate } from "@packages/localization";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { translate } from "@packages/localization";
+import { AgentCreationManualForm } from "@/features/manual-agent-creation-form/ui/agent-creation-manual-form";
+import { useTRPC } from "@/integrations/clients";
 export function EditAgentPage() {
    const navigate = useNavigate();
    const trpc = useTRPC();
@@ -12,18 +12,18 @@ export function EditAgentPage() {
    });
    const agentMutation = useMutation(
       trpc.agent.update.mutationOptions({
-         onSuccess: () => {
-            toast.success(translate("pages.agent-edit.messages.success"));
-            navigate({
-               to: "/agents",
-            });
-         },
          onError: (error) => {
             console.error(
                translate("pages.agent-edit.messages.error-console"),
                error,
             );
             toast.error(translate("pages.agent-edit.messages.error"));
+         },
+         onSuccess: () => {
+            toast.success(translate("pages.agent-edit.messages.success"));
+            navigate({
+               to: "/agents",
+            });
          },
       }),
    );
@@ -34,6 +34,7 @@ export function EditAgentPage() {
 
    return (
       <AgentCreationManualForm
+         defaultValues={{ ...agent.personaConfig }}
          mode="edit"
          onSubmit={async (values) => {
             await agentMutation.mutateAsync({
@@ -43,7 +44,6 @@ export function EditAgentPage() {
                },
             });
          }}
-         defaultValues={{ ...agent.personaConfig }}
       />
    );
 }

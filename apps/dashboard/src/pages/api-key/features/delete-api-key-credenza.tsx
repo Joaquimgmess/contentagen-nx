@@ -1,19 +1,19 @@
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
+   CredenzaFooter,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaFooter,
-   CredenzaBody,
-   CredenzaDescription,
 } from "@packages/ui/components/credenza";
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
 import { useCallback } from "react";
-import { betterAuthClient, useTRPC } from "@/integrations/clients";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { translate } from "@packages/localization";
+import { betterAuthClient, useTRPC } from "@/integrations/clients";
 export function DeleteApiKeyCredenza({
    open,
    onOpenChange,
@@ -34,6 +34,10 @@ export function DeleteApiKeyCredenza({
             keyId,
          },
          {
+            onError: (error) => {
+               console.error("Failed to delete API key:", error);
+               toast.error(translate("pages.api-key.messages.delete-error"));
+            },
             onSuccess: async () => {
                toast.success(
                   translate("pages.api-key.messages.delete-success"),
@@ -42,10 +46,6 @@ export function DeleteApiKeyCredenza({
                   queryKey: trpc.authHelpers.getApiKeys.queryKey(),
                });
                onOpenChange(false);
-            },
-            onError: (error) => {
-               console.error("Failed to delete API key:", error);
-               toast.error(translate("pages.api-key.messages.delete-error"));
             },
          },
       );
@@ -58,7 +58,7 @@ export function DeleteApiKeyCredenza({
    ]);
 
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>
@@ -77,10 +77,10 @@ export function DeleteApiKeyCredenza({
                </div>
             </CredenzaBody>
             <CredenzaFooter className="grid grid-cols-2 gap-2">
-               <Button variant="secondary" onClick={handleCancel}>
+               <Button onClick={handleCancel} variant="secondary">
                   {translate("common.actions.cancel")}
                </Button>
-               <Button variant="destructive" onClick={handleDelete}>
+               <Button onClick={handleDelete} variant="destructive">
                   {translate("common.actions.delete")}
                </Button>
             </CredenzaFooter>

@@ -1,27 +1,28 @@
-import { Elysia, t } from "elysia";
-import { findMemberByUserId } from "@packages/database/repositories/auth-repository";
+import { auth } from "@api/integrations/auth";
+import { db, ragClient } from "@api/integrations/database";
+import { minioClient } from "@api/integrations/minio";
 import { mastra, setRuntimeContext } from "@packages/agents";
-import { AppError, propagateError } from "@packages/utils/errors";
 import { getAgentById } from "@packages/database/repositories/agent-repository";
+import { findMemberByUserId } from "@packages/database/repositories/auth-repository";
+import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
 import {
    getContentById,
    getContentBySlug,
    listContents,
 } from "@packages/database/repositories/content-repository";
-import { streamFileForProxy } from "@packages/files/client";
-import { searchRelatedSlugsByText } from "@packages/rag/repositories/related-slugs-repository";
-import { auth } from "@api/integrations/auth";
-import { db, ragClient } from "@api/integrations/database";
 import { serverEnv as env } from "@packages/environment/server";
-import { minioClient } from "@api/integrations/minio";
-import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
+import { streamFileForProxy } from "@packages/files/client";
 import type { SupportedLng } from "@packages/localization";
+import { searchRelatedSlugsByText } from "@packages/rag/repositories/related-slugs-repository";
+import { AppError, propagateError } from "@packages/utils/errors";
+import { Elysia, t } from "elysia";
+
 const minioBucket = env.MINIO_BUCKET;
 
 const ImageSchema = t.Object(
    {
-      data: t.String(),
       contentType: t.String(),
+      data: t.String(),
    },
    { additionalProperties: true },
 );
@@ -40,8 +41,8 @@ export const sdkRoutes = new Elysia({
             }
 
             const apiKeyData = await auth.api.verifyApiKey({
-               headers: request.headers,
                body: { key: authHeader },
+               headers: request.headers,
             });
 
             if (!apiKeyData.valid) {
@@ -78,8 +79,8 @@ export const sdkRoutes = new Elysia({
                   minioClient,
                );
                profilePhoto = {
-                  data: buffer.toString("base64"),
                   contentType,
+                  data: buffer.toString("base64"),
                };
             } catch (err) {
                console.error("Error fetching profile photo:", err);
@@ -93,7 +94,6 @@ export const sdkRoutes = new Elysia({
          };
       },
       {
-         sdkAuth: true,
          params: t.Object({
             agentId: t.String(),
          }),
@@ -101,6 +101,7 @@ export const sdkRoutes = new Elysia({
             name: t.String(),
             profilePhoto: t.Nullable(ImageSchema),
          }),
+         sdkAuth: true,
       },
    )
    .get(
@@ -121,8 +122,8 @@ export const sdkRoutes = new Elysia({
       },
       {
          query: t.Object({
-            slug: t.String(),
             agentId: t.String(),
+            slug: t.String(),
          }),
          response: t.Array(t.String()),
          sdkAuth: true,
@@ -151,16 +152,16 @@ export const sdkRoutes = new Elysia({
          const brand = await getBrandByOrgId(db, member?.organizationId);
 
          const runtimeContext = setRuntimeContext({
-            userId: userId,
-            language: language as SupportedLng,
             brandId: brand?.id || "",
+            language: language as SupportedLng,
+            userId: userId,
          });
 
          try {
             const agentInstance = mastra.getAgent("appAssistantAgent");
             const result = await agentInstance.stream(
-               [{ role: "user", content: query.message }],
-               { runtimeContext, format: "aisdk" },
+               [{ content: query.message, role: "user" }],
+               { format: "aisdk", runtimeContext },
             );
             return result.toTextStreamResponse();
          } catch (error) {
@@ -170,11 +171,10 @@ export const sdkRoutes = new Elysia({
          }
       },
       {
-         sdkAuth: true,
-
          query: t.Object({
             message: t.String(),
          }),
+         sdkAuth: true,
       },
    )
 
@@ -202,8 +202,8 @@ export const sdkRoutes = new Elysia({
                         minioClient,
                      );
                      image = {
-                        data: buffer.toString("base64"),
                         contentType,
+                        data: buffer.toString("base64"),
                      };
                   } catch (error) {
                      console.error(
@@ -224,8 +224,6 @@ export const sdkRoutes = new Elysia({
          return { posts: postsWithImages, total: all.length };
       },
       {
-         sdkAuth: true,
-
          params: t.Object({
             agentId: t.String(),
          }),
@@ -234,6 +232,7 @@ export const sdkRoutes = new Elysia({
             page: t.Optional(t.String()),
             status: t.Optional(t.Array(t.UnionEnum(["draft", "approved"]))),
          }),
+         sdkAuth: true,
       },
    )
 
@@ -260,8 +259,8 @@ export const sdkRoutes = new Elysia({
                      minioClient,
                   );
                   image = {
-                     data: buffer.toString("base64"),
                      contentType,
+                     data: buffer.toString("base64"),
                   };
                } catch (error) {
                   console.error(
@@ -284,12 +283,11 @@ export const sdkRoutes = new Elysia({
          }
       },
       {
-         sdkAuth: true,
-
          params: t.Object({
             agentId: t.String(),
             slug: t.String(),
          }),
+         sdkAuth: true,
       },
    )
 
@@ -311,8 +309,8 @@ export const sdkRoutes = new Elysia({
             );
 
             return {
-               data: buffer.toString("base64"),
                contentType,
+               data: buffer.toString("base64"),
             };
          } catch (error) {
             console.error("Error fetching content image:", error);
@@ -320,11 +318,10 @@ export const sdkRoutes = new Elysia({
          }
       },
       {
-         sdkAuth: true,
-
          params: t.Object({
             contentId: t.String(),
          }),
          response: t.Nullable(ImageSchema),
+         sdkAuth: true,
       },
    );

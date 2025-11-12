@@ -1,3 +1,6 @@
+// Removed Credenza imports since edit will be inline
+import type { ContentSelect } from "@packages/database/schemas/content";
+import { translate } from "@packages/localization";
 import {
    Card,
    CardContent,
@@ -6,10 +9,7 @@ import {
    CardTitle,
 } from "@packages/ui/components/card";
 import { Markdown } from "@packages/ui/components/markdown";
-// Removed Credenza imports since edit will be inline
-import type { ContentSelect } from "@packages/database/schemas/content";
 import { EditContentBody } from "../features/edit-content-body";
-import { translate } from "@packages/localization";
 
 export function GeneratedContentDisplay({
    content,

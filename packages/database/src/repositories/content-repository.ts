@@ -1,13 +1,11 @@
-import { content } from "../schemas/content";
-import { inArray } from "drizzle-orm";
-
+import { AppError, propagateError } from "@packages/utils/errors";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
 import type {
    ContentSelect as Content,
    ContentInsert,
 } from "../schemas/content";
-import type { DatabaseInstance } from "../client";
-import { AppError, propagateError } from "@packages/utils/errors";
-import { eq, and, or, sql } from "drizzle-orm";
+import { content } from "../schemas/content";
 
 // Get content by slug
 export async function getContentBySlug(
@@ -165,8 +163,8 @@ export async function approveBulkContent(
 
       // First, verify all content items are in draft status
       const contentsToApprove = await dbClient.query.content.findMany({
+         columns: { agentId: true, id: true, meta: true, status: true },
          where: inArray(content.id, ids),
-         columns: { id: true, status: true, meta: true, agentId: true },
       });
 
       const draftContentIds = contentsToApprove
@@ -199,24 +197,24 @@ export async function listContents(
 ) {
    try {
       return await dbClient.query.content.findMany({
+         columns: {
+            createdAt: true,
+            id: true,
+            imageUrl: true,
+            meta: true,
+            shareStatus: true,
+            stats: true,
+            status: true,
+         },
+         orderBy: (content, { desc }) => [desc(content.updatedAt)],
          where: (_fields, operators) =>
             operators.and(
                inArray(content.agentId, agentIds),
                inArray(content.status, status),
             ),
-         columns: {
-            id: true,
-            meta: true,
-            imageUrl: true,
-            status: true,
-            createdAt: true,
-            stats: true,
-            shareStatus: true,
-         },
          with: {
             agent: true,
          },
-         orderBy: (content, { desc }) => [desc(content.updatedAt)],
       });
    } catch (err) {
       throw AppError.database(
@@ -234,15 +232,15 @@ export async function getContentStatsLast30Days(
       const now = new Date();
       const date30dAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       const items = await dbClient.query.content.findMany({
+         columns: {
+            stats: true,
+         },
          where: (_fields, operators) =>
             operators.and(
                inArray(content.agentId, agentIds),
                inArray(content.status, status),
                operators.gte(content.createdAt, date30dAgo),
             ),
-         columns: {
-            stats: true,
-         },
       });
       const wordsCount = items.reduce((acc, item) => {
          const wc = item.stats?.wordsCount
@@ -264,8 +262,8 @@ export async function getAgentContentStats(
 ): Promise<Content[]> {
    try {
       return await dbClient.query.content.findMany({
-         where: eq(content.agentId, agentId),
          orderBy: (content, { desc }) => [desc(content.updatedAt)],
+         where: eq(content.agentId, agentId),
       });
    } catch (err) {
       throw AppError.database(
@@ -282,8 +280,8 @@ export async function getMostUsedKeywordsByAgent(
    try {
       // Get all content for the agent
       const items = await dbClient.query.content.findMany({
-         where: eq(content.agentId, agentId),
          columns: { meta: true },
+         where: eq(content.agentId, agentId),
       });
 
       // Aggregate keywords
@@ -376,15 +374,15 @@ export async function searchContent(
 
       // Build columns object based on includeBody option
       const columns: Record<string, boolean> = {
-         id: true,
-         meta: true,
-         imageUrl: true,
-         status: true,
          createdAt: true,
-         updatedAt: true,
-         stats: true,
-         shareStatus: true,
+         id: true,
+         imageUrl: true,
+         meta: true,
          request: true,
+         shareStatus: true,
+         stats: true,
+         status: true,
+         updatedAt: true,
       };
 
       if (includeBody) {
@@ -393,14 +391,14 @@ export async function searchContent(
 
       // Get search results with pagination
       const results = await dbClient.query.content.findMany({
-         where: whereConditions,
          columns,
+         limit,
+         offset,
+         orderBy: (content, { desc }) => [desc(content.updatedAt)],
+         where: whereConditions,
          with: {
             agent: true,
          },
-         orderBy: (content, { desc }) => [desc(content.updatedAt)],
-         limit,
-         offset,
       });
 
       return { results, totalCount };

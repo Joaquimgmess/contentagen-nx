@@ -1,39 +1,40 @@
 import { ContentaChat } from "@contentagen/assistant-widget";
-import i18n, { type SupportedLng } from "@packages/localization";
-import { MessageCircle } from "lucide-react";
+import { getCurrentLanguage } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Popover,
    PopoverContent,
    PopoverTrigger,
 } from "@packages/ui/components/popover";
-import { Button } from "@packages/ui/components/button";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import {
    createFileRoute,
+   Outlet,
    useLocation,
    useRouter,
 } from "@tanstack/react-router";
-import { Outlet } from "@tanstack/react-router";
-import { DashboardLayout } from "@/layout/dashboard-layout";
-import { useTRPC } from "@/integrations/clients";
-import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { PendingComponent } from "@/default/pending";
-import { ErrorComponent } from "@/default/error";
+import { MessageCircle } from "lucide-react";
 import { useCallback, useEffect } from "react";
+import { toast } from "sonner";
+import { ErrorComponent } from "@/default/error";
+import { PendingComponent } from "@/default/pending";
+import { useTRPC } from "@/integrations/clients";
+import { DashboardLayout } from "@/layout/dashboard-layout";
+
 export const Route = createFileRoute("/_dashboard")({
    component: RouteComponent,
-   wrapInSuspense: true,
-   pendingComponent: () => (
-      <div className="h-screen w-screen">
-         <PendingComponent />
-      </div>
-   ),
    errorComponent: ErrorComponent,
    loader: async ({ context }) => {
       await context.queryClient.prefetchQuery(
          context.trpc.authHelpers.getSession.queryOptions(),
       );
    },
+   pendingComponent: () => (
+      <div className="h-screen w-screen">
+         <PendingComponent />
+      </div>
+   ),
+   wrapInSuspense: true,
 });
 
 function RouteComponent() {
@@ -48,18 +49,18 @@ function RouteComponent() {
       if (error) {
          toast.error("Failed to fetch session data.");
          router.navigate({
-            to: "/auth/sign-in",
-            search: location.search,
             replace: true,
+            search: location.search,
+            to: "/auth/sign-in",
          });
          return;
       }
       if (!session) {
          toast.error("You must be logged in to access this page.");
          router.navigate({
-            to: "/auth/sign-in",
-            search: location.search,
             replace: true,
+            search: location.search,
+            to: "/auth/sign-in",
          });
       }
    }, [session, location, router, error]);
@@ -73,7 +74,7 @@ function RouteComponent() {
       [mutation],
    );
    return (
-      <DashboardLayout session={session}>
+      <DashboardLayout>
          <div
             className="duration-700 animate-in slide-in-from-bottom-4 fade-in h-full w-full"
             key={location.pathname}
@@ -81,16 +82,16 @@ function RouteComponent() {
             <Popover>
                <PopoverTrigger asChild>
                   <Button
+                     className="fixed bottom-4 right-4 z-50"
                      size="icon"
                      variant={"outline"}
-                     className="fixed bottom-4 right-4 z-50"
                   >
                      <MessageCircle className="h-6 w-6" />
                   </Button>
                </PopoverTrigger>
                <PopoverContent align="end" className="w-full p-0">
                   <ContentaChat
-                     locale={i18n.language as SupportedLng}
+                     locale={getCurrentLanguage()}
                      sendMessage={sendMessage}
                   />
                </PopoverContent>

@@ -2,8 +2,8 @@ import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
 import { getRagGuidelinesTool } from "../tools/get-rag-guidelines-tool";
-import { queryForCompetitorKnowledgeTool } from "../tools/query-for-competitor-knowledge-tool";
 import { queryForBrandKnowledgeTool } from "../tools/query-for-brand-knowledge-tool";
+import { queryForCompetitorKnowledgeTool } from "../tools/query-for-competitor-knowledge-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -20,7 +20,6 @@ Regardless of source content language, your entire output must be written in ${l
 `;
 };
 export const contentStrategistAgent = new Agent({
-   name: "Elite Content Strategist",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") || "en";
 
@@ -165,9 +164,10 @@ Remember: Your role is to transform user content requests into strategic briefs 
       `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Elite Content Strategist",
    tools: {
-      queryForCompetitorKnowledge: queryForCompetitorKnowledgeTool,
-      queryForBrandKnowledge: queryForBrandKnowledgeTool,
       getRagPersona: getRagGuidelinesTool,
+      queryForBrandKnowledge: queryForBrandKnowledgeTool,
+      queryForCompetitorKnowledge: queryForCompetitorKnowledgeTool,
    },
 });

@@ -1,13 +1,13 @@
 import { createTool } from "@mastra/core/tools";
+import { serverEnv } from "@packages/environment/server";
+import { getPaymentClient } from "@packages/payment/client";
 import {
    createWebSearchUsageMetadata,
    ingestBilling,
 } from "@packages/payment/ingestion";
-import { getPaymentClient } from "@packages/payment/client";
-import { z } from "zod";
-import { serverEnv } from "@packages/environment/server";
-import { tavily } from "@tavily/core";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { tavily } from "@tavily/core";
+import { z } from "zod";
 
 export function getTavilySearchInstructions(): string {
    return `
@@ -26,11 +26,7 @@ Bad: "features" (too vague), "https://example.com" (use crawl tool for URLs)
 }
 
 export const tavilySearchTool = createTool({
-   id: "tavily-search",
    description: "Searches the web for relevant content",
-   inputSchema: z.object({
-      query: z.string().describe("The search query"),
-   }),
    execute: async ({ context, runtimeContext }) => {
       const { query } = context;
 
@@ -65,4 +61,8 @@ export const tavilySearchTool = createTool({
          );
       }
    },
+   id: "tavily-search",
+   inputSchema: z.object({
+      query: z.string().describe("The search query"),
+   }),
 });

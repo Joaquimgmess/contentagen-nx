@@ -1,16 +1,18 @@
 import { EventEmitter } from "node:events";
-import type { ContentStatus } from "@packages/database/schemas/content";
-import type { IdeiaStatus } from "@packages/database/schemas/ideas";
-import type { KnowledgeCreationStatus } from "@packages/database/schemas/competitor";
-import type { ContentRequest } from "@packages/database/schemas/content";
 import type { BrandKnowledgeStatus } from "@packages/database/schemas/brand";
+import type { KnowledgeCreationStatus } from "@packages/database/schemas/competitor";
+import type {
+   ContentRequest,
+   ContentStatus,
+} from "@packages/database/schemas/content";
+import type { IdeiaStatus } from "@packages/database/schemas/ideas";
 // 1. Define event names as constants
 export const EVENTS = {
    agentKnowledgeStatus: "agent.knowledge.status",
-   contentStatus: "content.status",
-   competitorStatus: "competitor.status",
-   ideaStatus: "idea.status",
    brandStatus: "brand.status",
+   competitorStatus: "competitor.status",
+   contentStatus: "content.status",
+   ideaStatus: "idea.status",
 } as const;
 
 // 2. Define the payload type for the status change event

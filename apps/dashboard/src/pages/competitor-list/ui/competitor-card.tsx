@@ -1,32 +1,32 @@
+import type { RouterOutput } from "@packages/api/client";
+import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
 import {
    Card,
-   CardHeader,
    CardAction,
    CardFooter,
+   CardHeader,
 } from "@packages/ui/components/card";
-import { Badge } from "@packages/ui/components/badge";
-import { Edit, Trash2, Globe, Eye } from "lucide-react";
-import { useRouter } from "@tanstack/react-router";
-import { DeleteCompetitorConfirmationDialog } from "../features/delete-competitor-confirmation-dialog";
-import { CreateEditCompetitorDialog } from "../features/create-edit-competitor-dialog";
+import { Checkbox } from "@packages/ui/components/checkbox";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaDescription,
    CredenzaTrigger,
-   CredenzaBody,
 } from "@packages/ui/components/credenza";
 import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { useCompetitorList } from "../lib/competitor-list-context";
-import { useCallback, useState } from "react";
-import { Checkbox } from "@packages/ui/components/checkbox";
-import type { RouterOutput } from "@packages/api/client";
-import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
-import { useTRPC } from "@/integrations/clients";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { translate } from "@packages/localization";
+import { useRouter } from "@tanstack/react-router";
+import { Edit, Eye, Globe, Trash2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useTRPC } from "@/integrations/clients";
+import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
+import { CreateEditCompetitorDialog } from "../features/create-edit-competitor-dialog";
+import { DeleteCompetitorConfirmationDialog } from "../features/delete-competitor-confirmation-dialog";
+import { useCompetitorList } from "../lib/competitor-list-context";
 
 interface CompetitorCardProps {
    competitor: RouterOutput["competitor"]["list"]["items"][number];
@@ -40,8 +40,8 @@ export function CompetitorCard({ competitor }: CompetitorCardProps) {
    const router = useRouter();
    const handleNavigate = useCallback(() => {
       router.navigate({
-         to: "/competitors/$id",
          params: { id: competitor.id },
+         to: "/competitors/$id",
       });
    }, [competitor.id, router]);
    const handleExternalNavigation = useCallback(() => {
@@ -49,9 +49,9 @@ export function CompetitorCard({ competitor }: CompetitorCardProps) {
    }, [competitor.websiteUrl]);
    const formatDate = (date: Date) => {
       return new Intl.DateTimeFormat("en-US", {
-         year: "numeric",
-         month: "short",
          day: "numeric",
+         month: "short",
+         year: "numeric",
       }).format(date);
    };
    const trpc = useTRPC();
@@ -62,15 +62,15 @@ export function CompetitorCard({ competitor }: CompetitorCardProps) {
    );
    return (
       <>
-         <Credenza open={isCredenzaOpen} onOpenChange={setIsCredenzaOpen}>
+         <Credenza onOpenChange={setIsCredenzaOpen} open={isCredenzaOpen}>
             <CredenzaTrigger asChild>
                <Card className="cursor-pointer">
                   <CardHeader>
                      <AgentWriterCard
-                        name={competitor.name ?? ""}
                         description={competitor.summary ?? ""}
-                        photo={data?.data ?? ""}
                         isHeader
+                        name={competitor.name ?? ""}
+                        photo={data?.data ?? ""}
                      />
 
                      <CardAction>
@@ -145,14 +145,14 @@ export function CompetitorCard({ competitor }: CompetitorCardProps) {
 
          <DeleteCompetitorConfirmationDialog
             competitor={competitor}
-            open={showDeleteDialog}
             onOpenChange={setShowDeleteDialog}
+            open={showDeleteDialog}
          />
 
          <CreateEditCompetitorDialog
             competitor={competitor}
-            open={showEditDialog}
             onOpenChange={setShowEditDialog}
+            open={showEditDialog}
          />
       </>
    );

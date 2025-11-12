@@ -1,9 +1,9 @@
 {
    "baseUrl": ".",
    "compilerOptions": {
+      "baseUrl": ".",
       "jsx": "react-jsx",
       "jsxImportSource": "react",
-      "baseUrl": ".",
       "paths": {
          "@/*": ["./src/*"],
          "@packages/ui/*": ["../../packages/ui/src/*"]

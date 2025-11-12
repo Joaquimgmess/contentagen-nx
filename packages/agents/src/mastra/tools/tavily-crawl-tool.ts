@@ -1,13 +1,13 @@
 import { createTool } from "@mastra/core/tools";
+import { serverEnv } from "@packages/environment/server";
+import { getPaymentClient } from "@packages/payment/client";
 import {
    createWebSearchUsageMetadata,
    ingestBilling,
 } from "@packages/payment/ingestion";
-import { getPaymentClient } from "@packages/payment/client";
-import { z } from "zod";
-import { serverEnv } from "@packages/environment/server";
-import { tavily } from "@tavily/core";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { tavily } from "@tavily/core";
+import { z } from "zod";
 
 export function getTavilyCrawlInstructions(): string {
    return `
@@ -27,16 +27,7 @@ instructions: "Extract API endpoints, authentication methods, and integration fe
 }
 
 export const tavilyCrawlTool = createTool({
-   id: "tavily-crawl",
    description: "Crawls a website url to extract knowledge and content",
-   inputSchema: z.object({
-      websiteUrl: z.url().describe("The website URL to crawl"),
-      instructions: z
-         .string()
-         .describe(
-            "Natural language instructions for the crawler to follow when crawling the website (max 400 characters)",
-         ),
-   }),
    execute: async ({ context, runtimeContext }) => {
       const { websiteUrl } = context;
 
@@ -52,8 +43,8 @@ export const tavilyCrawlTool = createTool({
          const truncatedInstructions = context.instructions.slice(0, 400);
 
          const crawResult = await tavilyClient.crawl(websiteUrl, {
-            maxDepth: 2,
             instructions: truncatedInstructions,
+            maxDepth: 2,
          });
          const usageData = createWebSearchUsageMetadata({
             method: "crawl",
@@ -75,4 +66,13 @@ export const tavilyCrawlTool = createTool({
          );
       }
    },
+   id: "tavily-crawl",
+   inputSchema: z.object({
+      instructions: z
+         .string()
+         .describe(
+            "Natural language instructions for the crawler to follow when crawling the website (max 400 characters)",
+         ),
+      websiteUrl: z.url().describe("The website URL to crawl"),
+   }),
 });

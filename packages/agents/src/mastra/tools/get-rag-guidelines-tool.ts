@@ -1,7 +1,7 @@
 import { createTool } from "@mastra/core/tools";
-import { serverEnv } from "@packages/environment/server";
 import { createDb } from "@packages/database/client";
 import { getAgentById } from "@packages/database/repositories/agent-repository";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
 export function getRagGuidelinesInstructions(): string {
    return `
@@ -15,7 +15,6 @@ Retrieves RAG integration instructions that define how to query and utilize know
 `;
 }
 export const getRagGuidelinesTool = createTool({
-   id: "get-rag-persona",
    description:
       "Retrieve the RAG integration persona from the database for the strategist agent to use",
    execute: async ({ runtimeContext }) => {
@@ -44,4 +43,5 @@ export const getRagGuidelinesTool = createTool({
          );
       }
    },
+   id: "get-rag-persona",
 });

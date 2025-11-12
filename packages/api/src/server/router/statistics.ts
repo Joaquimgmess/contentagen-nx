@@ -1,9 +1,9 @@
-import { protectedProcedure, router } from "../trpc";
 import {
    getTotalAgents,
    listAgents,
 } from "@packages/database/repositories/agent-repository";
 import { getContentStatsLast30Days } from "@packages/database/repositories/content-repository";
+import { protectedProcedure, router } from "../trpc";
 
 export const statisticsRouter = router({
    getHomeStats: protectedProcedure.query(async ({ ctx }) => {
@@ -13,12 +13,12 @@ export const statisticsRouter = router({
       const organizationId = resolvedCtx.session?.session?.activeOrganizationId;
       // Get agents for user/org
       const totalAgents = await getTotalAgents(db, {
-         userId,
          organizationId: organizationId ?? "",
+         userId,
       });
       const agents = await listAgents(db, {
-         userId,
          organizationId: organizationId ?? "",
+         userId,
       });
       const agentIds = agents.map((a) => a.id);
       // Get content stats for last 30 days
@@ -27,9 +27,9 @@ export const statisticsRouter = router({
          "draft",
       ]);
       return {
+         contentGenerated: contentStats.count,
          totalAgents,
          wordCount30d: contentStats.wordsCount,
-         contentGenerated: contentStats.count,
       };
    }),
 });

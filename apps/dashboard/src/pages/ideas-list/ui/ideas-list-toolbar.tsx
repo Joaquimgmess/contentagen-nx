@@ -1,4 +1,3 @@
-import { useState, useMemo } from "react";
 import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
@@ -8,15 +7,15 @@ import {
    DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
 import {
+   Archive,
+   CheckSquare,
    ChevronLeft,
    ChevronRight,
    MoreVertical,
-   CheckSquare,
-   Archive,
 } from "lucide-react";
-
-import { useIdeasList } from "../lib/ideas-list-context";
+import { useMemo, useState } from "react";
 import { BulkActionsCredenza } from "../features/bulk-actions-credenza";
+import { useIdeasList } from "../lib/ideas-list-context";
 
 export function IdeasListToolbar() {
    const {
@@ -35,17 +34,17 @@ export function IdeasListToolbar() {
    const actions = useMemo(
       () => [
          {
+            icon: CheckSquare,
             label: allSelected
                ? translate("pages.ideas-list.toolbar.unselect-all")
                : translate("pages.ideas-list.toolbar.select-all"),
-            icon: CheckSquare,
             onClick: handleSelectAll,
          },
          {
-            label: translate("pages.ideas-list.toolbar.bulk-actions"),
-            icon: Archive,
-            onClick: () => setOpenBulk(true),
             disabled: selectedItemsCount === 0,
+            icon: Archive,
+            label: translate("pages.ideas-list.toolbar.bulk-actions"),
+            onClick: () => setOpenBulk(true),
          },
       ],
       [handleSelectAll, allSelected, selectedItemsCount],
@@ -56,10 +55,10 @@ export function IdeasListToolbar() {
          <div className="flex items-center justify-between gap-4 p-4 bg-background border rounded-lg shadow-sm">
             <div className="flex items-center gap-2">
                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handlePageChange(page - 1)}
                   disabled={page === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                  size="icon"
+                  variant="outline"
                >
                   <ChevronLeft className="h-4 w-4" />
                </Button>
@@ -70,27 +69,27 @@ export function IdeasListToolbar() {
                </span>
 
                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handlePageChange(page + 1)}
                   disabled={page === totalPages}
+                  onClick={() => handlePageChange(page + 1)}
+                  size="icon"
+                  variant="outline"
                >
                   <ChevronRight className="h-4 w-4" />
                </Button>
             </div>
             <DropdownMenu>
                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button size="icon" variant="outline">
                      <MoreVertical className="h-4 w-4" />
                   </Button>
                </DropdownMenuTrigger>
                <DropdownMenuContent align="start">
                   {actions.map((action) => (
                      <DropdownMenuItem
+                        className="flex gap-2"
+                        disabled={action.disabled}
                         key={action.label}
                         onClick={action.onClick}
-                        disabled={action.disabled}
-                        className="flex gap-2"
                      >
                         <action.icon className="h-4 w-4" />
                         {action.label}
@@ -100,10 +99,10 @@ export function IdeasListToolbar() {
             </DropdownMenu>
          </div>
          <BulkActionsCredenza
-            open={openBulk}
-            onOpenChange={setOpenBulk}
-            selectedItems={Array.from(selectedItems)}
             onClearSelection={clearSelection}
+            onOpenChange={setOpenBulk}
+            open={openBulk}
+            selectedItems={Array.from(selectedItems)}
          />
       </>
    );

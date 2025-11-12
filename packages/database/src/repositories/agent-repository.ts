@@ -1,8 +1,8 @@
-import { agent } from "../schemas/agent";
-import type { AgentSelect, AgentInsert } from "../schemas/agent";
-import type { DatabaseInstance } from "../client";
 import { AppError, propagateError } from "@packages/utils/errors";
 import { eq, or, sql } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
+import type { AgentInsert, AgentSelect } from "../schemas/agent";
+import { agent } from "../schemas/agent";
 
 export async function createAgent(
    dbClient: DatabaseInstance,
@@ -97,29 +97,29 @@ export async function listAgents(
 
       if (userId && organizationId) {
          return await dbClient.query.agent.findMany({
+            limit,
+            offset,
+            orderBy: (agent, { desc }) => [desc(agent.createdAt)],
             where: or(
                eq(agent.userId, userId),
                eq(agent.organizationId, organizationId),
             ),
-            limit,
-            offset,
-            orderBy: (agent, { desc }) => [desc(agent.createdAt)],
          });
       }
       if (userId) {
          return await dbClient.query.agent.findMany({
-            where: eq(agent.userId, userId),
             limit,
             offset,
             orderBy: (agent, { desc }) => [desc(agent.createdAt)],
+            where: eq(agent.userId, userId),
          });
       }
       if (organizationId) {
          return await dbClient.query.agent.findMany({
-            where: eq(agent.organizationId, organizationId),
             limit,
             offset,
             orderBy: (agent, { desc }) => [desc(agent.createdAt)],
+            where: eq(agent.organizationId, organizationId),
          });
       }
       return [];

@@ -1,15 +1,15 @@
-import {
-   EditorContent,
-   useEditor,
-   type EditorOptions,
-   type Storage,
-} from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { Markdown, type MarkdownStorage } from "tiptap-markdown";
-import type React from "react";
-import { useEffect, useMemo } from "react";
 import { Button } from "@packages/ui/components/button";
 import { Separator } from "@packages/ui/components/separator";
+import {
+   EditorContent,
+   type EditorOptions,
+   type Storage,
+   useEditor,
+} from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import type React from "react";
+import { useEffect, useMemo } from "react";
+import { Markdown, type MarkdownStorage } from "tiptap-markdown";
 
 export interface TiptapEditorProps {
    value: string;
@@ -39,8 +39,6 @@ export function TiptapEditor({
    error = false,
 }: TiptapEditorProps) {
    const editor = useEditor({
-      immediatelyRender: false,
-      extensions: [StarterKit, Markdown],
       content: value,
       editorProps: {
          attributes: {
@@ -50,6 +48,8 @@ export function TiptapEditor({
             style: `min-height: ${minHeight};`,
          },
       },
+      extensions: [StarterKit, Markdown],
+      immediatelyRender: false,
 
       onUpdate: ({ editor }) => {
          const markdownStorage = (editor.storage as MDStorage).markdown;
@@ -73,139 +73,139 @@ export function TiptapEditor({
    const toolbarButtons = useMemo(
       () => [
          {
+            as: Button,
+            isActive: () => editor?.isActive("bold"),
             key: "bold",
             label: <strong>B</strong>,
-            isActive: () => editor?.isActive("bold"),
             onClick: () => editor?.chain().focus().toggleBold().run(),
-            variant: editor?.isActive("bold") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("bold") ? "secondary" : "ghost",
          },
          {
+            as: Button,
+            isActive: () => editor?.isActive("italic") ?? false,
             key: "italic",
             label: <em>I</em>,
-            isActive: () => editor?.isActive("italic") ?? false,
             onClick: () => editor?.chain().focus().toggleItalic().run(),
-            variant: editor?.isActive("italic") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("italic") ? "secondary" : "ghost",
          },
          {
+            as: Button,
+            isActive: () => editor?.isActive("strike") ?? false,
             key: "strike",
             label: <s>S</s>,
-            isActive: () => editor?.isActive("strike") ?? false,
             onClick: () => editor?.chain().focus().toggleStrike().run(),
-            variant: editor?.isActive("strike") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("strike") ? "secondary" : "ghost",
          },
          { key: "sep-1", separator: true },
          {
+            as: Button,
+            isActive: () => editor?.isActive("heading", { level: 1 }) ?? false,
             key: "heading-1",
             label: "H1",
-            isActive: () => editor?.isActive("heading", { level: 1 }) ?? false,
             onClick: () =>
                editor?.chain().focus().toggleHeading({ level: 1 }).run(),
+            size: "sm",
+            type: "button",
             variant: editor?.isActive("heading", { level: 1 })
                ? "secondary"
                : "ghost",
-            size: "sm",
-            type: "button",
-            as: Button,
          },
          {
+            as: Button,
+            isActive: () => editor?.isActive("heading", { level: 2 }) ?? false,
             key: "heading-2",
             label: "H2",
-            isActive: () => editor?.isActive("heading", { level: 2 }) ?? false,
             onClick: () =>
                editor?.chain().focus().toggleHeading({ level: 2 }).run(),
+            size: "sm",
+            type: "button",
             variant: editor?.isActive("heading", { level: 2 })
                ? "secondary"
                : "ghost",
-            size: "sm",
-            type: "button",
-            as: Button,
          },
          {
+            as: Button,
+            isActive: () => editor?.isActive("heading", { level: 3 }) ?? false,
             key: "heading-3",
             label: "H3",
-            isActive: () => editor?.isActive("heading", { level: 3 }) ?? false,
             onClick: () =>
                editor?.chain().focus().toggleHeading({ level: 3 }).run(),
+            size: "sm",
+            type: "button",
             variant: editor?.isActive("heading", { level: 3 })
                ? "secondary"
                : "ghost",
-            size: "sm",
-            type: "button",
-            as: Button,
          },
          { key: "sep-2", separator: true },
          {
+            as: Button,
+            isActive: () => editor?.isActive("bulletList") ?? false,
             key: "bulletList",
             label: "•",
-            isActive: () => editor?.isActive("bulletList") ?? false,
             onClick: () => editor?.chain().focus().toggleBulletList().run(),
-            variant: editor?.isActive("bulletList") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("bulletList") ? "secondary" : "ghost",
          },
          {
+            as: Button,
+            isActive: () => editor?.isActive("orderedList") ?? false,
             key: "orderedList",
             label: "1.",
-            isActive: () => editor?.isActive("orderedList") ?? false,
             onClick: () => editor?.chain().focus().toggleOrderedList().run(),
-            variant: editor?.isActive("orderedList") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("orderedList") ? "secondary" : "ghost",
          },
          { key: "sep-3", separator: true },
          {
+            as: Button,
+            isActive: () => editor?.isActive("blockquote") ?? false,
             key: "blockquote",
             label: '"',
-            isActive: () => editor?.isActive("blockquote") ?? false,
             onClick: () => editor?.chain().focus().toggleBlockquote().run(),
-            variant: editor?.isActive("blockquote") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("blockquote") ? "secondary" : "ghost",
          },
          {
+            as: Button,
+            isActive: () => editor?.isActive("code") ?? false,
             key: "code",
             label: "<>",
-            isActive: () => editor?.isActive("code") ?? false,
             onClick: () => editor?.chain().focus().toggleCode().run(),
-            variant: editor?.isActive("code") ? "secondary" : "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: editor?.isActive("code") ? "secondary" : "ghost",
          },
          { key: "sep-4", separator: true },
          {
+            as: Button,
+            disabled: !editor?.can().undo(),
+            isActive: () => false,
             key: "undo",
             label: "↶",
-            isActive: () => false,
             onClick: () => editor?.chain().focus().undo().run(),
-            disabled: !editor?.can().undo(),
-            variant: "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: "ghost",
          },
          {
+            as: Button,
+            disabled: !editor?.can().redo(),
+            isActive: () => false,
             key: "redo",
             label: "↷",
-            isActive: () => false,
             onClick: () => editor?.chain().focus().redo().run(),
-            disabled: !editor?.can().redo(),
-            variant: "ghost",
             size: "sm",
             type: "button",
-            as: Button,
+            variant: "ghost",
          },
       ],
       [editor],
@@ -220,10 +220,21 @@ export function TiptapEditor({
          <div className="p-2 flex flex-wrap items-center gap-1 bg-primary/10">
             {toolbarButtons.map((btn) =>
                btn.separator ? (
-                  <div key={btn.key} className="w-px h-6 bg-primary mx-1" />
+                  <div className="w-px h-6 bg-primary mx-1" key={btn.key} />
                ) : (
                   <Button
+                     disabled={btn.disabled}
                      key={btn.key}
+                     onClick={btn.onClick}
+                     size={
+                        btn.size as
+                           | "default"
+                           | "icon"
+                           | "lg"
+                           | "sm"
+                           | null
+                           | undefined
+                     }
                      type={
                         btn.type as "button" | "submit" | "reset" | undefined
                      }
@@ -238,17 +249,6 @@ export function TiptapEditor({
                            | null
                            | undefined
                      }
-                     size={
-                        btn.size as
-                           | "default"
-                           | "icon"
-                           | "lg"
-                           | "sm"
-                           | null
-                           | undefined
-                     }
-                     onClick={btn.onClick}
-                     disabled={btn.disabled}
                   >
                      {btn.label}
                   </Button>
@@ -257,10 +257,10 @@ export function TiptapEditor({
          </div>
          <div className=" relative rounded-b-lg" style={{ minHeight }}>
             <EditorContent
-               editor={editor}
-               id={id}
                data-name={name}
                data-placeholder={placeholder}
+               editor={editor}
+               id={id}
                onBlur={onBlur}
             />
             {editor.isEmpty && placeholder && (

@@ -6,9 +6,9 @@ import { defineConfig } from "astro/config";
 
 export default defineConfig({
    integrations: [mdx(), sitemap(), react()],
-   site: "https://blog.contentagen.com",
 
    output: "static",
+   site: "https://blog.contentagen.com",
 
    vite: {
       plugins: [tailwindcss()],

@@ -1,23 +1,24 @@
-import { betterAuthClient, useTRPC } from "@/integrations/clients";
-import { Key } from "lucide-react";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
+   CredenzaFooter,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaFooter,
-   CredenzaBody,
-   CredenzaDescription,
 } from "@packages/ui/components/credenza";
 import { useAppForm } from "@packages/ui/components/form";
 import { InfoItem } from "@packages/ui/components/info-item";
 import { Input } from "@packages/ui/components/input";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState, type FormEvent } from "react";
+import { Key } from "lucide-react";
+import { type FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { translate } from "@packages/localization";
+import { betterAuthClient, useTRPC } from "@/integrations/clients";
+
 function ApiKeyAlertCredenza({
    apiKey,
    open,
@@ -35,7 +36,7 @@ function ApiKeyAlertCredenza({
       onOpenChange(false);
    }, [apiKey, onOpenChange]);
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>
@@ -52,11 +53,11 @@ function ApiKeyAlertCredenza({
             <CredenzaBody className="grid grid-cols-1 pb-0">
                <InfoItem
                   icon={<Key />}
+                  key={"api-key"}
                   label={translate(
                      "pages.api-key.modals.api-key-alert.key-label",
                   )}
                   value={apiKey}
-                  key={"api-key"}
                />
             </CredenzaBody>
             <CredenzaFooter>
@@ -92,6 +93,10 @@ export function CreateApiKeyCredenza({
                name: values.name,
             },
             {
+               onError: (e) => {
+                  console.error("Error creating API key:", e);
+                  toast.error(translate("pages.api-key.messages.create-error"));
+               },
                onSuccess: ({ data }) => {
                   toast.success(
                      translate("pages.api-key.messages.create-success"),
@@ -101,10 +106,6 @@ export function CreateApiKeyCredenza({
                   queryClient.invalidateQueries({
                      queryKey: trpc.authHelpers.getApiKeys.queryKey(),
                   });
-               },
-               onError: (e) => {
-                  console.error("Error creating API key:", e);
-                  toast.error(translate("pages.api-key.messages.create-error"));
                },
             },
          );
@@ -118,13 +119,13 @@ export function CreateApiKeyCredenza({
 
    const form = useAppForm({
       defaultValues: { name: "" },
-      validators: {
-         onBlur: schema,
-      },
       onSubmit: async ({ value, formApi }) => {
          await createApiKey(value);
          formApi.reset();
          onOpenChange(false);
+      },
+      validators: {
+         onBlur: schema,
       },
    });
    const handleSubmit = useCallback(
@@ -138,7 +139,7 @@ export function CreateApiKeyCredenza({
 
    return (
       <>
-         <Credenza open={open} onOpenChange={onOpenChange}>
+         <Credenza onOpenChange={onOpenChange} open={open}>
             <CredenzaContent>
                <CredenzaHeader>
                   <CredenzaTitle>
@@ -193,11 +194,11 @@ export function CreateApiKeyCredenza({
          </Credenza>
          <ApiKeyAlertCredenza
             apiKey={newApiKey}
-            open={alertOpen}
             onOpenChange={(isOpen) => {
                setAlertOpen(isOpen);
                if (!isOpen) setNewApiKey("");
             }}
+            open={alertOpen}
          />
       </>
    );

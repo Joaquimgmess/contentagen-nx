@@ -1,19 +1,19 @@
-import { Suspense } from "react";
 import { translate } from "@packages/localization";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { Suspense } from "react";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { ContentCardsList } from "./content-cards-list";
-import { ContentCardsSkeleton } from "./content-cards-skeleton";
-import { ContentListToolbar } from "./content-list-toolbar";
 import {
    ContentListProvider,
    useContentList,
 } from "../lib/content-list-context";
-import { useTRPC } from "@/integrations/clients";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { toast } from "sonner";
 import { useMissingImagesNotification } from "../lib/use-missing-images-notification";
-import { useSearch } from "@tanstack/react-router";
+import { ContentCardsList } from "./content-cards-list";
+import { ContentCardsSkeleton } from "./content-cards-skeleton";
+import { ContentListToolbar } from "./content-list-toolbar";
 
 //TODO: criar um component padrao para paginacao + toolbar, bulk actions de aprovar, deletar ou rejeitar
 function ContentListPageContent() {
@@ -28,6 +28,7 @@ function ContentListPageContent() {
       trpc.content.onStatusChanged.subscriptionOptions(
          {},
          {
+            enabled: hasGeneratingContent,
             onData(statusData) {
                toast.success(
                   translate("pages.content-list.messages.status-updated", {
@@ -38,7 +39,6 @@ function ContentListPageContent() {
                   queryKey: trpc.content.listAllContent.queryKey(),
                });
             },
-            enabled: hasGeneratingContent,
          },
       ),
    );
@@ -62,14 +62,14 @@ export function ContentListPage() {
    const { data: agents } = useSuspenseQuery(trpc.agent.list.queryOptions());
    const { data } = useSuspenseQuery(
       trpc.content.listAllContent.queryOptions({
-         status: ["draft", "approved", "pending"],
-         page: search.page,
          limit: 8,
+         page: search.page,
+         status: ["draft", "approved", "pending"],
       }),
    );
 
    return (
-      <ContentListProvider data={data} agents={agents.items}>
+      <ContentListProvider agents={agents.items} data={data}>
          <ContentListPageContent />
       </ContentListProvider>
    );

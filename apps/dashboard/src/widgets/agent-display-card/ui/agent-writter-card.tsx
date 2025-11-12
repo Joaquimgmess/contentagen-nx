@@ -1,7 +1,7 @@
 import {
    Avatar,
-   AvatarImage,
    AvatarFallback,
+   AvatarImage,
 } from "@packages/ui/components/avatar";
 import { cn } from "@packages/ui/lib/utils";
 
@@ -25,7 +25,7 @@ export function AgentWriterCard({
       >
          <div className="relative">
             <Avatar className="w-8 h-8">
-               <AvatarImage src={photo} alt={name} />
+               <AvatarImage alt={name} src={photo} />
                <AvatarFallback className="bg-muted text-muted-foreground">
                   {name.charAt(0).toUpperCase()}
                </AvatarFallback>

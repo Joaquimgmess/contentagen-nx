@@ -1,4 +1,3 @@
-import { useState, useMemo } from "react";
 import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
@@ -8,17 +7,18 @@ import {
    DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
 import {
+   Archive,
+   CheckSquare,
    ChevronLeft,
    ChevronRight,
-   MoreVertical,
-   CheckSquare,
    Filter,
-   Archive,
+   MoreVertical,
    PlusIcon,
 } from "lucide-react";
-import { FilteringCredenza } from "../features/filtering-credenza";
+import { useMemo, useState } from "react";
 import { BulkActionsCredenza } from "../features/bulk-actions-credenza";
 import { CreateContentCredenza } from "../features/create-content-credenza";
+import { FilteringCredenza } from "../features/filtering-credenza";
 import { useContentList } from "../lib/content-list-context";
 
 export function ContentListToolbar() {
@@ -44,27 +44,27 @@ export function ContentListToolbar() {
    const actions = useMemo(
       () => [
          {
+            icon: CheckSquare,
             label: allSelectableSelected
                ? translate("pages.content-list.toolbar.unselect-all")
                : translate("pages.content-list.toolbar.select-all"),
-            icon: CheckSquare,
             onClick: handleSelectAll,
          },
          {
-            label: translate("pages.content-list.toolbar.filtering"),
             icon: Filter,
+            label: translate("pages.content-list.toolbar.filtering"),
             onClick: () => setOpenFilter(true),
          },
          {
-            label: translate("pages.content-list.toolbar.new-content"),
             icon: PlusIcon,
+            label: translate("pages.content-list.toolbar.new-content"),
             onClick: () => setOpenNewContent(true),
          },
          {
-            label: translate("pages.content-list.toolbar.bulk-actions"),
-            icon: Archive,
-            onClick: () => setOpenBulk(true),
             disabled: selectedItemsCount === 0,
+            icon: Archive,
+            label: translate("pages.content-list.toolbar.bulk-actions"),
+            onClick: () => setOpenBulk(true),
          },
       ],
       [handleSelectAll, selectedItemsCount, allSelectableSelected],
@@ -75,10 +75,10 @@ export function ContentListToolbar() {
          <div className="flex items-center justify-between gap-4 p-4 bg-background border rounded-lg shadow-sm">
             <div className="flex items-center gap-2">
                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handlePageChange(page - 1)}
                   disabled={page === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                  size="icon"
+                  variant="outline"
                >
                   <ChevronLeft className="h-4 w-4" />
                </Button>
@@ -89,27 +89,27 @@ export function ContentListToolbar() {
                </span>
 
                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handlePageChange(page + 1)}
                   disabled={page === totalPages}
+                  onClick={() => handlePageChange(page + 1)}
+                  size="icon"
+                  variant="outline"
                >
                   <ChevronRight className="h-4 w-4" />
                </Button>
             </div>
             <DropdownMenu>
                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button size="icon" variant="outline">
                      <MoreVertical className="h-4 w-4" />
                   </Button>
                </DropdownMenuTrigger>
                <DropdownMenuContent align="start">
                   {actions.map((action) => (
                      <DropdownMenuItem
+                        className="flex gap-2"
+                        disabled={action.disabled}
                         key={action.label}
                         onClick={action.onClick}
-                        disabled={action.disabled}
-                        className="flex gap-2"
                      >
                         <action.icon className="h-4 w-4" />
                         {action.label}
@@ -123,19 +123,19 @@ export function ContentListToolbar() {
             open={openNewContent}
          />
          <FilteringCredenza
-            open={openFilter}
-            onOpenChange={setOpenFilter}
-            selectedStatuses={selectedStatuses}
-            selectedAgents={selectedAgents}
-            onStatusesChange={setSelectedStatuses}
-            onAgentsChange={setSelectedAgents}
             agents={agents}
+            onAgentsChange={setSelectedAgents}
+            onOpenChange={setOpenFilter}
+            onStatusesChange={setSelectedStatuses}
+            open={openFilter}
+            selectedAgents={selectedAgents}
+            selectedStatuses={selectedStatuses}
          />
          <BulkActionsCredenza
-            open={openBulk}
-            onOpenChange={setOpenBulk}
-            selectedItems={Array.from(selectedItems)}
             onClearSelection={clearSelection}
+            onOpenChange={setOpenBulk}
+            open={openBulk}
+            selectedItems={Array.from(selectedItems)}
          />
       </>
    );

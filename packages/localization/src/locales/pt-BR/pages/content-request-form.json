@@ -1,13 +1,7 @@
 {
-   "title": "Solicitação de Conteúdo",
-   "steps": {
-      "basic-info": "Informações Básicas",
-      "review-submit": "Revisar e Enviar"
-   },
-   "mascot-messages": {
-      "basic-info": "Vamos começar definindo que conteúdo você gostaria de criar!",
-      "review-submit": "Perfeito! Vamos revisar sua solicitação de conteúdo antes de enviar!",
-      "default": "Vamos criar um conteúdo incrível!"
+   "actions": {
+      "back": "Voltar",
+      "next": "Próximo"
    },
    "basic-info": {
       "headline": {
@@ -18,19 +12,25 @@
          "label": "Layout *"
       }
    },
-   "review-submit": {
-      "headline-label": "Título do seu conteúdo",
-      "edit-request": "Editar Solicitação",
-      "editing": "Editando...",
-      "create-request": "Criar Solicitação",
-      "creating": "Criando..."
-   },
-   "actions": {
-      "next": "Próximo",
-      "back": "Voltar"
+   "mascot-messages": {
+      "basic-info": "Vamos começar definindo que conteúdo você gostaria de criar!",
+      "default": "Vamos criar um conteúdo incrível!",
+      "review-submit": "Perfeito! Vamos revisar sua solicitação de conteúdo antes de enviar!"
    },
    "messages": {
-      "generation-started": "Geração de conteúdo iniciada com sucesso!",
-      "creation-failed": "Falha ao criar conteúdo"
-   }
+      "creation-failed": "Falha ao criar conteúdo",
+      "generation-started": "Geração de conteúdo iniciada com sucesso!"
+   },
+   "review-submit": {
+      "create-request": "Criar Solicitação",
+      "creating": "Criando...",
+      "edit-request": "Editar Solicitação",
+      "editing": "Editando...",
+      "headline-label": "Título do seu conteúdo"
+   },
+   "steps": {
+      "basic-info": "Informações Básicas",
+      "review-submit": "Revisar e Enviar"
+   },
+   "title": "Solicitação de Conteúdo"
 }

@@ -1,3 +1,5 @@
+import type { SupportedLng } from "@packages/localization";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import {
    Sheet,
@@ -8,8 +10,6 @@ import {
 } from "@packages/ui/components/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { translate } from "@packages/localization";
-import type { SupportedLng } from "@packages/localization";
 
 const getMenuItems = (lang: SupportedLng) => {
    const locale = lang === "en" ? "en-US" : "pt-BR";
@@ -48,7 +48,7 @@ export function MobileMenu({ lang = "en" }: MobileMenuProps) {
             <Menu className="size-6" />
          </Button>
          <Sheet onOpenChange={setOpen} open={open}>
-            <SheetContent side="right" className="space-y-4">
+            <SheetContent className="space-y-4" side="right">
                <SheetHeader>
                   <SheetTitle>Menu</SheetTitle>
                   <SheetDescription>
@@ -71,11 +71,11 @@ export function MobileMenu({ lang = "en" }: MobileMenuProps) {
                </ul>
 
                <div className="px-4 w-full mt-auto">
-                  <Button variant="outline" className="w-full">
+                  <Button className="w-full" variant="outline">
                      <a
                         href="https://app.contentagen.com/auth/sign-in"
-                        target="_blank"
                         rel="noopener noreferrer"
+                        target="_blank"
                      >
                         Get Started
                      </a>

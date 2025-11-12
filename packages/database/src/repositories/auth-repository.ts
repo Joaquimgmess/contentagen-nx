@@ -1,6 +1,6 @@
-import type { DatabaseInstance } from "../client";
-import { eq } from "drizzle-orm";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { eq } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
 import { organization } from "../schemas/auth";
 
 export async function findMemberByUserId(

@@ -1,11 +1,11 @@
 import {
-   pgTable,
    index,
+   pgEnum,
+   pgTable,
    text,
    timestamp,
    uuid,
    vector,
-   pgEnum,
 } from "drizzle-orm/pg-core";
 
 export const competitorKnowledgeType = pgEnum("competitor_knowledge_type", [
@@ -15,15 +15,15 @@ export const competitorKnowledgeType = pgEnum("competitor_knowledge_type", [
 export const competitorKnowledge = pgTable(
    "competitor_knowledge",
    {
-      id: uuid("id").primaryKey().defaultRandom(),
-      externalId: uuid("external_id").notNull(),
-      sourceId: text("source_id").notNull(),
       chunk: text("chunk").notNull(),
-      type: competitorKnowledgeType("knowledge_type").notNull(),
-      embedding: vector("embedding", { dimensions: 1536 }).notNull(),
       createdAt: timestamp("created_at")
          .$defaultFn(() => new Date())
          .notNull(),
+      embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+      externalId: uuid("external_id").notNull(),
+      id: uuid("id").primaryKey().defaultRandom(),
+      sourceId: text("source_id").notNull(),
+      type: competitorKnowledgeType("knowledge_type").notNull(),
       updatedAt: timestamp("updated_at")
          .$defaultFn(() => new Date())
          .notNull(),

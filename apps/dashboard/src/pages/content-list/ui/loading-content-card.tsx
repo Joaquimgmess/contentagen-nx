@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
-import { Skeleton } from "@packages/ui/components/skeleton";
-import { Progress } from "@packages/ui/components/progress";
 import { translate } from "@packages/localization";
+import { Card, CardContent, CardHeader } from "@packages/ui/components/card";
+import { Progress } from "@packages/ui/components/progress";
+import { Skeleton } from "@packages/ui/components/skeleton";
 
 interface LoadingContentCardProps {
    status: string | null;
@@ -27,7 +27,7 @@ export function LoadingContentCard({
                   </span>
                   <span>{progress}%</span>
                </div>
-               <Progress value={progress} className="w-full" />
+               <Progress className="w-full" value={progress} />
             </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                <div className="animate-spin rounded-full h-3 w-3 border-2 border-primary border-t-transparent" />

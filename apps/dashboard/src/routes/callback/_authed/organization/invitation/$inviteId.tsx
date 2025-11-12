@@ -1,16 +1,16 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useCallback } from "react";
-import { betterAuthClient, useTRPC } from "@/integrations/clients";
+import { translate } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
+   CardContent,
    CardHeader,
    CardTitle,
-   CardContent,
 } from "@packages/ui/components/card";
-import { Button } from "@packages/ui/components/button";
-import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { translate } from "@packages/localization";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useCallback } from "react";
+import { toast } from "sonner";
+import { betterAuthClient, useTRPC } from "@/integrations/clients";
 
 export const Route = createFileRoute(
    "/callback/_authed/organization/invitation/$inviteId",
@@ -77,9 +77,9 @@ function RouteComponent() {
          </CardHeader>
          <CardContent>
             <Button
-               variant="default"
                className="mt-4"
                onClick={acceptInvitation}
+               variant="default"
             >
                {translate("pages.organization-invitation.actions.accept")}
             </Button>

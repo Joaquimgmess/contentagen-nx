@@ -1,8 +1,8 @@
 import { ContentRequestSchema } from "@packages/database/schema";
-import type { ContentRequestForm } from "../lib/use-content-request-form";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import { TiptapEditor } from "@packages/ui/components/tiptap-editor";
-import { translate } from "@packages/localization";
+import type { ContentRequestForm } from "../lib/use-content-request-form";
 
 const getLayoutLabel = (value: string): string => {
    return value.charAt(0).toUpperCase() + value.slice(1);
@@ -24,12 +24,12 @@ export function BasicInfoStep({ form }: { form: ContentRequestForm }) {
                   <TiptapEditor
                      id={field.name}
                      name={field.name}
-                     value={field.state.value}
-                     onChange={field.handleChange}
                      onBlur={field.handleBlur}
+                     onChange={field.handleChange}
                      placeholder={translate(
                         "pages.content-request-form.basic-info.headline.placeholder",
                      )}
+                     value={field.state.value}
                   />
                   <field.FieldMessage />
                </field.FieldContainer>
@@ -82,8 +82,8 @@ export function BasicInfoStepSubscribe({
       <form.Subscribe
          selector={(state) => ({
             descriptionValue: state.values.description,
-            layoutValue: state.values.layout,
             fieldMeta: state.fieldMeta,
+            layoutValue: state.values.layout,
          })}
       >
          {({ descriptionValue, layoutValue, fieldMeta }) => {
@@ -98,7 +98,7 @@ export function BasicInfoStepSubscribe({
             const canGoNext = isBriefDescriptionValid && isLayoutValid;
 
             return (
-               <Button onClick={next} type="button" disabled={!canGoNext}>
+               <Button disabled={!canGoNext} onClick={next} type="button">
                   {translate("pages.content-request-form.actions.next")}
                </Button>
             );

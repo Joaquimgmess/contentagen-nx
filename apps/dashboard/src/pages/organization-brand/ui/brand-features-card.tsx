@@ -1,3 +1,5 @@
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
    CardAction,
@@ -7,12 +9,10 @@ import {
    CardHeader,
    CardTitle,
 } from "@packages/ui/components/card";
-import { Badge } from "@packages/ui/components/badge";
-import { Button } from "@packages/ui/components/button";
-import { useTRPC } from "@/integrations/clients";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useTRPC } from "@/integrations/clients";
 
 interface BrandFeaturesCardProps {
    brandId: string;
@@ -26,8 +26,8 @@ export function BrandFeaturesCard({ brandId }: BrandFeaturesCardProps) {
    const { data } = useSuspenseQuery(
       trpc.brand.getFeatures.queryOptions({
          brandId,
-         page: currentPage,
          limit: itemsPerPage,
+         page: currentPage,
       }),
    );
 
@@ -77,7 +77,7 @@ export function BrandFeaturesCard({ brandId }: BrandFeaturesCardProps) {
          <CardContent>
             <div className="space-y-3">
                {features.map((feature) => (
-                  <Card key={feature.id} className="">
+                  <Card className="" key={feature.id}>
                      <CardHeader>
                         <CardTitle>{feature.featureName}</CardTitle>
                         <CardDescription>{feature.summary}</CardDescription>
@@ -99,10 +99,10 @@ export function BrandFeaturesCard({ brandId }: BrandFeaturesCardProps) {
          {totalPages > 1 && (
             <CardFooter className="flex items-center justify-center gap-4">
                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePreviousPage}
                   disabled={currentPage === 1}
+                  onClick={handlePreviousPage}
+                  size="sm"
+                  variant="outline"
                >
                   <ChevronLeft className="h-4 w-4" />
                   Previous
@@ -111,10 +111,10 @@ export function BrandFeaturesCard({ brandId }: BrandFeaturesCardProps) {
                   {`Page ${currentPage} of ${totalPages}`}
                </span>
                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNextPage}
                   disabled={currentPage === totalPages}
+                  onClick={handleNextPage}
+                  size="sm"
+                  variant="outline"
                >
                   Next
                   <ChevronRight className="h-4 w-4" />

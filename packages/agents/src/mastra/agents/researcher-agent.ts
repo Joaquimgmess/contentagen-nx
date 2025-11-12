@@ -1,8 +1,8 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
-import { tavilySearchTool } from "../tools/tavily-search-tool";
 import { dateTool } from "../tools/date-tool";
+import { tavilySearchTool } from "../tools/tavily-search-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -26,7 +26,6 @@ Regardless of the source content's language, your entire output must be written 
  * analyzes the SERP, and generates a comprehensive content brief.
  */
 export const researcherAgent = new Agent({
-   name: "SERP Researcher agent",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") || "en";
       return `
@@ -135,5 +134,6 @@ Remember: Your job is not just to describe what you see, but to decode WHY it's 
  `;
    },
    model: openrouter("x-ai/grok-4-fast"),
-   tools: { tavilySearchTool, dateTool },
+   name: "SERP Researcher agent",
+   tools: { dateTool, tavilySearchTool },
 });

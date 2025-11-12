@@ -1,13 +1,12 @@
-import { contentVersion } from "../schemas/content-version";
+import { AppError, propagateError } from "@packages/utils/errors";
+import { and, desc, eq } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
 import { content } from "../schemas/content";
-import { eq, desc, and } from "drizzle-orm";
-
 import type {
    ContentVersionSelect as ContentVersion,
    ContentVersionInsert,
 } from "../schemas/content-version";
-import type { DatabaseInstance } from "../client";
-import { AppError, propagateError } from "@packages/utils/errors";
+import { contentVersion } from "../schemas/content-version";
 import { updateContentCurrentVersion } from "./content-repository";
 
 export async function createContentVersion(
@@ -95,8 +94,8 @@ export async function getLatestVersionByContentId(
 ): Promise<ContentVersion> {
    try {
       const result = await dbClient.query.contentVersion.findFirst({
-         where: eq(contentVersion.contentId, contentId),
          orderBy: desc(contentVersion.version),
+         where: eq(contentVersion.contentId, contentId),
       });
       if (!result)
          throw AppError.database("No versions found for this content");
@@ -115,8 +114,8 @@ export async function getAllVersionsByContentId(
 ): Promise<ContentVersion[]> {
    try {
       return await dbClient.query.contentVersion.findMany({
-         where: eq(contentVersion.contentId, contentId),
          orderBy: desc(contentVersion.version),
+         where: eq(contentVersion.contentId, contentId),
       });
    } catch (err) {
       throw AppError.database(
@@ -154,8 +153,8 @@ export async function getNextVersionNumber(
    try {
       // Get current version from content table
       const contentResult = await dbClient.query.content.findFirst({
-         where: eq(content.id, contentId),
          columns: { currentVersion: true },
+         where: eq(content.id, contentId),
       });
 
       if (contentResult?.currentVersion) {
@@ -188,9 +187,9 @@ export async function createNextVersionWithUpdate<T>(
       const next = await getNextVersionNumber(tx, contentId);
       await createContentVersion(tx, {
          contentId,
+         meta,
          userId,
          version: next,
-         meta,
       });
       await updateContentCurrentVersion(tx, contentId, next);
       await updateBody(tx);

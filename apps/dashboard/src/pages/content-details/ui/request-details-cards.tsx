@@ -1,4 +1,5 @@
 import type { ContentSelect } from "@packages/database/schema";
+import { translate } from "@packages/localization";
 import {
    Card,
    CardContent,
@@ -6,12 +7,10 @@ import {
    CardHeader,
    CardTitle,
 } from "@packages/ui/components/card";
-
 import { InfoItem } from "@packages/ui/components/info-item";
 import { Separator } from "@packages/ui/components/separator";
-import { Calendar, Clock, Type, Link2, Tags, Globe } from "lucide-react";
+import { Calendar, Clock, Globe, Link2, Tags, Type } from "lucide-react";
 import { useMemo } from "react";
-import { translate } from "@packages/localization";
 
 export function ContentBasicDetailsCard({
    content,
@@ -67,8 +66,8 @@ export function ContentBasicDetailsCard({
          <CardContent className="space-y-4">
             {infoItems.map((item) => (
                <InfoItem
-                  key={item.label}
                   icon={item.icon}
+                  key={item.label}
                   label={item.label}
                   value={item.value}
                />
@@ -77,8 +76,8 @@ export function ContentBasicDetailsCard({
             <div className="grid grid-cols-2 gap-4">
                {dateItems.map((item) => (
                   <InfoItem
-                     key={item.label}
                      icon={item.icon}
+                     key={item.label}
                      label={item.label}
                      value={item.value}
                   />
@@ -151,8 +150,8 @@ export function ContentMetaDetailsCard({
             <div className="grid grid-cols-1 gap-4">
                {metaItems.map((item) => (
                   <InfoItem
-                     key={item.label}
                      icon={item.icon}
+                     key={item.label}
                      label={item.label}
                      value={item.value}
                   />
@@ -199,8 +198,8 @@ export function ContentStatsCard({ content }: { content: ContentSelect }) {
          <CardContent className="grid grid-cols-2 gap-4">
             {statsItems.map((item) => (
                <InfoItem
-                  key={item.label}
                   icon={item.icon}
+                  key={item.label}
                   label={item.label}
                   value={item.value}
                />

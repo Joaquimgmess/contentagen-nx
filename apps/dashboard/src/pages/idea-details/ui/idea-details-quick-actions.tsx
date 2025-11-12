@@ -1,6 +1,6 @@
-import { useRouter } from "@tanstack/react-router";
+import type { IdeaSelect } from "@packages/database/schema";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
-import { CheckCircle, Trash2 } from "lucide-react";
 import {
    Card,
    CardContent,
@@ -10,15 +10,15 @@ import {
 } from "@packages/ui/components/card";
 import {
    Tooltip,
-   TooltipTrigger,
    TooltipContent,
+   TooltipTrigger,
 } from "@packages/ui/components/tooltip";
 import { useMutation } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
+import { CheckCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { translate } from "@packages/localization";
-import type { IdeaSelect } from "@packages/database/schema";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
 import { ApproveConfirmationCredenza } from "../features/approve-confirmation-credenza";
 import { IdeaDeleteConfirmationCredenza } from "../features/delete-confirmation-credenza";
 
@@ -30,41 +30,41 @@ export function IdeaDetailsQuickActions({ idea }: { idea: IdeaSelect }) {
 
    const approveMutation = useMutation(
       trpc.ideas.approve.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               `${translate("pages.idea-details.toasts.approve-error")}: ${error.message ?? translate("pages.idea-details.toasts.unknown-error")}`,
+            );
+         },
          onSuccess: async (data) => {
             toast.success(
                translate("pages.idea-details.toasts.approve-success"),
             );
             router.navigate({
-               to: "/content/$id",
                params: {
                   id: data.content.id,
                },
                search: { page: 1 },
+               to: "/content/$id",
             });
-         },
-         onError: (error) => {
-            toast.error(
-               `${translate("pages.idea-details.toasts.approve-error")}: ${error.message ?? translate("pages.idea-details.toasts.unknown-error")}`,
-            );
          },
       }),
    );
 
    const deleteMutation = useMutation(
       trpc.ideas.delete.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               `${translate("pages.idea-details.toasts.delete-error")}: ${error.message ?? translate("pages.idea-details.toasts.unknown-error")}`,
+            );
+         },
          onSuccess: () => {
             toast.success(
                translate("pages.idea-details.toasts.delete-success"),
             );
             router.navigate({
-               to: "/ideas",
                search: { agentId: idea.agentId },
+               to: "/ideas",
             });
-         },
-         onError: (error) => {
-            toast.error(
-               `${translate("pages.idea-details.toasts.delete-error")}: ${error.message ?? translate("pages.idea-details.toasts.unknown-error")}`,
-            );
          },
       }),
    );
@@ -81,16 +81,16 @@ export function IdeaDetailsQuickActions({ idea }: { idea: IdeaSelect }) {
 
    const actions = [
       {
+         disabled: idea.status === "approved" || idea.status === "rejected",
          icon: CheckCircle,
          label: translate("pages.idea-details.quick-actions.approve-idea"),
          onClick: () => setApproveDialogOpen(true),
-         disabled: idea.status === "approved" || idea.status === "rejected",
       },
       {
+         disabled: false,
          icon: Trash2,
          label: translate("pages.idea-details.quick-actions.delete-idea"),
          onClick: () => setDeleteDialogOpen(true),
-         disabled: false,
       },
    ];
 
@@ -110,11 +110,11 @@ export function IdeaDetailsQuickActions({ idea }: { idea: IdeaSelect }) {
                   <Tooltip key={`idea-action-${index + 1}`}>
                      <TooltipTrigger asChild>
                         <Button
+                           className="flex items-center gap-2"
+                           disabled={action.disabled}
+                           onClick={action.onClick}
                            size="icon"
                            variant="outline"
-                           onClick={action.onClick}
-                           disabled={action.disabled}
-                           className="flex items-center gap-2"
                         >
                            <action.icon className="w-4 h-4" />
                         </Button>
@@ -126,14 +126,14 @@ export function IdeaDetailsQuickActions({ idea }: { idea: IdeaSelect }) {
          </Card>
 
          <ApproveConfirmationCredenza
-            open={approveDialogOpen}
-            onOpenChange={setApproveDialogOpen}
             onConfirm={handleApproveConfirm}
+            onOpenChange={setApproveDialogOpen}
+            open={approveDialogOpen}
          />
          <IdeaDeleteConfirmationCredenza
-            open={deleteDialogOpen}
-            onOpenChange={setDeleteDialogOpen}
             onConfirm={handleDeleteConfirm}
+            onOpenChange={setDeleteDialogOpen}
+            open={deleteDialogOpen}
          />
       </>
    );

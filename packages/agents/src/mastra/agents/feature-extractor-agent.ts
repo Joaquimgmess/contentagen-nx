@@ -1,12 +1,12 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
+import { createToolSystemPrompt } from "../helpers";
+import { dateTool, getDateToolInstructions } from "../tools/date-tool";
 import {
    getTavilyCrawlInstructions,
    tavilyCrawlTool,
 } from "../tools/tavily-crawl-tool";
-import { dateTool, getDateToolInstructions } from "../tools/date-tool";
-import { createToolSystemPrompt } from "../helpers";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -19,7 +19,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const featureExtractionAgent = new Agent({
-   name: "Feature Extraction Agent",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") as "en" | "pt";
       return `
@@ -61,5 +60,6 @@ Your entire response must be parseable JSON and nothing else.
    `;
    },
    model: openrouter("x-ai/grok-4-fast"),
-   tools: { tavilyCrawlTool, dateTool },
+   name: "Feature Extraction Agent",
+   tools: { dateTool, tavilyCrawlTool },
 });

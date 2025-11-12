@@ -1,6 +1,6 @@
 import { createTool } from "@mastra/core/tools";
-import { z } from "zod";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { z } from "zod";
 export function getDateToolInstructions(): string {
    return `
 ## GET CURRENT DATE TOOL
@@ -13,14 +13,7 @@ Returns today's date in YYYY-MM-DD format.
 `;
 }
 export const dateTool = createTool({
-   id: "get-current-date",
    description: "Gets the current date in YYYY-MM-DD format",
-   inputSchema: z.object({
-      timezone: z
-         .string()
-         .optional()
-         .describe("Optional timezone (e.g., 'UTC', 'America/New_York')"),
-   }),
    execute: async ({ context }) => {
       const { timezone } = context;
 
@@ -31,10 +24,10 @@ export const dateTool = createTool({
             return {
                date: now
                   .toLocaleDateString("en-CA", {
+                     day: "2-digit",
+                     month: "2-digit",
                      timeZone: timezone,
                      year: "numeric",
-                     month: "2-digit",
-                     day: "2-digit",
                   })
                   .replace(/\//g, "-"),
             };
@@ -53,4 +46,11 @@ export const dateTool = createTool({
          );
       }
    },
+   id: "get-current-date",
+   inputSchema: z.object({
+      timezone: z
+         .string()
+         .optional()
+         .describe("Optional timezone (e.g., 'UTC', 'America/New_York')"),
+   }),
 });

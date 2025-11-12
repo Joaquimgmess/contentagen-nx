@@ -1,30 +1,30 @@
+import type { CompetitorSelect } from "@packages/database/schema";
+import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
+import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
+   CardAction,
    CardContent,
    CardDescription,
    CardFooter,
    CardHeader,
    CardTitle,
-   CardAction,
 } from "@packages/ui/components/card";
-import { Button } from "@packages/ui/components/button";
-import { Badge } from "@packages/ui/components/badge";
 import {
    DropdownMenu,
-   DropdownMenuTrigger,
    DropdownMenuContent,
    DropdownMenuItem,
+   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
-import { FileText, MoreVertical } from "lucide-react";
-import { CompetitorFileViewerModal } from "../features/competitor-file-viewer-modal";
-import { useCallback, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useTRPC } from "@/integrations/clients";
+import { FileText, MoreVertical } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { createToast } from "@/features/error-modal/lib/create-toast";
-import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
-import type { CompetitorSelect } from "@packages/database/schema";
-import { translate } from "@packages/localization";
+import { useTRPC } from "@/integrations/clients";
+import { CompetitorFileViewerModal } from "../features/competitor-file-viewer-modal";
 
 export type UploadedFile = {
    fileName: string;
@@ -58,23 +58,23 @@ export function CompetitorDetailsKnowledgeBaseCard({
 
    const deleteFileMutation = useMutation(
       trpc.competitorFile.delete.mutationOptions({
-         onSuccess: async () => {
-            createToast({
-               type: "success",
-               message: translate(
-                  "pages.competitor-details.knowledge-base.messages.delete-success",
-               ),
-            });
-            await queryClient.invalidateQueries({
-               queryKey: trpc.competitor.get.queryKey({ id }),
-            });
-         },
          onError: () => {
             createToast({
-               type: "danger",
                message: translate(
                   "pages.competitor-details.knowledge-base.messages.delete-error",
                ),
+               type: "danger",
+            });
+         },
+         onSuccess: async () => {
+            createToast({
+               message: translate(
+                  "pages.competitor-details.knowledge-base.messages.delete-success",
+               ),
+               type: "success",
+            });
+            await queryClient.invalidateQueries({
+               queryKey: trpc.competitor.get.queryKey({ id }),
             });
          },
       }),
@@ -140,8 +140,8 @@ export function CompetitorDetailsKnowledgeBaseCard({
             <CardContent className="grid gap-2">
                {uploadedFiles.map((file, index) => (
                   <div
-                     key={`file-${index + 1}`}
                      className="flex items-center justify-between p-4 border rounded-lg"
+                     key={`file-${index + 1}`}
                   >
                      <div className="flex items-center gap-3">
                         <FileText className="w-4 h-4 text-muted-foreground" />
@@ -163,7 +163,7 @@ export function CompetitorDetailsKnowledgeBaseCard({
                      </div>
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                           <Button variant="ghost" size="icon">
+                           <Button size="icon" variant="ghost">
                               <MoreVertical className="w-4 h-4" />
                            </Button>
                         </DropdownMenuTrigger>

@@ -1,15 +1,15 @@
+import { relations } from "drizzle-orm";
 import {
+   index,
+   jsonb,
    pgTable,
-   uuid,
    text,
    timestamp,
-   jsonb,
-   index,
+   uuid,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { brand } from "./brand";
-import { relations } from "drizzle-orm";
 import z from "zod";
+import { brand } from "./brand";
 
 export const BrandFeatureMetaSchema = z.object({
    category: z
@@ -34,16 +34,16 @@ export type BrandFeatureMeta = z.infer<typeof BrandFeatureMetaSchema>;
 export const brandFeature = pgTable(
    "brand_feature",
    {
-      id: uuid("id").primaryKey().defaultRandom(),
       brandId: uuid("brand_id")
          .notNull()
          .references(() => brand.id, { onDelete: "cascade" }),
+      extractedAt: timestamp("extracted_at").defaultNow().notNull(),
       featureName: text("feature_name").notNull(),
-      summary: text("summary").notNull(),
+      id: uuid("id").primaryKey().defaultRandom(),
+      meta: jsonb("meta").$type<BrandFeatureMeta>().default({}),
       rawContent: text("raw_content").notNull(),
       sourceUrl: text("source_url"),
-      extractedAt: timestamp("extracted_at").defaultNow().notNull(),
-      meta: jsonb("meta").$type<BrandFeatureMeta>().default({}),
+      summary: text("summary").notNull(),
    },
    (table) => [
       index("brand_feature_brand_id_feature_name_idx").on(

@@ -1,5 +1,5 @@
-import { DeleteConfirmationCredenza } from "@packages/ui/components/delete-confirmation-credenza";
 import { translate } from "@packages/localization";
+import { DeleteConfirmationCredenza } from "@packages/ui/components/delete-confirmation-credenza";
 
 interface DeleteConfirmationCredenzaProps {
    open: boolean;
@@ -14,10 +14,10 @@ export function IdeaDeleteConfirmationCredenza({
 }: DeleteConfirmationCredenzaProps) {
    return (
       <DeleteConfirmationCredenza
-         open={open}
-         onOpenChange={onOpenChange}
-         onDelete={onConfirm}
          message={translate("pages.idea-details.confirmations.delete-message")}
+         onDelete={onConfirm}
+         onOpenChange={onOpenChange}
+         open={open}
       />
    );
 }

@@ -1,7 +1,14 @@
 {
-   "title": "Entrar",
    "description": "Digite seus dados para acessar sua conta.",
-   "google-button": "Entrar com Google",
+   "errors": {
+      "invalid-credentials": "Email ou senha inválidos",
+      "unknown": "Erro desconhecido"
+   },
+   "footer": {
+      "forgot-password": "Esqueceu sua senha?",
+      "no-account": "Não tem uma conta?",
+      "sign-up-link": "Cadastre-se aqui"
+   },
    "form": {
       "email": {
          "label": "Email",
@@ -13,22 +20,15 @@
       },
       "submit": "Entrar"
    },
-   "footer": {
-      "forgot-password": "Esqueceu sua senha?",
-      "no-account": "Não tem uma conta?",
-      "sign-up-link": "Cadastre-se aqui"
-   },
-   "validation": {
-      "email-invalid": "Digite um endereço de email válido",
-      "password-min-length": "A senha deve ter pelo menos 8 caracteres"
-   },
-   "errors": {
-      "unknown": "Erro desconhecido",
-      "invalid-credentials": "Email ou senha inválidos"
-   },
+   "google-button": "Entrar com Google",
    "messages": {
       "loading": "Entrando...",
       "success": "Login realizado com sucesso",
       "welcome": "Bem-vindo ao {{brand}} {{name}}"
+   },
+   "title": "Entrar",
+   "validation": {
+      "email-invalid": "Digite um endereço de email válido",
+      "password-min-length": "A senha deve ter pelo menos 8 caracteres"
    }
 }

@@ -1,13 +1,13 @@
-import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
-import { Suspense } from "react";
-import { useTRPC } from "@/integrations/clients";
+import { translate } from "@packages/localization";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
-import { translate } from "@packages/localization";
+import { Suspense } from "react";
+import { useTRPC } from "@/integrations/clients";
+import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { CompetitorListProvider } from "../lib/competitor-list-context";
 import { CompetitorCardsList } from "./competitor-cards-list";
 import { CompetitorCardsSkeleton } from "./competitor-cards-skeleton";
 import { CompetitorListToolbar } from "./competitor-list-toolbar";
-import { CompetitorListProvider } from "../lib/competitor-list-context";
 
 function CompetitorListPageContent() {
    return (
@@ -29,8 +29,8 @@ export function CompetitorListPage() {
 
    const { data } = useSuspenseQuery(
       trpc.competitor.list.queryOptions({
-         page: search.page,
          limit: 12,
+         page: search.page,
          search: search.search,
       }),
    );

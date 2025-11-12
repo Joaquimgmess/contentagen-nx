@@ -1,27 +1,27 @@
+import { eq } from "@packages/database";
+import { member, organization, user } from "@packages/database/schema";
+import i18n from "@packages/localization";
+import { getElysiaPosthogConfig } from "@packages/posthog/server";
+import { APIError } from "@packages/utils/errors";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { getElysiaPosthogConfig } from "@packages/posthog/server";
-import { eq } from "@packages/database";
-import { user, organization, member } from "@packages/database/schema";
-import { APIError } from "@packages/utils/errors";
-import i18n from "@packages/localization";
 
 const posthog = getElysiaPosthogConfig();
 
 export const bugReportSchema = z.object({
+   currentURL: z.string(),
    error: z.object({
-      title: z.string(),
       description: z.string(),
+      title: z.string(),
    }),
-   userReport: z.string().min(1),
    mutationCache: z.array(
       z.object({
-         key: z.string(),
          error: z.unknown(),
          input: z.unknown(),
+         key: z.string(),
       }),
    ),
-   currentURL: z.string(),
+   userReport: z.string().min(1),
 });
 
 export const bugReportRouter = router({
@@ -43,12 +43,12 @@ export const bugReportRouter = router({
 
          const userData = await resolvedCtx.db
             .select({
-               id: user.id,
-               name: user.name,
-               email: user.email,
-               role: user.role,
                createdAt: user.createdAt,
+               email: user.email,
+               id: user.id,
                image: user.image,
+               name: user.name,
+               role: user.role,
             })
             .from(user)
             .where(eq(user.id, userId))
@@ -58,9 +58,9 @@ export const bugReportRouter = router({
 
          const memberData = await resolvedCtx.db
             .select({
+               memberRole: member.role,
                organizationId: member.organizationId,
                organizationName: organization.name,
-               memberRole: member.role,
             })
             .from(member)
             .innerJoin(organization, eq(member.organizationId, organization.id))
@@ -88,21 +88,21 @@ export const bugReportRouter = router({
             distinctId: userId,
             event: "bug_report_submitted",
             properties: {
-               user_id: userId,
-               user_email: userEmail,
-               user_name: userInfo?.name || "N/A",
-               user_role: userInfo?.role || "N/A",
-               user_created_at: userInfo?.createdAt || "N/A",
-               user_image: userInfo?.image || "N/A",
+               current_url: input.currentURL,
+               error_description: input.error.description,
+               error_title: input.error.title,
+               member_role: orgInfo?.memberRole || "N/A",
+               mutation_cache: JSON.stringify(sanitizedMutationCache),
                organization_id: orgInfo?.organizationId || "N/A",
                organization_name: orgInfo?.organizationName || "N/A",
-               member_role: orgInfo?.memberRole || "N/A",
-               error_title: input.error.title,
-               error_description: input.error.description,
-               user_report: input.userReport,
-               current_url: input.currentURL,
-               mutation_cache: JSON.stringify(sanitizedMutationCache),
                timestamp: new Date().toISOString(),
+               user_created_at: userInfo?.createdAt || "N/A",
+               user_email: userEmail,
+               user_id: userId,
+               user_image: userInfo?.image || "N/A",
+               user_name: userInfo?.name || "N/A",
+               user_report: input.userReport,
+               user_role: userInfo?.role || "N/A",
             },
          });
 

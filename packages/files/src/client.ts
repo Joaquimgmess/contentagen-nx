@@ -1,5 +1,6 @@
-import { Client } from "minio";
 import type { ServerEnv } from "@packages/environment/server";
+import { Client } from "minio";
+
 const parseEndpoint = (endpointUrl: string) => {
    // 1. Ensure the URL has a protocol so the URL constructor works correctly.
    const fullUrl = endpointUrl.startsWith("http")
@@ -38,9 +39,9 @@ export function getMinioClient(
    const { endPoint, port, useSSL } = parseEndpoint(env.MINIO_ENDPOINT);
 
    const internalClient = new Client({
+      accessKey: env.MINIO_ACCESS_KEY,
       endPoint,
       port,
-      accessKey: env.MINIO_ACCESS_KEY,
       secretKey: env.MINIO_SECRET_KEY,
       useSSL, // Set to true in production with HTTPS
    });
@@ -124,5 +125,5 @@ export async function getFileInfo(
    minioClient: MinioClient,
 ): Promise<{ size: number; contentType: string }> {
    const stat = await minioClient.statObject(bucketName, fileName);
-   return { size: stat.size, contentType: stat.metaData["content-type"] };
+   return { contentType: stat.metaData["content-type"], size: stat.size };
 }

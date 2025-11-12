@@ -9,9 +9,9 @@
     "@astrojs/ts-plugin": "catalog:astro",
     "@contentagen/sdk": "^0.16.0",
     "@lucide/astro": "catalog:astro",
+    "@packages/environment": "workspace:*",
     "@packages/posthog": "workspace:*",
     "@packages/ui": "workspace:*",
-    "@packages/environment": "workspace:*",
     "@tailwindcss/vite": "catalog:vite",
     "astro": "catalog:astro",
     "marked": "^16.1.2",
@@ -24,8 +24,8 @@
     "@types/react-dom": "catalog:react",
     "typescript": "catalog:development"
   },
-  "name": "blog",
   "license": "Apache-2.0",
+  "name": "blog",
   "scripts": {
     "astro": "bunx --bun astro",
     "build": "bunx --bun astro build",
@@ -35,5 +35,5 @@
     "typecheck": "bunx --bun astro check"
   },
   "type": "module",
-  "version": "0.8.0"
+  "version": "0.8.1"
 }

@@ -1,8 +1,8 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
-import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 import { createToolSystemPrompt } from "../../helpers";
+import { dateTool, getDateToolInstructions } from "../../tools/date-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -17,7 +17,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const changelogReaderAgent = new Agent({
-   name: "Changelog Requirements Evaluator",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language");
       return `
@@ -76,5 +75,6 @@ Focus on requirements fulfillment. Provide specific evidence and prioritize acti
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Changelog Requirements Evaluator",
    tools: { dateTool },
 });

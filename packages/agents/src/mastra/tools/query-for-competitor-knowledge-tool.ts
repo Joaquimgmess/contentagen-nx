@@ -2,8 +2,8 @@ import { createTool } from "@mastra/core/tools";
 import { serverEnv } from "@packages/environment/server";
 import { createPgVector } from "@packages/rag/client";
 import { searchCompetitorKnowledgeByTextAndExternalId } from "@packages/rag/repositories/competitor-knowledge-repository";
-import { z } from "zod";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { z } from "zod";
 export function getQueryCompetitorKnowledgeInstructions(): string {
    return `
 ## COMPETITOR KNOWLEDGE QUERY TOOL
@@ -21,17 +21,7 @@ Bad: searchTerm="competitor" (too vague)
 `;
 }
 export const queryForCompetitorKnowledgeTool = createTool({
-   id: "query-for-competitor-knowledge",
    description: "Query the pg vector database for competitor knowledge",
-   inputSchema: z.object({
-      externalIds: z
-         .array(z.string())
-         .describe("An array of external ids for identifying the competitors"),
-      searchTerm: z.string().describe("The search term to query the database"),
-      type: z
-         .enum(["document", "feature"])
-         .describe("The type of knowledge to search for"),
-   }),
    execute: async ({ context }) => {
       const { externalIds, searchTerm, type } = context;
 
@@ -44,9 +34,9 @@ export const queryForCompetitorKnowledgeTool = createTool({
             searchTerm,
             externalIds,
             {
-               type,
                limit: 20,
                similarityThreshold: 0,
+               type,
             },
          );
          // Always return something, even if it's an empty array
@@ -59,4 +49,14 @@ export const queryForCompetitorKnowledgeTool = createTool({
          );
       }
    },
+   id: "query-for-competitor-knowledge",
+   inputSchema: z.object({
+      externalIds: z
+         .array(z.string())
+         .describe("An array of external ids for identifying the competitors"),
+      searchTerm: z.string().describe("The search term to query the database"),
+      type: z
+         .enum(["document", "feature"])
+         .describe("The type of knowledge to search for"),
+   }),
 });

@@ -1,14 +1,14 @@
+import type { IdeaSelect } from "@packages/database/schema";
+import { translate } from "@packages/localization";
 import {
    Card,
-   CardHeader,
    CardContent,
-   CardTitle,
    CardDescription,
+   CardHeader,
+   CardTitle,
 } from "@packages/ui/components/card";
 import { InfoItem } from "@packages/ui/components/info-item";
-import { Calendar, Clock, Tag, Link2, Circle } from "lucide-react";
-import { translate } from "@packages/localization";
-import type { IdeaSelect } from "@packages/database/schema";
+import { Calendar, Circle, Clock, Link2, Tag } from "lucide-react";
 
 export function IdeaMetaCard({ idea }: { idea: IdeaSelect }) {
    return (

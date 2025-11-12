@@ -1,7 +1,7 @@
+import type { ContentSelect } from "@packages/database/schema";
+import { translate } from "@packages/localization";
 import { StatsCard } from "@packages/ui/components/stats-card";
 import { useMemo } from "react";
-import { translate } from "@packages/localization";
-import type { ContentSelect } from "@packages/database/schema";
 
 interface ContentStatsCardProps {
    content: ContentSelect;
@@ -14,17 +14,17 @@ export function ContentStatsCard({ content }: ContentStatsCardProps) {
 
       return [
          {
-            label: translate("pages.content-details.stats.word-count"),
             description: translate(
                "pages.content-details.stats.word-count-description",
             ),
+            label: translate("pages.content-details.stats.word-count"),
             value: wordCount.toLocaleString(),
          },
          {
-            label: translate("pages.content-details.stats.content-quality"),
             description: translate(
                "pages.content-details.stats.content-quality-description",
             ),
+            label: translate("pages.content-details.stats.content-quality"),
             value: `${qualityScore}/100`,
          },
       ];
@@ -34,9 +34,9 @@ export function ContentStatsCard({ content }: ContentStatsCardProps) {
       <div className="w-full gap-4 grid md:grid-cols-2">
          {items.map((item) => (
             <StatsCard
+               description={item.description}
                key={item.label}
                title={item.label}
-               description={item.description}
                value={item.value}
             />
          ))}

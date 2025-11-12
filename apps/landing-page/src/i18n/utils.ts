@@ -1,7 +1,7 @@
 import type { SupportedLng } from "@packages/localization";
-import { defaultLang, supportedLanguages } from "./config";
 import enUS from "@packages/localization/locales/en-US";
 import ptBR from "@packages/localization/locales/pt-BR";
+import { defaultLang, supportedLanguages } from "./config";
 
 const translations = {
    en: enUS.translation,

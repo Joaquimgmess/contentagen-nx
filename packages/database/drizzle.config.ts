@@ -8,8 +8,8 @@ const env = z
    .parse(process.env);
 
 export default {
-   schema: "./src/schema.ts",
-   dialect: "postgresql",
-   dbCredentials: { url: env.DATABASE_URL },
    casing: "snake_case",
+   dbCredentials: { url: env.DATABASE_URL },
+   dialect: "postgresql",
+   schema: "./src/schema.ts",
 } satisfies Config;

@@ -1,28 +1,28 @@
+import type { BrandSelect } from "@packages/database/schema";
+import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
+import { Badge } from "@packages/ui/components/badge";
+import { Button } from "@packages/ui/components/button";
 import {
    Card,
+   CardAction,
    CardContent,
    CardDescription,
    CardFooter,
    CardHeader,
    CardTitle,
-   CardAction,
 } from "@packages/ui/components/card";
-import { Button } from "@packages/ui/components/button";
-import { Badge } from "@packages/ui/components/badge";
 import {
    DropdownMenu,
-   DropdownMenuTrigger,
    DropdownMenuContent,
    DropdownMenuItem,
+   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
-import { FileText, MoreVertical } from "lucide-react";
-import { BrandFileViewerModal } from "../features/brand-file-viewer-modal";
-import { useCallback, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
+import { FileText, MoreVertical } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { createToast } from "@/features/error-modal/lib/create-toast";
-import { AGENT_FILE_UPLOAD_LIMIT } from "@packages/files/text-file-helper";
-import type { BrandSelect } from "@packages/database/schema";
+import { useTRPC } from "@/integrations/clients";
+import { BrandFileViewerModal } from "../features/brand-file-viewer-modal";
 
 export type UploadedFile = {
    fileName: string;
@@ -53,19 +53,19 @@ export function BrandDetailsKnowledgeBaseCard({
 
    const deleteFileMutation = useMutation(
       trpc.brandFile.delete.mutationOptions({
+         onError: () => {
+            createToast({
+               message: "Failed to delete file",
+               type: "danger",
+            });
+         },
          onSuccess: async () => {
             createToast({
-               type: "success",
                message: "File deleted successfully",
+               type: "success",
             });
             await queryClient.invalidateQueries({
                queryKey: trpc.brand.getByOrganization.queryKey(),
-            });
-         },
-         onError: () => {
-            createToast({
-               type: "danger",
-               message: "Failed to delete file",
             });
          },
       }),
@@ -123,8 +123,8 @@ export function BrandDetailsKnowledgeBaseCard({
             <CardContent className="grid gap-2">
                {uploadedFiles.map((file, index) => (
                   <div
-                     key={`file-${index + 1}`}
                      className="flex items-center justify-between p-4 border rounded-lg"
+                     key={`file-${index + 1}`}
                   >
                      <div className="flex items-center gap-3">
                         <FileText className="w-4 h-4 text-muted-foreground" />
@@ -139,7 +139,7 @@ export function BrandDetailsKnowledgeBaseCard({
                      </div>
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                           <Button variant="ghost" size="icon">
+                           <Button size="icon" variant="ghost">
                               <MoreVertical className="w-4 h-4" />
                            </Button>
                         </DropdownMenuTrigger>

@@ -1,8 +1,8 @@
+import { translate } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { TiptapEditor } from "@packages/ui/components/tiptap-editor";
 import type { AgentForm } from "../lib/use-agent-form";
-import { Button } from "@packages/ui/components/button";
-import { translate } from "@packages/localization";
 
 export function BasicInfoStep({ form }: { form: AgentForm }) {
    return (
@@ -17,6 +17,7 @@ export function BasicInfoStep({ form }: { form: AgentForm }) {
                   </field.FieldLabel>
                   <Input
                      autoComplete="off"
+                     className="w-full"
                      id={field.name}
                      name={field.name}
                      onBlur={field.handleBlur}
@@ -25,7 +26,6 @@ export function BasicInfoStep({ form }: { form: AgentForm }) {
                         "pages.agent-creation-form.basic-info.agent-name.placeholder",
                      )}
                      value={field.state.value}
-                     className="w-full"
                   />
                   <field.FieldMessage />
                </field.FieldContainer>
@@ -40,17 +40,17 @@ export function BasicInfoStep({ form }: { form: AgentForm }) {
                      )}
                   </field.FieldLabel>
                   <TiptapEditor
-                     value={field.state.value || "<p></p>"}
+                     className="w-full"
+                     id={field.name}
+                     name={field.name}
+                     onBlur={field.handleBlur}
                      onChange={(val) => {
                         field.handleChange(val);
                      }}
-                     onBlur={field.handleBlur}
-                     name={field.name}
-                     id={field.name}
                      placeholder={translate(
                         "pages.agent-creation-form.basic-info.description.placeholder",
                      )}
-                     className="w-full"
+                     value={field.state.value || "<p></p>"}
                   />
                   <field.FieldMessage />
                </field.FieldContainer>
@@ -70,9 +70,9 @@ export function BasicInfoStepSubscribe({
    return (
       <form.Subscribe
          selector={(state) => ({
-            nameValue: state.values.metadata?.name,
             descriptionValue: state.values.metadata?.description,
             fieldMeta: state.fieldMeta,
+            nameValue: state.values.metadata?.name,
          })}
       >
          {({ nameValue, descriptionValue, fieldMeta }) => {
@@ -109,7 +109,7 @@ export function BasicInfoStepSubscribe({
             const canGoNext = isNameValid && isDescriptionValid;
 
             return (
-               <Button onClick={next} type="button" disabled={!canGoNext}>
+               <Button disabled={!canGoNext} onClick={next} type="button">
                   {translate("pages.agent-creation-form.actions.next")}
                </Button>
             );

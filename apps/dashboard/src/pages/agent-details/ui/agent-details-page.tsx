@@ -1,14 +1,14 @@
-import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
 import { translate } from "@packages/localization";
-import { AgentPersonaCard } from "./agent-details-persona-card";
-import { AgentStatsCard } from "./agent-stats-card";
-import { AgentInstructionsContainer } from "../features/agent-instructions-container";
-import { Suspense, useState } from "react";
-import { useTRPC } from "@/integrations/clients";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
+import { Suspense, useState } from "react";
+import { useTRPC } from "@/integrations/clients";
+import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
+import { AgentInstructionsContainer } from "../features/agent-instructions-container";
+import { AgentPersonaCard } from "./agent-details-persona-card";
 import { AgentDetailsQuickActions } from "./agent-details-quick-actions";
 import { AgentNavigationButtons } from "./agent-navigation-buttons";
+import { AgentStatsCard } from "./agent-stats-card";
 
 export function AgentDetailsPage() {
    const trpc = useTRPC();

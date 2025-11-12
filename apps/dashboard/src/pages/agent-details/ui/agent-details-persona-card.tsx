@@ -1,21 +1,22 @@
+import type { RouterOutput } from "@packages/api/client";
+import { translate } from "@packages/localization";
 import {
    Card,
+   CardContent,
+   CardDescription,
+   CardFooter,
    CardHeader,
    CardTitle,
-   CardDescription,
-   CardContent,
-   CardFooter,
 } from "@packages/ui/components/card";
-import { translate } from "@packages/localization";
-import { FileText } from "lucide-react";
-import { useMemo } from "react";
 import { InfoItem } from "@packages/ui/components/info-item";
 import { Separator } from "@packages/ui/components/separator";
-import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
 import { formatStringForDisplay } from "@packages/utils/text";
-import type { RouterOutput } from "@packages/api/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { FileText } from "lucide-react";
+import { useMemo } from "react";
+import { useTRPC } from "@/integrations/clients";
+import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
+
 type Agent = RouterOutput["agent"]["get"];
 export const AgentPersonaCard = ({ agent }: { agent: Agent }) => {
    const trpc = useTRPC();
@@ -27,9 +28,9 @@ export const AgentPersonaCard = ({ agent }: { agent: Agent }) => {
    const items = useMemo(
       () => [
          {
+            icon: FileText,
             label: translate("pages.agent-details.persona.content-type"),
             value: formatStringForDisplay(agent?.personaConfig?.purpose ?? ""),
-            icon: FileText,
          },
       ],
       [agent],
@@ -48,18 +49,18 @@ export const AgentPersonaCard = ({ agent }: { agent: Agent }) => {
          <CardContent className="grid grid-cols-1 gap-4">
             {items.map(({ label, value, icon: Icon }) => (
                <InfoItem
+                  icon={<Icon className="w-4 h-4" />}
                   key={label}
                   label={label}
                   value={value}
-                  icon={<Icon className="w-4 h-4" />}
                />
             ))}
          </CardContent>
          <CardFooter className="grid gap-2">
             <Separator />
             <AgentWriterCard
-               name={agent?.personaConfig?.metadata.name ?? ""}
                description={agent?.personaConfig?.metadata.description ?? ""}
+               name={agent?.personaConfig?.metadata.name ?? ""}
                photo={data?.data}
             />
          </CardFooter>

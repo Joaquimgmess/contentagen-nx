@@ -1,14 +1,14 @@
+import type { RouterInput, RouterOutput } from "@packages/api/client";
+import { Button } from "@packages/ui/components/button";
+import { Checkbox } from "@packages/ui/components/checkbox";
 import {
    Dialog,
    DialogContent,
    DialogHeader,
    DialogTitle,
 } from "@packages/ui/components/dialog";
-import { Button } from "@packages/ui/components/button";
-import { Checkbox } from "@packages/ui/components/checkbox";
 import { Label } from "@packages/ui/components/label";
 import { Separator } from "@packages/ui/components/separator";
-import type { RouterInput, RouterOutput } from "@packages/api/client";
 
 type Statuses = RouterInput["content"]["listAllContent"]["status"];
 interface FilteringCredenzaProps {
@@ -22,15 +22,15 @@ interface FilteringCredenzaProps {
 }
 
 const allStatuses = [
-   { value: "draft", label: "Draft" },
-   { value: "approved", label: "Approved" },
-   { value: "pending", label: "Pending" },
-   { value: "planning", label: "Planning" },
-   { value: "researching", label: "Researching" },
-   { value: "writing", label: "Writing" },
-   { value: "editing", label: "Editing" },
-   { value: "analyzing", label: "Analyzing" },
-   { value: "grammar_checking", label: "Grammar Checking" },
+   { label: "Draft", value: "draft" },
+   { label: "Approved", value: "approved" },
+   { label: "Pending", value: "pending" },
+   { label: "Planning", value: "planning" },
+   { label: "Researching", value: "researching" },
+   { label: "Writing", value: "writing" },
+   { label: "Editing", value: "editing" },
+   { label: "Analyzing", value: "analyzing" },
+   { label: "Grammar Checking", value: "grammar_checking" },
 ];
 
 export function FilteringCredenza({
@@ -64,7 +64,7 @@ export function FilteringCredenza({
    };
 
    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog onOpenChange={onOpenChange} open={open}>
          <DialogContent className="max-w-md">
             <DialogHeader>
                <DialogTitle>Filter Content</DialogTitle>
@@ -75,14 +75,14 @@ export function FilteringCredenza({
                   <div className="space-y-2 max-h-40 overflow-y-auto">
                      {allStatuses.map((status) => (
                         <div
-                           key={status.value}
                            className="flex items-center space-x-2"
+                           key={status.value}
                         >
                            <Checkbox
-                              id={`status-${status.value}`}
                               checked={selectedStatuses.includes(
                                  status.value as Statuses[number],
                               )}
+                              id={`status-${status.value}`}
                               onCheckedChange={(checked) =>
                                  handleStatusChange(
                                     status.value as Statuses[number],
@@ -91,8 +91,8 @@ export function FilteringCredenza({
                               }
                            />
                            <Label
-                              htmlFor={`status-${status.value}`}
                               className="text-sm font-normal"
+                              htmlFor={`status-${status.value}`}
                            >
                               {status.label}
                            </Label>
@@ -108,19 +108,19 @@ export function FilteringCredenza({
                   <div className="space-y-2 max-h-40 overflow-y-auto">
                      {agents?.map((agent) => (
                         <div
-                           key={agent.id}
                            className="flex items-center space-x-2"
+                           key={agent.id}
                         >
                            <Checkbox
-                              id={`agent-${agent.id}`}
                               checked={selectedAgents.includes(agent.id)}
+                              id={`agent-${agent.id}`}
                               onCheckedChange={(checked) =>
                                  handleAgentChange(agent.id, checked as boolean)
                               }
                            />
                            <Label
-                              htmlFor={`agent-${agent.id}`}
                               className="text-sm font-normal"
+                              htmlFor={`agent-${agent.id}`}
                            >
                               {agent.personaConfig.metadata.name}
                            </Label>
@@ -130,7 +130,7 @@ export function FilteringCredenza({
                </div>
 
                <div className="flex justify-end space-x-2 pt-4">
-                  <Button variant="outline" onClick={clearFilters}>
+                  <Button onClick={clearFilters} variant="outline">
                      Clear All
                   </Button>
                   <Button onClick={() => onOpenChange(false)}>

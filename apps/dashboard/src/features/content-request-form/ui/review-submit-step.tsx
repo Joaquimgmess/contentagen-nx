@@ -1,19 +1,19 @@
-import type { ContentRequestForm } from "../lib/use-content-request-form";
-import { FileTextIcon } from "lucide-react";
-import { InfoItem } from "@packages/ui/components/info-item";
 import { Button } from "@packages/ui/components/button";
+import { InfoItem } from "@packages/ui/components/info-item";
+import { useLocation } from "@tanstack/react-router";
+import { FileTextIcon } from "lucide-react";
 
 import { useMemo } from "react";
-import { useLocation } from "@tanstack/react-router";
+import type { ContentRequestForm } from "../lib/use-content-request-form";
 
 export function ReviewSubmitStep({ form }: { form: ContentRequestForm }) {
    const basicInfoItems = useMemo(
       () => [
          {
+            className: "col-span-2",
             icon: <FileTextIcon className="w-4 h-4" />,
             label: "Headline of your content",
             value: String(form.getFieldValue("description") ?? ""),
-            className: "col-span-2",
          },
       ],
       [form],
@@ -60,7 +60,7 @@ export function ReviewSubmitStepSubscribe({
          })}
       >
          {({ canSubmit, isSubmitting }) => (
-            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+            <Button disabled={!canSubmit || isSubmitting} type="submit">
                {isSubmitting ? buttonTexts.loading : buttonTexts.idle}
             </Button>
          )}

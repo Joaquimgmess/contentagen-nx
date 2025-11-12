@@ -1,30 +1,31 @@
-import { useMemo } from "react";
-import { z } from "zod";
-import { useTRPC } from "@/integrations/clients";
 import type { AgentSelect } from "@packages/database/schema";
+import type {
+   InstructionsConfig,
+   PersonaConfig,
+} from "@packages/database/schemas/agent";
+import { type TranslationKey, translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
-import { useAppForm } from "@packages/ui/components/form";
-import { TiptapEditor } from "@packages/ui/components/tiptap-editor";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Check, X } from "lucide-react";
-import { translate, type TranslationKey } from "@packages/localization";
 import {
    Card,
    CardContent,
    CardDescription,
    CardHeader,
 } from "@packages/ui/components/card";
+import { Field, FieldError } from "@packages/ui/components/field";
 import {
    Tabs,
+   TabsContent,
    TabsList,
    TabsTrigger,
-   TabsContent,
 } from "@packages/ui/components/tabs";
-import type {
-   InstructionsConfig,
-   PersonaConfig,
-} from "@packages/database/schemas/agent";
+import { TiptapEditor } from "@packages/ui/components/tiptap-editor";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Check, X } from "lucide-react";
+import { useMemo } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useTRPC } from "@/integrations/clients";
 
 interface EditInstructionCard {
    titleKey: TranslationKey;
@@ -47,28 +48,28 @@ export function EditAgentInstructions({
    const instructionCards = useMemo(() => {
       return [
          {
-            titleKey: "pages.agent-details.instructions.tabs.audience.title",
             descriptionKey:
                "pages.agent-details.instructions.tabs.audience.description",
+            fieldName: "audienceProfile" as const,
             placeholderKey:
                "pages.agent-details.instructions.tabs.audience.placeholder",
-            fieldName: "audienceProfile" as const,
+            titleKey: "pages.agent-details.instructions.tabs.audience.title",
          },
          {
-            titleKey: "pages.agent-details.instructions.tabs.writing.title",
             descriptionKey:
                "pages.agent-details.instructions.tabs.writing.description",
+            fieldName: "writingGuidelines" as const,
             placeholderKey:
                "pages.agent-details.instructions.tabs.writing.placeholder",
-            fieldName: "writingGuidelines" as const,
+            titleKey: "pages.agent-details.instructions.tabs.writing.title",
          },
          {
-            titleKey: "pages.agent-details.instructions.tabs.rag.title",
             descriptionKey:
                "pages.agent-details.instructions.tabs.rag.description",
+            fieldName: "ragIntegration" as const,
             placeholderKey:
                "pages.agent-details.instructions.tabs.rag.placeholder",
-            fieldName: "ragIntegration" as const,
+            titleKey: "pages.agent-details.instructions.tabs.rag.title",
          },
       ] as EditInstructionCard[];
    }, []);
@@ -95,27 +96,19 @@ export function EditAgentInstructions({
       }),
    );
 
-   const editForm = useAppForm({
+   const editForm = useForm({
       defaultValues: {
          audienceProfile: personaConfig.instructions?.audienceProfile ?? "",
-         writingGuidelines: personaConfig.instructions?.writingGuidelines ?? "",
          ragIntegration: personaConfig.instructions?.ragIntegration ?? "",
-      },
-      validators: {
-         //TODO: Onblur is not working when using the schema from the database
-         onBlur: z.object({
-            audienceProfile: z.string(),
-            writingGuidelines: z.string(),
-            ragIntegration: z.string(),
-         }),
+         writingGuidelines: personaConfig.instructions?.writingGuidelines ?? "",
       },
       onSubmit: async ({ value }) => {
          const updatedPersonaConfig: PersonaConfig = {
             ...personaConfig,
             instructions: {
                audienceProfile: value.audienceProfile,
-               writingGuidelines: value.writingGuidelines,
                ragIntegration: value.ragIntegration,
+               writingGuidelines: value.writingGuidelines,
             },
          };
 
@@ -124,6 +117,14 @@ export function EditAgentInstructions({
             personaConfig: updatedPersonaConfig,
          });
          setEditing(false);
+      },
+      validators: {
+         //TODO: Onblur is not working when using the schema from the database
+         onBlur: z.object({
+            audienceProfile: z.string(),
+            ragIntegration: z.string(),
+            writingGuidelines: z.string(),
+         }),
       },
    });
 
@@ -140,21 +141,21 @@ export function EditAgentInstructions({
             </div>
             <div className="flex items-center gap-2">
                <Button
+                  disabled={editInstructionsMutation.isPending}
+                  onClick={() => setEditing(false)}
+                  size="icon"
                   type="button"
                   variant="ghost"
-                  size="icon"
-                  onClick={() => setEditing(false)}
-                  disabled={editInstructionsMutation.isPending}
                >
                   <X size={20} />
                </Button>
                <Button
-                  type="button"
-                  onClick={() => editForm.handleSubmit()}
                   disabled={
                      !editForm.state.canSubmit ||
                      editInstructionsMutation.isPending
                   }
+                  onClick={() => editForm.handleSubmit()}
+                  type="button"
                >
                   <Check size={20} />
                </Button>
@@ -179,21 +180,30 @@ export function EditAgentInstructions({
                            <CardDescription>
                               {translate(card.descriptionKey)}
                            </CardDescription>
-                           <editForm.AppField name={card.fieldName}>
-                              {(field) => (
-                                 <field.FieldContainer>
-                                    <TiptapEditor
-                                       value={field.state.value}
-                                       onChange={field.handleChange}
-                                       onBlur={field.handleBlur}
-                                       placeholder={translate(
-                                          card.placeholderKey,
+                           <editForm.Field name={card.fieldName}>
+                              {(field) => {
+                                 const isInvalid =
+                                    field.state.meta.isTouched &&
+                                    !field.state.meta.isValid;
+                                 return (
+                                    <Field data-invalid={isInvalid}>
+                                       <TiptapEditor
+                                          onBlur={field.handleBlur}
+                                          onChange={field.handleChange}
+                                          placeholder={translate(
+                                             card.placeholderKey,
+                                          )}
+                                          value={field.state.value}
+                                       />
+                                       {isInvalid && (
+                                          <FieldError
+                                             errors={field.state.meta.errors}
+                                          />
                                        )}
-                                    />
-                                    <field.FieldMessage />
-                                 </field.FieldContainer>
-                              )}
-                           </editForm.AppField>
+                                    </Field>
+                                 );
+                              }}
+                           </editForm.Field>
                         </div>
                      </TabsContent>
                   ))}

@@ -1,40 +1,40 @@
 export const menuItems = [
    {
+      description: "Simple, transparent pricing for every team",
       href: "#pricing",
       name: "Pricing",
-      description: "Simple, transparent pricing for every team",
    },
    {
+      description: "Complete guides and API references",
       href: "https://docs.contentagen.com/",
       name: "Docs",
-      description: "Complete guides and API references",
    },
    {
+      description: "Complete guides and API references",
       href: "https://blog.contentagen.com/",
       name: "Blog",
-      description: "Complete guides and API references",
    },
 ];
 
 export const productItems = [
    {
+      description: "AI learns your unique brand voice and style",
       href: "#brand-learning",
       name: "Brand Learning",
-      description: "AI learns your unique brand voice and style",
    },
    {
+      description: "Analyze and stay ahead of your competition",
       href: "#competitor-intelligence",
       name: "Competitor Intelligence",
-      description: "Analyze and stay ahead of your competition",
    },
    {
+      description: "Streamlined process from idea to publication",
       href: "#content-workflow",
       name: "Content Workflow",
-      description: "Streamlined process from idea to publication",
    },
    {
+      description: "Build custom integrations with our API",
       href: "#sdk",
       name: "Developer SDK",
-      description: "Build custom integrations with our API",
    },
 ];

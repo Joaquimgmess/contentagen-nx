@@ -1,10 +1,9 @@
+import {
+   type ContentRequest,
+   ContentRequestSchema,
+} from "@packages/database/schemas/content";
 import { useAppForm } from "@packages/ui/components/form";
 import { type FormEvent, useCallback } from "react";
-
-import {
-   ContentRequestSchema,
-   type ContentRequest,
-} from "@packages/database/schemas/content";
 
 export type ContentRequestFormData = ContentRequest;
 

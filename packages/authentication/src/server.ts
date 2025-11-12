@@ -1,26 +1,26 @@
 import type { DatabaseInstance } from "@packages/database/client";
-import {
-   sendEmailOTP,
-   sendOrganizationInvitation,
-   type ResendClient,
-   type SendEmailOTPOptions,
-} from "@packages/transactional/client";
+import { findMemberByUserId } from "@packages/database/repositories/auth-repository";
+import { getDomain, isProduction } from "@packages/environment/helpers";
 import { serverEnv } from "@packages/environment/server";
 import type { PaymentClient } from "@packages/payment/client";
-import { betterAuth, type BetterAuthOptions } from "better-auth";
+import { getCustomerState } from "@packages/payment/ingestion";
+import { POLAR_PLAN_SLUGS, POLAR_PLANS } from "@packages/payment/plans";
 import {
+   type ResendClient,
+   type SendEmailOTPOptions,
+   sendEmailOTP,
+   sendOrganizationInvitation,
+} from "@packages/transactional/client";
+import { checkout, polar, portal, usage } from "@polar-sh/better-auth";
+import { type BetterAuthOptions, betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import {
+   admin,
+   apiKey,
    emailOTP,
    openAPI,
-   admin,
    organization,
-   apiKey,
 } from "better-auth/plugins";
-import { getDomain, isProduction } from "@packages/environment/helpers";
-import { POLAR_PLANS, POLAR_PLAN_SLUGS } from "@packages/payment/plans";
-import { polar, portal, checkout, usage } from "@polar-sh/better-auth";
-import { findMemberByUserId } from "@packages/database/repositories/auth-repository";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { getCustomerState } from "@packages/payment/ingestion";
 export interface AuthOptions {
    db: DatabaseInstance;
    polarClient: PaymentClient;
@@ -40,6 +40,12 @@ export const getAuthOptions = (
    polarClient: PaymentClient,
 ) =>
    ({
+      advanced: {
+         crossSubDomainCookies: {
+            domain: ".contentagen.com",
+            enabled: isProduction,
+         },
+      },
       database: drizzleAdapter(db, {
          provider: "pg",
       }),
@@ -79,6 +85,14 @@ export const getAuthOptions = (
             },
          },
       },
+      emailAndPassword: {
+         enabled: true,
+         requireEmailVerification: true,
+      },
+      emailVerification: {
+         autoSignInAfterVerification: true,
+         sendOnSignUp: true,
+      },
       plugins: [
          admin(),
          polar({
@@ -87,12 +101,12 @@ export const getAuthOptions = (
             use: [
                portal(),
                checkout({
-                  successUrl: `${getDomain()}/profile`,
                   authenticatedUsersOnly: true,
                   products: [
                      POLAR_PLANS[POLAR_PLAN_SLUGS.BASIC],
                      POLAR_PLANS[POLAR_PLAN_SLUGS.HOBBY],
                   ],
+                  successUrl: `${getDomain()}/profile`,
                }),
                usage(),
             ],
@@ -111,69 +125,75 @@ export const getAuthOptions = (
          }),
          openAPI(),
          organization({
-            organizationLimit: 1,
-            teams: {
-               enabled: true,
-               maximumTeams: 10,
-               maximumMembersPerTeam: 50,
-               allowRemovingAllTeams: false,
-            },
             allowUserToCreateOrganization: async (user) => {
                const state = await getCustomerState(polarClient, user.id);
                return state?.activeSubscriptions.length > 0;
+            },
+            organizationLimit: 1,
+            schema: {
+               organization: {
+                  additionalFields: {
+                     description: {
+                        defaultValue: "",
+                        required: false,
+                        type: "string",
+                     },
+                  },
+               },
+               team: {
+                  additionalFields: {
+                     description: {
+                        defaultValue: "",
+                        required: false,
+                        type: "string",
+                     },
+                  },
+               },
             },
             async sendInvitationEmail(data) {
                const inviteLink = `${getDomain()}/callback/organization/invitation/${data.id}`;
                await sendOrganizationInvitation(resendClient, {
                   email: data.email,
-                  invitedByUsername: data.inviter.user.name,
                   invitedByEmail: data.inviter.user.email,
-                  teamName: data.organization.name,
+                  invitedByUsername: data.inviter.user.name,
                   inviteLink,
+                  teamName: data.organization.name,
                });
+            },
+            teams: {
+               allowRemovingAllTeams: false,
+               enabled: true,
+               maximumMembersPerTeam: 50,
+               maximumTeams: 10,
             },
          }),
          apiKey({
+            apiKeyHeaders: "sdk-api-key",
+            enableMetadata: true,
+            enableSessionForAPIKeys: true,
             rateLimit: {
                enabled: true,
-               timeWindow: 1000 * 60 * 60, // 1 hour
                maxRequests: 500, // 500 requests per hour
+               timeWindow: 1000 * 60 * 60, // 1 hour
             },
-            enableSessionForAPIKeys: true,
-            enableMetadata: true,
-            apiKeyHeaders: "sdk-api-key",
          }),
       ],
-      socialProviders: {
-         google: {
-            prompt: "select_account" as const,
-            clientId: serverEnv.BETTER_AUTH_GOOGLE_CLIENT_ID as string,
-            clientSecret: serverEnv.BETTER_AUTH_GOOGLE_CLIENT_SECRET as string,
-         },
-      },
-      emailAndPassword: {
-         enabled: true,
-         requireEmailVerification: true,
-      },
-      emailVerification: {
-         autoSignInAfterVerification: true,
-         sendOnSignUp: true,
-      },
 
       secret: serverEnv.BETTER_AUTH_SECRET,
-      trustedOrigins: serverEnv.BETTER_AUTH_TRUSTED_ORIGINS.split(","),
-      advanced: {
-         crossSubDomainCookies: {
-            enabled: isProduction,
-            domain: ".contentagen.com",
-         },
-      },
       session: {
          cookieCache: {
             enabled: true,
             maxAge: 5 * 60,
          },
       },
+      socialProviders: {
+         google: {
+            clientId: serverEnv.BETTER_AUTH_GOOGLE_CLIENT_ID as string,
+            clientSecret: serverEnv.BETTER_AUTH_GOOGLE_CLIENT_SECRET as string,
+            prompt: "select_account" as const,
+         },
+      },
+      trustedOrigins: serverEnv.BETTER_AUTH_TRUSTED_ORIGINS.split(","),
    }) satisfies BetterAuthOptions;
 
 export const createAuth = (options: AuthOptions) => {

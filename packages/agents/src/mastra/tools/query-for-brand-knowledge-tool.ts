@@ -2,8 +2,8 @@ import { createTool } from "@mastra/core/tools";
 import { serverEnv } from "@packages/environment/server";
 import { createPgVector } from "@packages/rag/client";
 import { searchBrandKnowledgeByTextAndExternalId } from "@packages/rag/repositories/brand-knowledge-repository";
-import { z } from "zod";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { z } from "zod";
 export function getQueryBrandKnowledgeInstructions(): string {
    return `
 ## QUERY BRAND KNOWLEDGE TOOL
@@ -18,14 +18,7 @@ Searches vector database for brand information and app features.
 `;
 }
 export const queryForBrandKnowledgeTool = createTool({
-   id: "query-for-brand-knowledge",
    description: "Query the pg vector database for brand knowledge",
-   inputSchema: z.object({
-      searchTerm: z.string().describe("The search term to query the database"),
-      type: z
-         .enum(["document", "feature"])
-         .describe("The type of knowledge to search for"),
-   }),
    execute: async ({ context, runtimeContext }) => {
       const { searchTerm, type } = context;
       if (!runtimeContext?.has("brandId")) {
@@ -41,9 +34,9 @@ export const queryForBrandKnowledgeTool = createTool({
             searchTerm,
             externalId,
             {
-               type,
                limit: 5,
                similarityThreshold: 0,
+               type,
             },
          );
          return { results };
@@ -55,4 +48,11 @@ export const queryForBrandKnowledgeTool = createTool({
          );
       }
    },
+   id: "query-for-brand-knowledge",
+   inputSchema: z.object({
+      searchTerm: z.string().describe("The search term to query the database"),
+      type: z
+         .enum(["document", "feature"])
+         .describe("The type of knowledge to search for"),
+   }),
 });

@@ -1,16 +1,16 @@
+import type { ContentSelect } from "@packages/database/schema";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaBody,
-   CredenzaDescription,
 } from "@packages/ui/components/credenza";
-import type { ContentSelect } from "@packages/database/schema";
-import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
 import { Markdown } from "@packages/ui/components/markdown";
 import { ScrollArea } from "@packages/ui/components/scroll-area";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/integrations/clients";
 
 interface BlogPreviewCredenzaProps {
    content: ContentSelect;
@@ -47,9 +47,9 @@ export function BlogPreviewCredenza({
 
    const formatDate = (date: Date) => {
       return new Intl.DateTimeFormat("en-US", {
-         year: "numeric",
-         month: "long",
          day: "numeric",
+         month: "long",
+         year: "numeric",
       }).format(date);
    };
 
@@ -57,7 +57,7 @@ export function BlogPreviewCredenza({
       agentData?.personaConfig?.metadata?.name || "ContentaGen Team";
 
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>Blog Post Preview</CredenzaTitle>
@@ -72,9 +72,9 @@ export function BlogPreviewCredenza({
                      {contentImage?.data && (
                         <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
                            <img
-                              src={contentImage.data}
                               alt={content.meta?.title ?? ""}
                               className="w-full h-auto object-cover transition-transform duration-700 hover:scale-105"
+                              src={contentImage.data}
                               style={{ maxHeight: "300px" }}
                            />
                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
@@ -91,9 +91,9 @@ export function BlogPreviewCredenza({
                               <div className="flex items-center gap-2">
                                  {agentPhoto?.data && (
                                     <img
-                                       src={agentPhoto.data}
                                        alt={authorName}
                                        className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+                                       src={agentPhoto.data}
                                     />
                                  )}
                                  <div>

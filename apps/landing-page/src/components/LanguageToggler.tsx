@@ -1,7 +1,5 @@
-import { useState, useMemo } from "react";
-import { Globe } from "lucide-react";
+import type { SupportedLng } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
-import { cn } from "@packages/ui/lib/utils";
 import {
    Dialog,
    DialogContent,
@@ -10,7 +8,9 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "@packages/ui/components/dialog";
-import type { SupportedLng } from "@packages/localization";
+import { cn } from "@packages/ui/lib/utils";
+import { Globe } from "lucide-react";
+import { useMemo, useState } from "react";
 import { getLocalizedPath } from "../i18n/utils";
 
 interface LanguageTogglerProps {
@@ -26,8 +26,8 @@ export function LanguageToggler({
 
    const languageOptions = useMemo(
       () => [
-         { code: "en" as const, name: "English", flag: "🇺🇸" },
-         { code: "pt" as const, name: "Português", flag: "🇧🇷" },
+         { code: "en" as const, flag: "🇺🇸", name: "English" },
+         { code: "pt" as const, flag: "🇧🇷", name: "Português" },
       ],
       [],
    );
@@ -51,12 +51,12 @@ export function LanguageToggler({
    };
 
    return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog onOpenChange={setOpen} open={open}>
          <DialogTrigger asChild>
             <Button
-               variant="outline"
-               size="sm"
                className="flex items-center gap-2"
+               size="sm"
+               variant="outline"
             >
                <Globe className="w-4 h-4" />
                <span className="hidden sm:inline">
@@ -75,14 +75,14 @@ export function LanguageToggler({
             <div className="grid gap-2">
                {languageOptions.map((lang) => (
                   <Button
-                     key={lang.code}
-                     onClick={() => handleLanguageChange(lang.code)}
-                     variant={currentLang === lang.code ? "default" : "outline"}
                      className={cn(
                         "w-full justify-start text-left font-normal",
                         currentLang === lang.code &&
                            "bg-primary text-primary-foreground",
                      )}
+                     key={lang.code}
+                     onClick={() => handleLanguageChange(lang.code)}
+                     variant={currentLang === lang.code ? "default" : "outline"}
                   >
                      <span className="mr-2">{lang.flag}</span>
                      <span>{lang.name}</span>

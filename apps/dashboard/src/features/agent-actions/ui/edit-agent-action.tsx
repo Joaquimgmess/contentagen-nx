@@ -9,8 +9,8 @@ export function EditAgentAction({ agentId }: EditAgentActionProps) {
 
    const handleEdit = () => {
       router.navigate({
-         to: "/agents/$agentId/edit",
          params: { agentId },
+         to: "/agents/$agentId/edit",
       });
    };
 

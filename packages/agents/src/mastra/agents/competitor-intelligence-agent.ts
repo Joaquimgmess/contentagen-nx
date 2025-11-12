@@ -1,16 +1,16 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
-import {
-   queryForCompetitorKnowledgeTool,
-   getQueryCompetitorKnowledgeInstructions,
-} from "../tools/query-for-competitor-knowledge-tool";
+import { createToolSystemPrompt } from "../helpers";
 import { dateTool, getDateToolInstructions } from "../tools/date-tool";
 import {
    getQueryBrandKnowledgeInstructions,
    queryForBrandKnowledgeTool,
 } from "../tools/query-for-brand-knowledge-tool";
-import { createToolSystemPrompt } from "../helpers";
+import {
+   getQueryCompetitorKnowledgeInstructions,
+   queryForCompetitorKnowledgeTool,
+} from "../tools/query-for-competitor-knowledge-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -26,7 +26,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
  * @description An agent that compares competitor activities against brand capabilities and generates actionable gap analysis
  */
 export const competitorIntelligenceAgent = new Agent({
-   name: "Competitor Intelligence Agent",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") || "en";
       return `
@@ -117,9 +116,10 @@ Be direct and action-oriented. Skip the fluff. Decision-makers need to know:
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "Competitor Intelligence Agent",
    tools: {
-      queryForCompetitorKnowledgeTool,
-      queryForBrandKnowledgeTool,
       dateTool,
+      queryForBrandKnowledgeTool,
+      queryForCompetitorKnowledgeTool,
    },
 });

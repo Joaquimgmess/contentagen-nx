@@ -1,7 +1,7 @@
-import { Section, Text, Button, Container } from "@react-email/components";
-import { DefaultEmailLayout } from "./default-layout";
+import { Button, Container, Section, Text } from "@react-email/components";
 import { DefaultFooter } from "./default-footer";
 import { DefaultHeading } from "./default-heading";
+import { DefaultEmailLayout } from "./default-layout";
 
 interface OrganizationInvitationEmailProps {
    invitedByUsername: string;
@@ -29,8 +29,8 @@ export default function OrganizationInvitationEmail({
             </Text>
             <Container className="text-center my-4">
                <Button
-                  href={inviteLink}
                   className="bg-blue-600 text-white px-6 py-3 rounded-md font-bold text-base inline-block"
+                  href={inviteLink}
                >
                   Accept Invitation
                </Button>
@@ -46,8 +46,8 @@ export default function OrganizationInvitationEmail({
 }
 
 OrganizationInvitationEmail.PreviewProps = {
-   invitedByUsername: "Jane Doe",
    invitedByEmail: "jane.doe@example.com",
-   teamName: "Marketing Team",
+   invitedByUsername: "Jane Doe",
    inviteLink: "https://app.contentagen.com/invite/1234",
+   teamName: "Marketing Team",
 };

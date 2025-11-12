@@ -1,11 +1,11 @@
-import type { DatabaseInstance } from "../client";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { and, eq } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
 import {
-   userPreference,
    type PreferenceCategory,
+   userPreference,
    type WorkflowPreferences,
 } from "../schemas/user-preferences";
-import { eq, and } from "drizzle-orm";
 
 export type UserPreferenceInsert = typeof userPreference.$inferInsert;
 export type UserPreferenceSelect = typeof userPreference.$inferSelect;
@@ -120,8 +120,8 @@ export async function updateWorkflowPreferences(
          const result = await db
             .update(userPreference)
             .set({
-               value: preferences,
                updatedAt: new Date(),
+               value: preferences,
             })
             .where(eq(userPreference.id, existing.id))
             .returning();
@@ -133,8 +133,8 @@ export async function updateWorkflowPreferences(
          const result = await db
             .insert(userPreference)
             .values({
-               userId,
                category: "workflow",
+               userId,
                value: preferences,
             })
             .returning();

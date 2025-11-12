@@ -1,7 +1,7 @@
 import { createTool } from "@mastra/core/tools";
-import { serverEnv } from "@packages/environment/server";
 import { createDb } from "@packages/database/client";
 import { getAgentById } from "@packages/database/repositories/agent-repository";
+import { serverEnv } from "@packages/environment/server";
 import { AppError, propagateError } from "@packages/utils/errors";
 export function getWriterPersonaInstructions(): string {
    return `
@@ -17,7 +17,6 @@ Retrieves agent identity (name, description) that defines the voice and style fo
 `;
 }
 export const getWriterPersonaTool = createTool({
-   id: "get-writing-persona",
    description:
       "Retrieve the writer persona including agent metadata (name + description) for content creation",
    execute: async ({ runtimeContext }) => {
@@ -35,8 +34,8 @@ export const getWriterPersonaTool = createTool({
          const metadata = agent.personaConfig.metadata;
 
          return {
-            personaName: metadata.name,
             personaDescription: metadata.description,
+            personaName: metadata.name,
          };
       } catch (error) {
          console.error("Failed to retrieve writing persona:", error);
@@ -46,4 +45,5 @@ export const getWriterPersonaTool = createTool({
          );
       }
    },
+   id: "get-writing-persona",
 });

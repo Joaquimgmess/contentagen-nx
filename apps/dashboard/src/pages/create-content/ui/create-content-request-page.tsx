@@ -1,9 +1,9 @@
+import { translate } from "@packages/localization";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { ContentRequestForm } from "@/features/content-request-form/ui/content-request-form";
-import { useTRPC } from "@/integrations/clients";
 import { createToast } from "@/features/error-modal/lib/create-toast";
-import { translate } from "@packages/localization";
+import { useTRPC } from "@/integrations/clients";
 
 export function AgentContentRequestPage() {
    const trpc = useTRPC();
@@ -15,12 +15,21 @@ export function AgentContentRequestPage() {
    // Create mutation for content request
    const contentRequestMutation = useMutation(
       trpc.content.create.mutationOptions({
+         onError: (error) => {
+            console.error("Failed to create content request:", error);
+            createToast({
+               message: translate(
+                  "pages.content-request-form.messages.creation-failed",
+               ),
+               type: "danger",
+            });
+         },
          onSuccess: (data) => {
             createToast({
-               type: "success",
                message: translate(
                   "pages.content-request-form.messages.generation-started",
                ),
+               type: "success",
             });
             queryClient.invalidateQueries({
                queryKey: trpc.content.listAllContent.queryKey({
@@ -29,18 +38,9 @@ export function AgentContentRequestPage() {
             });
             if (!data?.id) return state.history.back();
             state.navigate({
-               to: "/content/$id",
                params: { id: data.id },
                search: { page: 1 },
-            });
-         },
-         onError: (error) => {
-            console.error("Failed to create content request:", error);
-            createToast({
-               type: "danger",
-               message: translate(
-                  "pages.content-request-form.messages.creation-failed",
-               ),
+               to: "/content/$id",
             });
          },
       }),

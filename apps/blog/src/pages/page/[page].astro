@@ -1,13 +1,17 @@
 ---
+
+
+
 export const prerender = true;
-import { sdk, agentId } from "../../contentagen";
-import BaseHead from "../../components/BaseHead.astro";
-import Navbar from "../../components/Navbar.astro";
-import Footer from "../../components/Footer.astro";
-import FormattedDate from "../../components/FormattedDate.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+
 import { Image } from "astro:assets";
 import { Button } from "@packages/ui/components/button";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import Navbar from "../../components/Navbar.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { agentId, sdk } from "../../contentagen";
 
 export async function getStaticPaths() {
    const postsPerPage = 5;
@@ -15,8 +19,8 @@ export async function getStaticPaths() {
    // Get total count first to calculate pages
    const response = await sdk.listContentByAgent({
       agentId: agentId,
-      status: ["approved"],
       limit: 1, // Just get count
+      status: ["approved"],
    });
    const totalPosts = response.total;
    const totalPages = Math.ceil(totalPosts / postsPerPage);
@@ -25,9 +29,9 @@ export async function getStaticPaths() {
    for (let page = 1; page <= totalPages; page++) {
       const pageResponse = await sdk.listContentByAgent({
          agentId: agentId,
-         status: ["approved"],
          limit: postsPerPage,
          page: page,
+         status: ["approved"],
       });
       const postsRaw = pageResponse.posts.sort(
          (a, b) =>
@@ -61,8 +65,8 @@ export async function getStaticPaths() {
       paths.push({
          params: { page: page.toString() },
          props: {
-            posts,
             currentPage: page,
+            posts,
             totalPages,
             totalPosts,
          },

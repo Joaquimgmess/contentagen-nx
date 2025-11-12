@@ -5,7 +5,6 @@ import chalk from "chalk";
 
 const checks = [
    {
-      name: "Node.js Version",
       fn: () => {
          const version = process.versions.node;
          const majorVersion = parseInt(version.split(".")[0] || "0", 10);
@@ -16,9 +15,9 @@ const checks = [
          }
          return `v${version}`;
       },
+      name: "Node.js Version",
    },
    {
-      name: "Bun Version",
       fn: () => {
          try {
             const version = execSync("bun --version").toString().trim();
@@ -30,9 +29,9 @@ const checks = [
             );
          }
       },
+      name: "Bun Version",
    },
    {
-      name: "Podman",
       fn: () => {
          try {
             const version = execSync("podman --version").toString().trim();
@@ -45,9 +44,9 @@ const checks = [
             );
          }
       },
+      name: "Podman",
    },
    {
-      name: "Podman Compose",
       fn: () => {
          try {
             const version = execSync("podman-compose version")
@@ -62,9 +61,9 @@ const checks = [
             );
          }
       },
+      name: "Podman Compose",
    },
    {
-      name: "Dependencies",
       fn: () => {
          if (!fs.existsSync("node_modules")) {
             throw new Error(
@@ -73,9 +72,9 @@ const checks = [
          }
          return "Installed";
       },
+      name: "Dependencies",
    },
    {
-      name: "Environment Files",
       fn: () => {
          const allDirs: string[] = [];
 
@@ -145,24 +144,25 @@ const checks = [
          }
          return "All environment files found";
       },
+      name: "Environment Files",
    },
    {
-      name: "TypeScript Configuration",
       fn: () => {
          if (!fs.existsSync("tsconfig.json")) {
             throw new Error("Root tsconfig.json not found");
          }
          return "Found";
       },
+      name: "TypeScript Configuration",
    },
    {
-      name: "NX Configuration",
       fn: () => {
          if (!fs.existsSync("nx.json")) {
             throw new Error("nx.json not found");
          }
          return "Found";
       },
+      name: "NX Configuration",
    },
 ];
 

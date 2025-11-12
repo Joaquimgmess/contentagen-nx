@@ -1,23 +1,23 @@
+import { Info as InfoIcon } from "lucide-react";
 import type * as React from "react";
+import { Button } from "./button";
 import {
    Card,
+   CardAction,
+   CardContent,
+   CardDescription,
    CardHeader,
    CardTitle,
-   CardDescription,
-   CardContent,
-   CardAction,
 } from "./card";
 import {
    Credenza,
-   CredenzaTrigger,
-   CredenzaContent,
    CredenzaBody,
-   CredenzaHeader,
+   CredenzaContent,
    CredenzaDescription,
+   CredenzaHeader,
    CredenzaTitle,
+   CredenzaTrigger,
 } from "./credenza";
-import { Info as InfoIcon } from "lucide-react";
-import { Button } from "./button";
 
 type Values = {
    title: string;
@@ -61,8 +61,8 @@ export function StatsCard({ className, details, ...props }: DetailsProps) {
    const content = (
       <StatsContent
          className={className}
-         title={props.title}
          description={props.description}
+         title={props.title}
          value={props.value}
       />
    );
@@ -76,16 +76,16 @@ export function StatsCard({ className, details, ...props }: DetailsProps) {
          <div className="col-span-1">
             <StatsContent
                className={className}
-               title={props.title}
                description={props.description}
-               value={props.value}
                showAction={
                   <CredenzaTrigger>
-                     <Button variant="ghost" size="icon">
+                     <Button size="icon" variant="ghost">
                         <InfoIcon />
                      </Button>
                   </CredenzaTrigger>
                }
+               title={props.title}
+               value={props.value}
             />
          </div>
 
@@ -99,10 +99,10 @@ export function StatsCard({ className, details, ...props }: DetailsProps) {
             <CredenzaBody className="grid grid-cols-1 md:grid-cols-2 gap-4">
                {details.map((detail) => (
                   <StatsContent
-                     key={detail.title}
                      className="w-full"
-                     title={detail.title}
                      description={detail.description}
+                     key={detail.title}
+                     title={detail.title}
                      value={detail.value}
                   />
                ))}

@@ -1,6 +1,6 @@
-import { ContentRequestCard } from "./content-card";
-import { useContentList } from "../lib/content-list-context";
 import { translate } from "@packages/localization";
+import { useContentList } from "../lib/content-list-context";
+import { ContentRequestCard } from "./content-card";
 
 export function ContentCardsList() {
    const { data } = useContentList();

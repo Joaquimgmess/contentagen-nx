@@ -1,9 +1,9 @@
+import { translate } from "@packages/localization";
 import { StatsCard } from "@packages/ui/components/stats-card";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/integrations/clients";
 import { useParams } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { translate } from "@packages/localization";
+import { useTRPC } from "@/integrations/clients";
 
 export function AgentStatsCard() {
    const trpc = useTRPC();
@@ -19,16 +19,16 @@ export function AgentStatsCard() {
 
    const items = useMemo(() => {
       const drafts = {
-         title: translate("pages.agent-details.stats.drafts"),
          description: translate("pages.agent-details.stats.drafts-description"),
+         title: translate("pages.agent-details.stats.drafts"),
          value: data.totalDraft.toString(),
       };
 
       const published = {
-         title: translate("pages.agent-details.stats.published"),
          description: translate(
             "pages.agent-details.stats.published-description",
          ),
+         title: translate("pages.agent-details.stats.published"),
          value: data.totalPublished.toString(),
       };
 
@@ -38,32 +38,32 @@ export function AgentStatsCard() {
 
       return [
          {
-            label: translate("pages.agent-details.stats.total-content"),
             description: translate(
                "pages.agent-details.stats.total-content-description",
             ),
-            value: totalContentValue,
             details: [drafts, published],
+            label: translate("pages.agent-details.stats.total-content"),
+            value: totalContentValue,
          },
          {
-            label: translate("pages.agent-details.stats.total-words"),
             description: translate(
                "pages.agent-details.stats.total-words-description",
             ),
+            label: translate("pages.agent-details.stats.total-words"),
             value: data.wordsWritten?.toLocaleString() ?? "0",
          },
          {
-            label: translate("pages.agent-details.stats.avg-quality-score"),
             description: translate(
                "pages.agent-details.stats.avg-quality-score-description",
             ),
+            label: translate("pages.agent-details.stats.avg-quality-score"),
             value: data.avgQualityScore?.toFixed(2).toString() ?? "0",
          },
          {
-            label: translate("pages.agent-details.stats.total-ideas"),
             description: translate(
                "pages.agent-details.stats.total-ideas-description",
             ),
+            label: translate("pages.agent-details.stats.total-ideas"),
             value: data.totalIdeas?.toString() ?? "0",
          },
       ];
@@ -73,11 +73,11 @@ export function AgentStatsCard() {
       <div className="w-full h-full gap-4 grid md:grid-cols-2">
          {items.map((item) => (
             <StatsCard
+               description={item.description}
+               details={item.details}
                key={item.label}
                title={item.label}
-               description={item.description}
                value={item.value}
-               details={item.details}
             />
          ))}
       </div>

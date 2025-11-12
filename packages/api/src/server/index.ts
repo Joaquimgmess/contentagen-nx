@@ -1,41 +1,45 @@
 import type { AuthInstance } from "@packages/authentication/server";
-import type { Polar } from "@polar-sh/sdk";
 import type { DatabaseInstance } from "@packages/database/client";
-import { createTRPCContext as createTRPCContextInternal, router } from "./trpc";
-import { agentFileRouter } from "./router/agent-file";
 import type { MinioClient } from "@packages/files/client";
 import type { PgVectorDatabaseInstance } from "@packages/rag/client";
+import type { Polar } from "@polar-sh/sdk";
 import { agentRouter } from "./router/agent";
-import { contentRouter } from "./router/content";
-import { statisticsRouter } from "./router/statistics";
+import { agentFileRouter } from "./router/agent-file";
+import { assistantRouter } from "./router/assistant";
 import { authHelpersRouter } from "./router/auth-helpers";
-import { ideasRouter } from "./router/ideas";
-import { preferencesRouter } from "./router/preferences";
-import { competitorRouter } from "./router/competitor";
-import { competitorFileRouter } from "./router/competitor-file";
-import { bugReportRouter } from "./router/bug-report";
-import { organizationRouter } from "./router/organization";
-import { organizationFileRouter } from "./router/organization-file";
 import { brandRouter } from "./router/brand";
 import { brandFileRouter } from "./router/brand-file";
-import { assistantRouter } from "./router/assistant";
+import { bugReportRouter } from "./router/bug-report";
+import { competitorRouter } from "./router/competitor";
+import { competitorFileRouter } from "./router/competitor-file";
+import { contentRouter } from "./router/content";
+import { ideasRouter } from "./router/ideas";
+import { organizationRouter } from "./router/organization";
+import { organizationInvitesRouter } from "./router/organization-invites";
+import { preferencesRouter } from "./router/preferences";
+import { sessionRouter } from "./router/session";
+import { statisticsRouter } from "./router/statistics";
+import { subscriptionRouter } from "./router/subscription";
+import { createTRPCContext as createTRPCContextInternal, router } from "./trpc";
 
 export const appRouter = router({
-   assistant: assistantRouter,
    agent: agentRouter,
    agentFile: agentFileRouter,
-   content: contentRouter,
+   assistant: assistantRouter,
    authHelpers: authHelpersRouter,
-   statistics: statisticsRouter,
-   ideas: ideasRouter,
-   preferences: preferencesRouter,
-   competitor: competitorRouter,
-   competitorFile: competitorFileRouter,
-   bugReport: bugReportRouter,
-   organization: organizationRouter,
-   organizationFile: organizationFileRouter,
    brand: brandRouter,
    brandFile: brandFileRouter,
+   bugReport: bugReportRouter,
+   competitor: competitorRouter,
+   competitorFile: competitorFileRouter,
+   content: contentRouter,
+   ideas: ideasRouter,
+   organization: organizationRouter,
+   organizationInvites: organizationInvitesRouter,
+   preferences: preferencesRouter,
+   session: sessionRouter,
+   statistics: statisticsRouter,
+   subscription: subscriptionRouter,
 });
 export const createApi = ({
    auth,
@@ -53,17 +57,17 @@ export const createApi = ({
    polarClient: Polar;
 }) => {
    return {
-      trpcRouter: appRouter,
       createTRPCContext: async ({ headers }: { headers: Headers }) =>
          await createTRPCContextInternal({
-            minioClient,
             auth,
             db,
             headers,
             minioBucket,
-            ragClient,
+            minioClient,
             polarClient,
+            ragClient,
          }),
+      trpcRouter: appRouter,
    };
 };
 

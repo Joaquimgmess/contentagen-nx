@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { TRPCClientError } from "@trpc/client";
-import { useTranslation } from "react-i18next";
+import { Button } from "@packages/ui/components/button";
 import {
    Dialog,
    DialogContent,
-   DialogHeader,
-   DialogTitle,
    DialogDescription,
    DialogFooter,
+   DialogHeader,
+   DialogTitle,
 } from "@packages/ui/components/dialog";
-import { Button } from "@packages/ui/components/button";
 import { Textarea } from "@packages/ui/components/textarea";
+import { useQueryClient } from "@tanstack/react-query";
+import { TRPCClientError } from "@trpc/client";
 import { MegaphoneIcon } from "lucide-react";
-import { useErrorModalStore } from "../lib/error-modal-context";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { createToast } from "../lib/create-toast";
+import { useErrorModalStore } from "../lib/error-modal-context";
 
 type BugReportInput = {
    userReport: string;
@@ -59,11 +59,9 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
          .filter((mutation) => mutation.state.status === "error")
          .map((mutation) => {
             return {
-               key: mutation.options.mutationKey?.join(".") ?? "",
                error:
                   mutation.state.error instanceof TRPCClientError
                      ? {
-                          message: mutation.state.error.message,
                           data: (() => {
                              const { stack: _, ...dataWithoutStack } =
                                 (mutation.state.error.data as Record<
@@ -72,6 +70,7 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                                 >) || {};
                              return dataWithoutStack;
                           })(),
+                          message: mutation.state.error.message,
                        }
                      : mutation.state.error instanceof Error
                        ? {
@@ -80,39 +79,40 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
                          }
                        : JSON.stringify(mutation.state.error),
                input: mutation.state.variables,
+               key: mutation.options.mutationKey?.join(".") ?? "",
             };
          });
 
       submitBugReport.mutate(
          {
-            userReport: bugDescription,
-            mutationCache: errorMutations,
             currentURL: window.location.href,
             error: {
-               title: state?.title || "",
                description: state?.description || "",
+               title: state?.title || "",
             },
+            mutationCache: errorMutations,
+            userReport: bugDescription,
          },
          {
-            onSuccess: () => {
-               createToast({
-                  type: "success",
-                  message: t("common.errorModal.successMessage"),
-               });
-               setBugDescription("");
-               setShowBugReport(false);
-               actions.closeModal();
-            },
             onError: (error) => {
                const errorMessage =
                   error instanceof Error
                      ? error.message
                      : t("common.errorModal.errorMessage");
                createToast({
-                  type: "danger",
-                  title: t("common.errorModal.errorTitle"),
                   message: errorMessage,
+                  title: t("common.errorModal.errorTitle"),
+                  type: "danger",
                });
+            },
+            onSuccess: () => {
+               createToast({
+                  message: t("common.errorModal.successMessage"),
+                  type: "success",
+               });
+               setBugDescription("");
+               setShowBugReport(false);
+               actions.closeModal();
             },
          },
       );
@@ -125,7 +125,7 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
    };
 
    return (
-      <Dialog open={state?.isOpen} onOpenChange={handleClose}>
+      <Dialog onOpenChange={handleClose} open={state?.isOpen}>
          <DialogContent>
             <DialogHeader>
                <DialogTitle className="text-red-600">
@@ -139,25 +139,25 @@ export const ErrorModal = ({ submitBugReport }: ErrorModalProps) => {
             {showBugReport ? (
                <div className="flex flex-col gap-4">
                   <Textarea
-                     value={bugDescription}
+                     className="resize-none"
                      onChange={(e) => setBugDescription(e.target.value)}
                      placeholder={t("common.errorModal.placeholder")}
                      rows={6}
-                     className="resize-none"
+                     value={bugDescription}
                   />
                   <DialogFooter className="gap-2">
                      <Button
-                        variant="outline"
-                        onClick={() => setShowBugReport(false)}
                         disabled={submitBugReport.isPending}
+                        onClick={() => setShowBugReport(false)}
+                        variant="outline"
                      >
                         {t("common.errorModal.backButton")}
                      </Button>
                      <Button
-                        onClick={handleSubmitBug}
                         disabled={
                            !bugDescription.trim() || submitBugReport.isPending
                         }
+                        onClick={handleSubmitBug}
                      >
                         {submitBugReport.isPending
                            ? t("common.errorModal.submittingButton")

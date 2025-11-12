@@ -1,4 +1,6 @@
-import { CardMultiStepLoader } from "@/widgets/multi-step-loader/ui/card-multi-step-loader";
+import type { RouterOutput } from "@packages/api/client";
+import { translate } from "@packages/localization";
+import { Badge } from "@packages/ui/components/badge";
 import {
    Card,
    CardAction,
@@ -11,33 +13,30 @@ import {
 import { Checkbox } from "@packages/ui/components/checkbox";
 import {
    Credenza,
+   CredenzaBody,
    CredenzaContent,
+   CredenzaDescription,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaDescription,
    CredenzaTrigger,
-   CredenzaBody,
 } from "@packages/ui/components/credenza";
-import { ContentDeleteConfirmationCredenza } from "../features/content-delete-confirmation-credenza";
-import { Trash2, Eye, Lock, Globe } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
-import { Badge } from "@packages/ui/components/badge";
-import type { RouterOutput } from "@packages/api/client";
-import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
-import { useTRPC } from "@/integrations/clients";
-import {
-   useSuspenseQuery,
-   useMutation,
-   useQueryClient,
-} from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
-import { toast } from "sonner";
 import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
 import { formatStringForDisplay } from "@packages/utils/text";
-import { useContentList } from "../lib/content-list-context";
-import { useSearch } from "@tanstack/react-router";
-import { translate } from "@packages/localization";
+import {
+   useMutation,
+   useQueryClient,
+   useSuspenseQuery,
+} from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
+import { Eye, Globe, Lock, Trash2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
+import { AgentWriterCard } from "@/widgets/agent-display-card/ui/agent-writter-card";
+import { CardMultiStepLoader } from "@/widgets/multi-step-loader/ui/card-multi-step-loader";
+import { ContentDeleteConfirmationCredenza } from "../features/content-delete-confirmation-credenza";
+import { useContentList } from "../lib/content-list-context";
 
 export function ContentRequestCard({
    request,
@@ -77,6 +76,10 @@ export function ContentRequestCard({
    );
    const deleteMutation = useMutation(
       trpc.content.delete.mutationOptions({
+         onError: (error) => {
+            toast.error(translate("pages.content-list.messages.delete-error"));
+            console.error("Delete error:", error);
+         },
          onSuccess: async () => {
             toast.success(
                translate("pages.content-list.messages.delete-success"),
@@ -87,18 +90,14 @@ export function ContentRequestCard({
                queryKey: trpc.content.listAllContent.queryKey(),
             });
          },
-         onError: (error) => {
-            toast.error(translate("pages.content-list.messages.delete-error"));
-            console.error("Delete error:", error);
-         },
       }),
    );
 
    const handleView = useCallback(() => {
       navigate({
-         to: "/content/$id",
          params: { id: request.id },
          search,
+         to: "/content/$id",
       });
       setIsCredenzaOpen(false);
    }, [navigate, request.id, search]);
@@ -114,7 +113,7 @@ export function ContentRequestCard({
 
    return (
       <>
-         <Credenza open={isCredenzaOpen} onOpenChange={setIsCredenzaOpen}>
+         <Credenza onOpenChange={setIsCredenzaOpen} open={isCredenzaOpen}>
             <CredenzaTrigger asChild>
                <Card className="cursor-pointer">
                   {isLoading ? (
@@ -172,13 +171,6 @@ export function ContentRequestCard({
                         </CardHeader>
                         <CardContent>
                            <AgentWriterCard
-                              photo={profilePhoto?.data}
-                              name={
-                                 request.agent?.personaConfig.metadata.name ||
-                                 translate(
-                                    "pages.content-list.card.unknown-agent",
-                                 )
-                              }
                               description={
                                  request.agent?.personaConfig.metadata
                                     .description ||
@@ -186,6 +178,13 @@ export function ContentRequestCard({
                                     "pages.content-list.card.no-agent-description",
                                  )
                               }
+                              name={
+                                 request.agent?.personaConfig.metadata.name ||
+                                 translate(
+                                    "pages.content-list.card.unknown-agent",
+                                 )
+                              }
+                              photo={profilePhoto?.data}
                            />
                         </CardContent>
                         <CardFooter className="flex items-center justify-between">
@@ -228,8 +227,8 @@ export function ContentRequestCard({
 
                   <SquaredIconButton
                      destructive
-                     onClick={handleDelete}
                      disabled={deleteMutation.isPending}
+                     onClick={handleDelete}
                   >
                      <Trash2 className="h-4 w-4" />
                      {deleteMutation.isPending
@@ -240,13 +239,13 @@ export function ContentRequestCard({
             </CredenzaContent>
          </Credenza>
          <ContentDeleteConfirmationCredenza
-            open={showDeleteConfirmation}
-            onOpenChange={setShowDeleteConfirmation}
             contentTitle={
                request.meta?.title ||
                translate("pages.content-list.card.this-content")
             }
             onConfirm={confirmDelete}
+            onOpenChange={setShowDeleteConfirmation}
+            open={showDeleteConfirmation}
          />
       </>
    );

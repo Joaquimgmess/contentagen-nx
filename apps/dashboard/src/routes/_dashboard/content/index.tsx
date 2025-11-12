@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ContentListPage } from "@/pages/content-list/ui/content-list-page";
 import { z } from "zod";
+import { ContentListPage } from "@/pages/content-list/ui/content-list-page";
 
 const contentSearchSchema = z.object({
    agentId: z.string().optional(),

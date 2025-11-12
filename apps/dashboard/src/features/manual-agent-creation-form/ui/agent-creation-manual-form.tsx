@@ -1,17 +1,17 @@
+import {
+   type PersonaConfig,
+   PersonaConfigSchema,
+} from "@packages/database/schemas/agent";
+import { translate } from "@packages/localization";
 import { Button } from "@packages/ui/components/button";
 import { defineStepper } from "@packages/ui/components/stepper";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { TalkingMascot } from "@/widgets/talking-mascot/ui/talking-mascot";
 import { useAgentForm } from "../lib/use-agent-form";
-import { translate } from "@packages/localization";
 import { BasicInfoStep, BasicInfoStepSubscribe } from "./basic-info-step";
 import { PurposeStep, PurposeStepSubscribe } from "./purpose-step";
 import { ReviewStep, ReviewStepSubscribe } from "./review-step";
-import {
-   type PersonaConfig,
-   PersonaConfigSchema,
-} from "@packages/database/schemas/agent";
 export const agentFormSchema = PersonaConfigSchema;
 const steps = [
    {
@@ -64,9 +64,9 @@ export function AgentCreationManualForm({
    };
    return (
       <Stepper.Provider
+         className="h-full w-full"
          labelOrientation="vertical"
          variant="horizontal"
-         className="h-full w-full"
       >
          {({ methods }) => (
             <form
@@ -97,13 +97,13 @@ export function AgentCreationManualForm({
                <TalkingMascot message={getMascotMessage(methods.current.id)} />
 
                <Stepper.Panel className="h-full">
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence initial={false} mode="wait">
                      <motion.div
-                        className="h-full"
-                        key={methods.current.id}
-                        initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
+                        className="h-full"
                         exit={{ opacity: 0, scale: 0.96 }}
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        key={methods.current.id}
                         transition={{ duration: 0.3 }}
                      >
                         {methods.switch({

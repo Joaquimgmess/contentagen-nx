@@ -1,10 +1,10 @@
 import { Buffer } from "node:buffer";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { Mock } from "vitest";
-import type { DatabaseInstance } from "@packages/database/client";
-import type { PgVectorDatabaseInstance } from "@packages/rag/client";
-import type { MinioClient } from "@packages/files/client";
 import type { CustomRuntimeContext } from "@packages/agents";
+import type { DatabaseInstance } from "@packages/database/client";
+import type { MinioClient } from "@packages/files/client";
+import type { PgVectorDatabaseInstance } from "@packages/rag/client";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockDb = {} as DatabaseInstance;
 const mockRagClient = {} as PgVectorDatabaseInstance;
@@ -46,8 +46,8 @@ vi.mock("@packages/rag/repositories/related-slugs-repository", () => ({
 vi.mock("@api/integrations/auth", () => ({
    auth: {
       api: {
-         verifyApiKey: vi.fn(),
          getSession: vi.fn(),
+         verifyApiKey: vi.fn(),
       },
    },
 }));
@@ -61,19 +61,19 @@ vi.mock("@api/integrations/minio", () => ({
    minioClient: mockMinioClient,
 }));
 
-import { sdkRoutes } from "../src/routes/sdk";
+import { auth } from "@api/integrations/auth";
 import { mastra, setRuntimeContext } from "@packages/agents";
 import { getAgentById } from "@packages/database/repositories/agent-repository";
 import { findMemberByUserId } from "@packages/database/repositories/auth-repository";
+import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
 import {
    getContentById,
    getContentBySlug,
    listContents,
 } from "@packages/database/repositories/content-repository";
-import { getBrandByOrgId } from "@packages/database/repositories/brand-repository";
 import { streamFileForProxy } from "@packages/files/client";
 import { searchRelatedSlugsByText } from "@packages/rag/repositories/related-slugs-repository";
-import { auth } from "@api/integrations/auth";
+import { sdkRoutes } from "../src/routes/sdk";
 
 type AgentRecord = Awaited<ReturnType<typeof getAgentById>>;
 type ContentRecord = Awaited<ReturnType<typeof getContentById>>;
@@ -125,19 +125,19 @@ const createAgentInstance = (
 const buildAgent = (overrides: Partial<AgentRecord> = {}): AgentRecord => {
    const { personaConfig: personaOverride, ...rest } = overrides;
    const base: AgentRecord = {
+      createdAt: new Date(),
       id: "agent-id",
-      userId: "user-id",
+      lastGeneratedAt: null,
       organizationId: null,
       personaConfig: {
          metadata: {
-            name: "Default Name",
             description: "Default Description",
+            name: "Default Name",
          },
       },
       profilePhotoUrl: null,
-      createdAt: new Date(),
       updatedAt: new Date(),
-      lastGeneratedAt: null,
+      userId: "user-id",
    };
    return {
       ...base,
@@ -163,17 +163,17 @@ const buildContent = (
       ...rest
    } = overrides;
    const base = {
-      id: "content-id",
       agentId: "agent-id",
-      imageUrl: null,
       body: "",
-      status: "draft",
-      shareStatus: "private",
+      createdAt: new Date(),
+      currentVersion: 0,
+      id: "content-id",
+      imageUrl: null,
       meta: {},
       request: { description: "", layout: "article" },
+      shareStatus: "private",
       stats: {},
-      currentVersion: 0,
-      createdAt: new Date(),
+      status: "draft",
       updatedAt: new Date(),
    } satisfies ContentRecord;
    const resolvedMeta =
@@ -210,14 +210,14 @@ const buildContentListItem = (
       ...rest
    } = overrides;
    const base = {
-      id: "content-id",
-      meta: {},
-      imageUrl: null,
-      status: "draft",
-      createdAt: new Date(),
-      stats: {},
-      shareStatus: "private",
       agent: buildAgent(),
+      createdAt: new Date(),
+      id: "content-id",
+      imageUrl: null,
+      meta: {},
+      shareStatus: "private",
+      stats: {},
+      status: "draft",
    } satisfies ContentListItem;
    const resolvedMeta =
       metaOverride === undefined
@@ -234,25 +234,22 @@ const buildContentListItem = (
    return {
       ...base,
       ...rest,
+      agent: agentOverride ?? base.agent,
       meta: resolvedMeta,
       stats: resolvedStats,
-      agent: agentOverride ?? base.agent,
    };
 };
 
 const buildBrand = (overrides: Partial<BrandRecord> = {}): BrandRecord => {
    const base = {
-      id: "brand-id",
-      name: "Brand",
-      websiteUrl: "https://example.com",
-      summary: "",
-      logoUrl: "",
-      status: "analyzing",
-      organizationId: "org-id",
-      uploadedFiles: [],
       createdAt: new Date(),
-      updatedAt: new Date(),
       features: [],
+      id: "brand-id",
+      organizationId: "org-id",
+      status: "analyzing",
+      updatedAt: new Date(),
+      uploadedFiles: [],
+      websiteUrl: "https://example.com",
    } satisfies BrandRecord;
    return {
       ...base,
@@ -263,11 +260,11 @@ const buildBrand = (overrides: Partial<BrandRecord> = {}): BrandRecord => {
 
 const buildMember = (overrides: Partial<MemberRecord> = {}): MemberRecord => {
    const base = {
+      createdAt: new Date(),
       id: "member-id",
-      userId: "test-user-id",
       organizationId: "test-org-id",
       role: "member" as const,
-      createdAt: new Date(),
+      userId: "test-user-id",
    } satisfies MemberRecord;
    return {
       ...base,
@@ -484,13 +481,9 @@ const defaultImageBuffer = Buffer.from("test-image-data");
 const defaultImageBase64 = defaultImageBuffer.toString("base64");
 
 let agentInstance: MockMastraAgent;
-let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 describe("sdkRoutes", () => {
    beforeEach(() => {
       vi.clearAllMocks();
-      consoleErrorSpy = vi
-         .spyOn(console, "error")
-         .mockImplementation(() => undefined);
       authVerifyApiKeyMock.mockResolvedValue({ valid: true });
       authGetSessionMock.mockResolvedValue({
          user: { id: "test-user-id" },
@@ -505,22 +498,18 @@ describe("sdkRoutes", () => {
       });
    });
 
-   afterEach(() => {
-      consoleErrorSpy.mockRestore();
-   });
-
    describe("GET /sdk/author/:agentId", () => {
       it("returns author information with profile photo", async () => {
          const agent = buildAgent({
             id: "test-agent-id",
-            userId: "test-user-id",
             personaConfig: {
                metadata: {
-                  name: "Test Author",
                   description: "Default Description",
+                  name: "Test Author",
                },
             },
             profilePhotoUrl: "test-photo-url",
+            userId: "test-user-id",
          });
          getAgentByIdMock.mockResolvedValue(agent);
 
@@ -535,8 +524,8 @@ describe("sdkRoutes", () => {
          expect(body).toEqual({
             name: "Test Author",
             profilePhoto: {
-               data: defaultImageBase64,
                contentType: "image/jpeg",
+               data: defaultImageBase64,
             },
          });
          expect(getAgentByIdMock).toHaveBeenCalledWith(mockDb, "test-agent-id");
@@ -552,14 +541,14 @@ describe("sdkRoutes", () => {
       it("returns author information without profile photo", async () => {
          const agent = buildAgent({
             id: "test-agent-id",
-            userId: "test-user-id",
             personaConfig: {
                metadata: {
-                  name: "Test Author",
                   description: "Default Description",
+                  name: "Test Author",
                },
             },
             profilePhotoUrl: null,
+            userId: "test-user-id",
          });
          getAgentByIdMock.mockResolvedValue(agent);
 
@@ -595,14 +584,14 @@ describe("sdkRoutes", () => {
       it("returns profile photo as null when file retrieval fails", async () => {
          const agent = buildAgent({
             id: "test-agent-id",
-            userId: "test-user-id",
             personaConfig: {
                metadata: {
-                  name: "Test Author",
                   description: "Default Description",
+                  name: "Test Author",
                },
             },
             profilePhotoUrl: "test-photo-url",
+            userId: "test-user-id",
          });
          getAgentByIdMock.mockResolvedValue(agent);
          streamFileForProxyMock.mockRejectedValue(
@@ -713,8 +702,8 @@ describe("sdkRoutes", () => {
    describe("GET /sdk/assistant", () => {
       it("streams assistant response", async () => {
          const member = buildMember({
-            userId: "test-user-id",
             organizationId: "test-org-id",
+            userId: "test-user-id",
          });
          const brand = buildBrand({
             id: "test-brand-id",
@@ -743,14 +732,14 @@ describe("sdkRoutes", () => {
             "test-org-id",
          );
          expect(setRuntimeContextMock).toHaveBeenCalledWith({
-            userId: "test-user-id",
-            language: "en",
             brandId: "test-brand-id",
+            language: "en",
+            userId: "test-user-id",
          });
          expect(mastraGetAgentMock).toHaveBeenCalledWith("appAssistantAgent");
          expect(agentInstance.stream).toHaveBeenCalledWith(
-            [{ role: "user", content: "Hello" }],
-            { runtimeContext: "assistant-context", format: "aisdk" },
+            [{ content: "Hello", role: "user" }],
+            { format: "aisdk", runtimeContext: "assistant-context" },
          );
       });
 
@@ -785,8 +774,8 @@ describe("sdkRoutes", () => {
 
       it("returns 500 when member has no organization", async () => {
          const member = buildMember({
-            userId: "test-user-id",
             organizationId: undefined,
+            userId: "test-user-id",
          });
          findMemberByUserIdMock.mockResolvedValue(member);
 
@@ -804,8 +793,8 @@ describe("sdkRoutes", () => {
 
       it("returns 500 when brand lookup fails", async () => {
          const member = buildMember({
-            userId: "test-user-id",
             organizationId: "test-org-id",
+            userId: "test-user-id",
          });
          findMemberByUserIdMock.mockResolvedValue(member);
          getBrandByOrgIdMock.mockRejectedValue(new Error("Brand not found"));
@@ -824,8 +813,8 @@ describe("sdkRoutes", () => {
 
       it("returns 500 when streaming fails", async () => {
          const member = buildMember({
-            userId: "test-user-id",
             organizationId: "test-org-id",
+            userId: "test-user-id",
          });
          findMemberByUserIdMock.mockResolvedValue(member);
          getBrandByOrgIdMock.mockResolvedValue(
@@ -852,12 +841,12 @@ describe("sdkRoutes", () => {
             buildContentListItem({
                id: "1",
                imageUrl: "image1.jpg",
-               meta: { title: "Content 1", slug: "content-1" },
+               meta: { slug: "content-1", title: "Content 1" },
             }),
             buildContentListItem({
                id: "2",
                imageUrl: null,
-               meta: { title: "Content 2", slug: "content-2" },
+               meta: { slug: "content-2", title: "Content 2" },
             }),
          ];
          listContentsMock.mockResolvedValue(contents);
@@ -879,8 +868,8 @@ describe("sdkRoutes", () => {
          }
          expect(firstPost.meta).toMatchObject({ title: "Content 1" });
          expect(firstPost.image).toEqual({
-            data: defaultImageBase64,
             contentType: "image/jpeg",
+            data: defaultImageBase64,
          });
          expect(secondPost.image).toBeNull();
          expect(listContentsMock).toHaveBeenCalledWith(
@@ -954,10 +943,10 @@ describe("sdkRoutes", () => {
    describe("GET /sdk/content/:agentId/:slug", () => {
       it("returns content with image", async () => {
          const content = buildContent({
-            id: "content-1",
             agentId: "test-agent-id",
+            id: "content-1",
             imageUrl: "content-image.jpg",
-            meta: { title: "Test Content", slug: "test-slug" },
+            meta: { slug: "test-slug", title: "Test Content" },
          });
          getContentBySlugMock.mockResolvedValue(content);
 
@@ -974,8 +963,8 @@ describe("sdkRoutes", () => {
          expect(response.status).toBe(200);
          expect(body?.meta?.slug).toBe("test-slug");
          expect(body.image).toEqual({
-            data: defaultImageBase64,
             contentType: "image/jpeg",
+            data: defaultImageBase64,
          });
          expect(getContentBySlugMock).toHaveBeenCalledWith(
             mockDb,
@@ -1001,8 +990,8 @@ describe("sdkRoutes", () => {
 
       it("omits image when none exists", async () => {
          const content = buildContent({
-            id: "content-1",
             agentId: "test-agent-id",
+            id: "content-1",
             imageUrl: null,
             meta: { slug: "test-slug" },
          });
@@ -1041,8 +1030,8 @@ describe("sdkRoutes", () => {
 
          expect(response.status).toBe(200);
          expect(body).toEqual({
-            data: defaultImageBase64,
             contentType: "image/jpeg",
+            data: defaultImageBase64,
          });
       });
 

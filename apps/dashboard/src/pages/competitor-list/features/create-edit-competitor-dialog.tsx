@@ -1,4 +1,6 @@
 import type { CompetitorSelect } from "@packages/database/schema";
+import { translate } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
    CredenzaContent,
@@ -7,16 +9,15 @@ import {
    CredenzaHeader,
    CredenzaTitle,
 } from "@packages/ui/components/credenza";
-import { Button } from "@packages/ui/components/button";
 import { useAppForm } from "@packages/ui/components/form";
-import { useTRPC } from "@/integrations/clients";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { type FormEvent, useCallback } from "react";
 import { Input } from "@packages/ui/components/input";
-import { z } from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { translate } from "@packages/localization";
+import { type FormEvent, useCallback } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useTRPC } from "@/integrations/clients";
+
 const createCompetitorSchema = z.object({
    websiteUrl: z.url(translate("pages.competitor-list.validation.invalid-url")),
 });
@@ -44,8 +45,8 @@ export function CreateEditCompetitorDialog({
       onSubmit: async ({ value, formApi }) => {
          if (competitor) {
             await updateCompetitorMutation.mutateAsync({
-               id: competitor.id,
                data: value,
+               id: competitor.id,
             });
          } else {
             await createCompetitorMutation.mutateAsync(value);
@@ -68,6 +69,13 @@ export function CreateEditCompetitorDialog({
    const router = useRouter();
    const createCompetitorMutation = useMutation(
       trpc.competitor.create.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               translate("pages.competitor-list.messages.create-error", {
+                  error: error.message,
+               }),
+            );
+         },
          onSuccess: async (data) => {
             toast.success(
                translate("pages.competitor-list.messages.create-success"),
@@ -76,26 +84,26 @@ export function CreateEditCompetitorDialog({
                queryKey: trpc.competitor.list.queryKey(),
             });
             router.navigate({
-               to: "/competitors/$id",
                params: {
                   id: data.id,
                },
+               to: "/competitors/$id",
             });
             onOpenChange(false);
             form.reset();
-         },
-         onError: (error) => {
-            toast.error(
-               translate("pages.competitor-list.messages.create-error", {
-                  error: error.message,
-               }),
-            );
          },
       }),
    );
 
    const updateCompetitorMutation = useMutation(
       trpc.competitor.update.mutationOptions({
+         onError: (error) => {
+            toast.error(
+               translate("pages.competitor-list.messages.update-error", {
+                  error: error.message,
+               }),
+            );
+         },
          onSuccess: async () => {
             toast.success(
                translate("pages.competitor-list.messages.update-success"),
@@ -109,13 +117,6 @@ export function CreateEditCompetitorDialog({
             onOpenChange(false);
             form.reset();
          },
-         onError: (error) => {
-            toast.error(
-               translate("pages.competitor-list.messages.update-error", {
-                  error: error.message,
-               }),
-            );
-         },
       }),
    );
 
@@ -123,7 +124,7 @@ export function CreateEditCompetitorDialog({
       createCompetitorMutation.isPending || updateCompetitorMutation.isPending;
 
    return (
-      <Credenza open={open} onOpenChange={onOpenChange}>
+      <Credenza onOpenChange={onOpenChange} open={open}>
          <CredenzaContent className="sm:max-w-[425px]">
             <CredenzaHeader>
                <CredenzaTitle>
@@ -156,14 +157,14 @@ export function CreateEditCompetitorDialog({
                               )}
                            </field.FieldLabel>
                            <Input
+                              onBlur={field.handleBlur}
+                              onChange={(e) =>
+                                 field.handleChange(e.target.value)
+                              }
                               placeholder={translate(
                                  "pages.competitor-list.modals.create-edit.website-url-placeholder",
                               )}
                               value={field.state.value}
-                              onChange={(e) =>
-                                 field.handleChange(e.target.value)
-                              }
-                              onBlur={field.handleBlur}
                            />
                            <field.FieldMessage />
                         </field.FieldContainer>
@@ -172,16 +173,16 @@ export function CreateEditCompetitorDialog({
                </div>
                <CredenzaFooter>
                   <Button
+                     disabled={isLoading}
+                     onClick={() => onOpenChange(false)}
                      type="button"
                      variant="outline"
-                     onClick={() => onOpenChange(false)}
-                     disabled={isLoading}
                   >
                      {translate(
                         "pages.competitor-list.modals.create-edit.cancel",
                      )}
                   </Button>
-                  <Button type="submit" disabled={isLoading}>
+                  <Button disabled={isLoading} type="submit">
                      {isLoading
                         ? translate(
                              "pages.competitor-list.modals.create-edit.saving",

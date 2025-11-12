@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CompetitorListPage } from "@/pages/competitor-list/ui/competitor-list-page";
 import { z } from "zod";
+import { CompetitorListPage } from "@/pages/competitor-list/ui/competitor-list-page";
 
 const competitorSearchSchema = z.object({
-   search: z.string().optional(),
    page: z.coerce.number().int().min(1).default(1),
+   search: z.string().optional(),
 });
 
 export const Route = createFileRoute("/_dashboard/competitors/")({

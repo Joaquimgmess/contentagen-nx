@@ -1,18 +1,18 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 
 const program = new Command();
 
 // Colors
 const colors = {
    blue: chalk.blue,
-   green: chalk.green,
-   yellow: chalk.yellow,
-   red: chalk.red,
    cyan: chalk.cyan,
+   green: chalk.green,
    magenta: chalk.magenta,
+   red: chalk.red,
+   yellow: chalk.yellow,
 };
 
 // Functions

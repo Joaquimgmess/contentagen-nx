@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
+import type { RouterOutput } from "@packages/api/client";
+import { translate } from "@packages/localization";
+import { Button } from "@packages/ui/components/button";
 import {
    Credenza,
+   CredenzaBody,
+   CredenzaClose,
    CredenzaContent,
+   CredenzaDescription,
+   CredenzaFooter,
    CredenzaHeader,
    CredenzaTitle,
-   CredenzaDescription,
-   CredenzaBody,
-   CredenzaFooter,
-   CredenzaClose,
 } from "@packages/ui/components/credenza";
 import {
    Dropzone,
    DropzoneContent,
    DropzoneEmptyState,
 } from "@packages/ui/components/dropzone";
-import { Button } from "@packages/ui/components/button";
-import { translate } from "@packages/localization";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
 
-import type { RouterOutput } from "@packages/api/client";
 type Agent = RouterOutput["agent"]["get"];
 interface ManageAgentPhotoProps {
    agent: Agent;
@@ -57,6 +57,14 @@ export function ManageAgentPhoto({
 
    const uploadPhotoMutation = useMutation(
       trpc.agentFile.uploadProfilePhoto.mutationOptions({
+         onError: (error) => {
+            console.error("Upload error:", error);
+            toast.error(
+               translate(
+                  "pages.agent-details.modals.manage-photo.messages.upload-failed",
+               ),
+            );
+         },
          onSuccess: async () => {
             toast.success(
                translate(
@@ -72,14 +80,6 @@ export function ManageAgentPhoto({
             setIsOpen(false);
             setSelectedFile(null);
             setFilePreview(undefined);
-         },
-         onError: (error) => {
-            console.error("Upload error:", error);
-            toast.error(
-               translate(
-                  "pages.agent-details.modals.manage-photo.messages.upload-failed",
-               ),
-            );
          },
       }),
    );
@@ -143,9 +143,9 @@ export function ManageAgentPhoto({
 
          await uploadPhotoMutation.mutateAsync({
             agentId,
-            fileName: selectedFile.name,
-            fileBuffer: base64,
             contentType: selectedFile.type,
+            fileBuffer: base64,
+            fileName: selectedFile.name,
          });
       } catch (error) {
          console.error("Upload failed:", error);
@@ -158,7 +158,7 @@ export function ManageAgentPhoto({
    };
 
    return (
-      <Credenza open={isOpen} onOpenChange={setIsOpen}>
+      <Credenza onOpenChange={setIsOpen} open={isOpen}>
          <CredenzaContent>
             <CredenzaHeader>
                <CredenzaTitle>
@@ -176,10 +176,10 @@ export function ManageAgentPhoto({
                   accept={{
                      "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp"],
                   }}
-                  maxSize={5 * 1024 * 1024} // 5MB
+                  disabled={uploadPhotoMutation.isPending} // 5MB
                   maxFiles={1}
+                  maxSize={5 * 1024 * 1024}
                   onDrop={handleFileSelect}
-                  disabled={uploadPhotoMutation.isPending}
                   src={selectedFile ? [selectedFile] : undefined}
                >
                   <DropzoneEmptyState>
@@ -211,8 +211,8 @@ export function ManageAgentPhoto({
                   </Button>
                </CredenzaClose>
                <Button
-                  onClick={handleUpload}
                   disabled={!selectedFile || uploadPhotoMutation.isPending}
+                  onClick={handleUpload}
                >
                   {uploadPhotoMutation.isPending
                      ? translate(

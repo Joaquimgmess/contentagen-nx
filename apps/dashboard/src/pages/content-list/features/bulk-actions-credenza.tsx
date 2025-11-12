@@ -7,13 +7,13 @@ import {
    CredenzaTitle,
 } from "@packages/ui/components/credenza";
 import { SquaredIconButton } from "@packages/ui/components/squared-icon-button";
-import { CheckCircle, Trash2 } from "lucide-react";
-import { useTRPC } from "@/integrations/clients";
-import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { BulkDeleteConfirmationCredenza } from "./bulk-delete-confirmation-credenza";
+import { toast } from "sonner";
+import { useTRPC } from "@/integrations/clients";
 import { BulkApproveConfirmationCredenza } from "./bulk-approve-confirmation-credenza";
+import { BulkDeleteConfirmationCredenza } from "./bulk-delete-confirmation-credenza";
 
 interface BulkActionsCredenzaProps {
    open: boolean;
@@ -36,6 +36,10 @@ export function BulkActionsCredenza({
 
    const bulkApproveMutation = useMutation(
       trpc.content.bulk.bulkApprove.mutationOptions({
+         onError: (error) => {
+            toast.error("Failed to approve content items");
+            console.error("Bulk approve error:", error);
+         },
          onSuccess: async (result) => {
             const message =
                result.totalSelected &&
@@ -51,19 +55,19 @@ export function BulkActionsCredenza({
             });
             // Invalidate all content versions since multiple items were affected
             await queryClient.invalidateQueries({
-               queryKey: ["trpc", "content", "getVersions"],
                exact: false,
+               queryKey: ["trpc", "content", "getVersions"],
             });
-         },
-         onError: (error) => {
-            toast.error("Failed to approve content items");
-            console.error("Bulk approve error:", error);
          },
       }),
    );
 
    const bulkDeleteMutation = useMutation(
       trpc.content.bulk.bulkDelete.mutationOptions({
+         onError: (error) => {
+            toast.error("Failed to delete content items");
+            console.error("Bulk delete error:", error);
+         },
          onSuccess: async (result) => {
             toast.success(
                `Successfully deleted ${result.deletedCount} content items`,
@@ -73,10 +77,6 @@ export function BulkActionsCredenza({
             await queryClient.invalidateQueries({
                queryKey: trpc.content.listAllContent.queryKey(),
             });
-         },
-         onError: (error) => {
-            toast.error("Failed to delete content items");
-            console.error("Bulk delete error:", error);
          },
       }),
    );
@@ -103,7 +103,7 @@ export function BulkActionsCredenza({
 
    return (
       <>
-         <Credenza open={open} onOpenChange={onOpenChange}>
+         <Credenza onOpenChange={onOpenChange} open={open}>
             <CredenzaContent>
                <CredenzaHeader>
                   <CredenzaTitle>Bulk Actions</CredenzaTitle>
@@ -113,12 +113,12 @@ export function BulkActionsCredenza({
                </CredenzaHeader>
                <CredenzaBody className="grid grid-cols-2 gap-4">
                   <SquaredIconButton
-                     onClick={handleBulkApprove}
                      disabled={
                         bulkApproveMutation.isPending ||
                         bulkDeleteMutation.isPending ||
                         selectedItems.length === 0
                      }
+                     onClick={handleBulkApprove}
                   >
                      <CheckCircle className="h-8 w-8" />
 
@@ -129,13 +129,13 @@ export function BulkActionsCredenza({
                   </SquaredIconButton>
 
                   <SquaredIconButton
-                     onClick={handleBulkDelete}
+                     destructive
                      disabled={
                         bulkApproveMutation.isPending ||
                         bulkDeleteMutation.isPending ||
                         selectedItems.length === 0
                      }
-                     destructive
+                     onClick={handleBulkDelete}
                   >
                      <Trash2 className="h-8 w-8 " />
                      <span className="text-sm font-medium">Delete</span>
@@ -147,15 +147,15 @@ export function BulkActionsCredenza({
             </CredenzaContent>
          </Credenza>
          <BulkDeleteConfirmationCredenza
-            open={showDeleteConfirmation}
-            onOpenChange={setShowDeleteConfirmation}
-            selectedItemsCount={selectedItems.length}
             onConfirm={confirmBulkDelete}
+            onOpenChange={setShowDeleteConfirmation}
+            open={showDeleteConfirmation}
+            selectedItemsCount={selectedItems.length}
          />
          <BulkApproveConfirmationCredenza
-            open={showApproveConfirmation}
-            onOpenChange={setShowApproveConfirmation}
             onConfirm={confirmBulkApprove}
+            onOpenChange={setShowApproveConfirmation}
+            open={showApproveConfirmation}
          />
       </>
    );

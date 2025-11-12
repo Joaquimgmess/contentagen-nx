@@ -1,9 +1,3 @@
-import { useState } from "react";
-import { useTRPC } from "@/integrations/clients";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import { FileText, Loader2 } from "lucide-react";
-import { Markdown } from "@packages/ui/components/markdown";
 import {
    Credenza,
    CredenzaBody,
@@ -12,6 +6,12 @@ import {
    CredenzaHeader,
    CredenzaTitle,
 } from "@packages/ui/components/credenza";
+import { Markdown } from "@packages/ui/components/markdown";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { FileText, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useTRPC } from "@/integrations/clients";
 
 export function CompetitorFileViewerModal() {
    const trpc = useTRPC();
@@ -38,14 +38,13 @@ export function CompetitorFileViewerModal() {
    };
 
    return {
-      isOpen,
-      fileName,
-      fileContent: data?.content,
-      isLoading,
-      open,
       close,
+      fileContent: data?.content,
+      fileName,
+      isLoading,
+      isOpen,
       Modal: () => (
-         <Credenza open={isOpen} onOpenChange={close}>
+         <Credenza onOpenChange={close} open={isOpen}>
             <CredenzaContent className="">
                <CredenzaHeader>
                   <CredenzaTitle className="flex items-center gap-2">
@@ -71,5 +70,6 @@ export function CompetitorFileViewerModal() {
             </CredenzaContent>
          </Credenza>
       ),
+      open,
    };
 }

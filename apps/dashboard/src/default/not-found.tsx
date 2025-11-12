@@ -1,7 +1,7 @@
 import mascot from "@packages/brand/logo.svg";
-import { Search } from "lucide-react";
 import { Button } from "@packages/ui/components/button";
 import { useNavigate } from "@tanstack/react-router";
+import { Search } from "lucide-react";
 
 export function NotFoundComponent() {
    const navigate = useNavigate();

@@ -1,7 +1,14 @@
 {
-   "title": "Sign In",
    "description": "Enter your details to access your account.",
-   "google-button": "Sign in with Google",
+   "errors": {
+      "invalid-credentials": "Invalid email or password",
+      "unknown": "Unknown error"
+   },
+   "footer": {
+      "forgot-password": "Forgot your password?",
+      "no-account": "Don't have an account?",
+      "sign-up-link": "Sign up here"
+   },
    "form": {
       "email": {
          "label": "Email",
@@ -13,22 +20,15 @@
       },
       "submit": "Sign In"
    },
-   "footer": {
-      "forgot-password": "Forgot your password",
-      "no-account": "Don't have an account?",
-      "sign-up-link": "Sign up here"
-   },
-   "validation": {
-      "email-invalid": "Please enter a valid email address",
-      "password-min-length": "Password must be at least 8 characters"
-   },
-   "errors": {
-      "unknown": "Unknown error",
-      "invalid-credentials": "Invalid email or password"
-   },
+   "google-button": "Sign in with Google",
    "messages": {
       "loading": "Signing in...",
       "success": "Sign in successful",
       "welcome": "Welcome to {{brand}} {{name}}"
+   },
+   "title": "Sign In",
+   "validation": {
+      "email-invalid": "Please enter a valid email address",
+      "password-min-length": "Password must be at least 8 characters"
    }
 }

@@ -1,11 +1,11 @@
-import { competitorFeature } from "../schemas/competitor-feature";
-import { eq, and, sql, inArray, desc } from "drizzle-orm";
-import type {
-   CompetitorFeatureSelect,
-   CompetitorFeatureInsert,
-} from "../schemas/competitor-feature";
-import type { DatabaseInstance } from "../client";
 import { AppError, propagateError } from "@packages/utils/errors";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import type { DatabaseInstance } from "../client";
+import type {
+   CompetitorFeatureInsert,
+   CompetitorFeatureSelect,
+} from "../schemas/competitor-feature";
+import { competitorFeature } from "../schemas/competitor-feature";
 
 const buildOwnerExists = (userId?: string, organizationId?: string) => {
    if (!userId && !organizationId) return sql`TRUE`;
@@ -130,12 +130,12 @@ export async function getFeaturesByCompetitorId(
       const orderByDirection = sortOrder === "asc" ? "asc" : "desc";
 
       return await dbClient.query.competitorFeature.findMany({
-         where: eq(competitorFeature.competitorId, competitorId),
          limit,
          offset,
          orderBy: [
             orderByDirection === "asc" ? orderByField : desc(orderByField),
          ],
+         where: eq(competitorFeature.competitorId, competitorId),
          with: {
             competitor: {
                columns: {
@@ -197,10 +197,10 @@ export async function searchFeatures(
       const whereCondition = buildWhereCondition();
 
       return await dbClient.query.competitorFeature.findMany({
-         where: whereCondition,
          limit,
          offset,
          orderBy: [desc(competitorFeature.extractedAt)],
+         where: whereCondition,
          with: {
             competitor: {
                columns: {
@@ -251,9 +251,9 @@ export async function getRecentFeatures(
       );
 
       return await dbClient.query.competitorFeature.findMany({
-         where: whereCondition,
          limit,
          orderBy: [desc(competitorFeature.extractedAt)],
+         where: whereCondition,
          with: {
             competitor: {
                columns: {
@@ -381,9 +381,9 @@ export async function getFeaturesStats(
          totalCompetitors > 0 ? totalFeatures / totalCompetitors : 0;
 
       return {
-         totalFeatures,
-         totalCompetitors,
          avgFeaturesPerCompetitor,
+         totalCompetitors,
+         totalFeatures,
       };
    } catch (err) {
       throw AppError.database(

@@ -1,10 +1,11 @@
+import { createTrpcClient } from "@packages/api/client";
+import type { AppRouter } from "@packages/api/server";
+import { createAuthClient } from "@packages/authentication/client";
+import { clientEnv } from "@packages/environment/client";
+import { getCurrentLanguage } from "@packages/localization";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { clientEnv } from "@packages/environment/client";
-import { createAuthClient } from "@packages/authentication/client";
-import { createTrpcClient } from "@packages/api/client";
-import { getCurrentLanguage } from "@packages/localization";
-import type { AppRouter } from "@packages/api/server";
+
 import {
    createTRPCContext,
    createTRPCOptionsProxy,
@@ -18,9 +19,9 @@ export const { TRPCProvider, useTRPC, useTRPCClient } =
 // This function now correctly uses the environment variable
 export function makeTrpcClient(headers?: Headers) {
    return createTrpcClient({
-      serverUrl: clientEnv.VITE_SERVER_URL,
       headers,
       language: getCurrentLanguage(),
+      serverUrl: clientEnv.VITE_SERVER_URL,
    });
 }
 
@@ -60,8 +61,9 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
    const [trpcClient] = useState(() => makeTrpcClient());
    return (
       <QueryClientProvider client={queryClient}>
-         <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-            <ReactQueryDevtools buttonPosition="top-left" />
+         <TRPCProvider queryClient={queryClient} trpcClient={trpcClient}>
+            <ReactQueryDevtools buttonPosition="bottom-left" />
+
             {children}
          </TRPCProvider>
       </QueryClientProvider>

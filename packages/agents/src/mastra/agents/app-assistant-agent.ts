@@ -1,12 +1,12 @@
 import { Agent } from "@mastra/core/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { serverEnv } from "@packages/environment/server";
-import {
-   queryForBrandKnowledgeTool,
-   getQueryBrandKnowledgeInstructions,
-} from "../tools/query-for-brand-knowledge-tool";
-import { dateTool, getDateToolInstructions } from "../tools/date-tool";
 import { createToolSystemPrompt } from "../helpers";
+import { dateTool, getDateToolInstructions } from "../tools/date-tool";
+import {
+   getQueryBrandKnowledgeInstructions,
+   queryForBrandKnowledgeTool,
+} from "../tools/query-for-brand-knowledge-tool";
 
 const openrouter = createOpenRouter({
    apiKey: serverEnv.OPENROUTER_API_KEY,
@@ -19,7 +19,6 @@ const getLanguageOutputInstruction = (language: "en" | "pt"): string => {
 };
 
 export const appAssistantAgent = new Agent({
-   name: "App Assistant",
    instructions: ({ runtimeContext }) => {
       const locale = runtimeContext.get("language") || "en";
       return `
@@ -95,8 +94,9 @@ When users greet you (hello, hi, etc.):
 `;
    },
    model: openrouter("x-ai/grok-4-fast"),
+   name: "App Assistant",
    tools: {
-      queryForBrandKnowledgeTool,
       dateTool,
+      queryForBrandKnowledgeTool,
    },
 });

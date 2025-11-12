@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { formatWindow } from "../src/numbers";
 
 describe("number utilities", () => {

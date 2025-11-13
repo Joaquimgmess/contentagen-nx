@@ -162,12 +162,6 @@ function ProfilePageBillingContent() {
       };
    }, [billingInfo.customerState?.activeMeters]);
 
-   const rulerDisplayLimit = 50000;
-   const displayConsumed = useMemo(
-      () => Math.min(meterData.consumedUnits, rulerDisplayLimit),
-      [meterData.consumedUnits],
-   );
-
    const goToBillingPortal = useCallback(async () => {
       return await betterAuthClient.customer.portal();
    }, []);
@@ -269,13 +263,12 @@ function ProfilePageBillingContent() {
                   </ItemDescription>
                </ItemContent>
                <UsageRuler
-                  displayMax={rulerDisplayLimit}
                   legend={translate(
                      "pages.profile.billing.state.active.legend",
                   )}
                   max={meterData.creditedUnits}
                   min={0}
-                  value={displayConsumed}
+                  value={meterData.consumedUnits}
                />
             </Item>
          </ItemGroup>
